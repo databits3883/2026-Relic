@@ -58,7 +58,7 @@ public class ArmSubsystem extends SubsystemBase {
                         .p(kP)
                         .i(kI)
                         .d(kD)
-                        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
                         .outputRange(-0.3,0.3); // set PID and 1/3 max speeds
         m_baseConfig.idleMode(IdleMode.kBrake);
 
@@ -70,6 +70,7 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.setDefaultNumber("Target Velocity", 0);
         SmartDashboard.setDefaultBoolean("Control Mode", false);
         SmartDashboard.setDefaultBoolean("Reset Encoder", false);
+        SmartDashboard.setDefaultNumber("Absolute Angle", 0);
         Shuffleboard.getTab("Arm Sysid Testing").addDouble("Absolute Angle", absAngleEncoder::getPosition);
         Shuffleboard.getTab("Arm Sysid Testing").addDouble("Angle ProfileGoal", () -> angleSetpoint);
         Shuffleboard.getTab("Arm Sysid Testing").addDouble("Angle Motor Current", m_motor::getOutputCurrent);        
@@ -103,11 +104,15 @@ public class ArmSubsystem extends SubsystemBase {
         // Display encoder position and velocity
         SmartDashboard.putNumber("Actual Position", encoder.getPosition());
         SmartDashboard.putNumber("Actual Velocity", encoder.getVelocity());
+        double currentAngleRot2Degree = Units.rotationsToDegrees(absAngleEncoder.getPosition());
+        SmartDashboard.putNumber("Absolute Angle rot2deg", currentAngleRot2Degree);
+        
 
         if (SmartDashboard.getBoolean("Reset Encoder", false)) {
             SmartDashboard.putBoolean("Reset Encoder", false);
-            // Reset the encoder position to 0
-            encoder.setPosition(0);
+            // Reset the encoder position to abs value
+            encoder.setPosition(absAngleEncoder.getPosition());
+            SmartDashboard.putNumber("Target Position",currentAngleRot2Degree);
         }
         if (SmartDashboard.getBoolean("Control Mode", false)) 
         {
@@ -123,7 +128,16 @@ public class ArmSubsystem extends SubsystemBase {
             * for the closed loop controller.
             */
             double targetPosition = SmartDashboard.getNumber("Target Position", 0);
-            closedLoopController.setSetpoint(targetPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+            if (targetPosition > 360) {
+                targetPosition = 360;
+                SmartDashboard.putNumber("Target Position",targetPosition);
+            } else if (targetPosition < 0) {
+                targetPosition = 0;
+                SmartDashboard.putNumber("Target Position",targetPosition);
+            }
+            double targetPositionRotations = Units.degreesToRotations(targetPosition);
+
+            closedLoopController.setSetpoint(targetPositionRotations, ControlType.kPosition, ClosedLoopSlot.kSlot0);
         }
     }
 
