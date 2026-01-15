@@ -26,7 +26,7 @@ public class RobotContainer {
     public static ArmSubsystem armSubsystem = new ArmSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  final CommandJoystick driverJoystick = new CommandJoystick(0);
+  //final CommandJoystick driverJoystick = new CommandJoystick(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -50,7 +50,7 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     //actually use button to stop arm
-     driverJoystick.button(16).whileTrue(new RunArm(10));
+     //driverJoystick.button(16).whileTrue(new RunArm(10));
   }
 
   /**

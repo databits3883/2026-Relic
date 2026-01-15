@@ -29,8 +29,8 @@ public class ArmSubsystem extends SubsystemBase {
     //private final ProfiledPIDController armController;
 
     // PID Gains and Motion Profile Constraints
-    private static double kP = 0.1; // Proportional gain
-    private static double kI = 0.0; // Integral gain
+    private static double kP = 0.5; // Proportional gain
+    private static double kI = 0.0001; // Integral gain
     private static double kD = 0.0; // Derivative gain
     private static double maxOutput = 0.3;
     private static final double kMaxVelocity = 1.0; // Max velocity in units/sec
@@ -75,6 +75,9 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("P Gain", kP);
         SmartDashboard.putNumber("I Gain", kI);
         SmartDashboard.putNumber("D Gain", kD);
+        SmartDashboard.putNumber("IAccum", 0);
+        SmartDashboard.setDefaultBoolean("Stop", false);
+
         Shuffleboard.getTab("Arm Sysid Testing").addDouble("Absolute Angle", absAngleEncoder::getPosition);
         Shuffleboard.getTab("Arm Sysid Testing").addDouble("Angle ProfileGoal", () -> angleSetpoint);
         Shuffleboard.getTab("Arm Sysid Testing").addDouble("Angle Motor Current", m_motor::getOutputCurrent);        
@@ -94,12 +97,15 @@ public class ArmSubsystem extends SubsystemBase {
      */
     public void stop()
     {
-        //turn off motor
-        setAngleMotor(0);
         //set the current
         double currentAngle = Units.rotationsToDegrees(absAngleEncoder.getPosition());
+        closedLoopController.setSetpoint(currentAngle, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        closedLoopController.setIAccum(0);
+        //turn off motor
+        setAngleMotor(0);
+
         //turn off the control mode
-        SmartDashboard.putBoolean("Control Mode", false);
+        SmartDashboard.putBoolean("GO", false);
     }
     
 
@@ -110,7 +116,7 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Actual Velocity", encoder.getVelocity());
         double currentAngleRot2Degree = Units.rotationsToDegrees(absAngleEncoder.getPosition());
         SmartDashboard.putNumber("Absolute Angle rot2deg", currentAngleRot2Degree);
-        
+        SmartDashboard.putNumber("IAccum", closedLoopController.getIAccum());
 
         if (SmartDashboard.getBoolean("Reset Encoder", false)) {
             SmartDashboard.putBoolean("Reset Encoder", false);
@@ -118,7 +124,13 @@ public class ArmSubsystem extends SubsystemBase {
             encoder.setPosition(absAngleEncoder.getPosition());
             SmartDashboard.putNumber("Target Position",currentAngleRot2Degree);
         }
-        if (SmartDashboard.getBoolean("GO", false)) 
+        if (SmartDashboard.getBoolean("Stop", false)) 
+        {
+            SmartDashboard.putBoolean("Stop", false);
+            //Turn off motor
+            stop();
+        }
+        else if (SmartDashboard.getBoolean("GO", false)) 
         {
             SmartDashboard.putBoolean("GO", false);
             /*
@@ -155,7 +167,7 @@ public class ArmSubsystem extends SubsystemBase {
                         .i(kI)
                         .d(kD)
                         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-                        .outputRange(-0.3,0.3); // set PID and 1/3 max speeds
+                        .outputRange((-1 * maxOutput),maxOutput); // set PID and 1/3 max speeds
                 //Update the motoro config to use PID
                 m_motor.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
             } //end if updatePID
