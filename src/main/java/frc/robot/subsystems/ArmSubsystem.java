@@ -29,9 +29,10 @@ public class ArmSubsystem extends SubsystemBase {
     //private final ProfiledPIDController armController;
 
     // PID Gains and Motion Profile Constraints
-    private static final double kP = 0.1; // Proportional gain
-    private static final double kI = 0.0; // Integral gain
-    private static final double kD = 0.0; // Derivative gain
+    private static double kP = 0.1; // Proportional gain
+    private static double kI = 0.0; // Integral gain
+    private static double kD = 0.0; // Derivative gain
+    private static double maxOutput = 0.3;
     private static final double kMaxVelocity = 1.0; // Max velocity in units/sec
     private static final double kMaxAcceleration = 0.5; // Max acceleration in units/sec^2
 
@@ -59,7 +60,7 @@ public class ArmSubsystem extends SubsystemBase {
                         .i(kI)
                         .d(kD)
                         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-                        .outputRange(-0.3,0.3); // set PID and 1/3 max speeds
+                        .outputRange((-1 * maxOutput),maxOutput); // set PID and 1/3 max speeds
         m_baseConfig.idleMode(IdleMode.kBrake);
 
         //Update the motoro config to use PID
@@ -68,9 +69,12 @@ public class ArmSubsystem extends SubsystemBase {
             // Initialize dashboard values
         SmartDashboard.setDefaultNumber("Target Position", 0);
         SmartDashboard.setDefaultNumber("Target Velocity", 0);
-        SmartDashboard.setDefaultBoolean("Control Mode", false);
+        SmartDashboard.setDefaultBoolean("GO", false);
         SmartDashboard.setDefaultBoolean("Reset Encoder", false);
         SmartDashboard.setDefaultNumber("Absolute Angle", 0);
+        SmartDashboard.putNumber("P Gain", kP);
+        SmartDashboard.putNumber("I Gain", kI);
+        SmartDashboard.putNumber("D Gain", kD);
         Shuffleboard.getTab("Arm Sysid Testing").addDouble("Absolute Angle", absAngleEncoder::getPosition);
         Shuffleboard.getTab("Arm Sysid Testing").addDouble("Angle ProfileGoal", () -> angleSetpoint);
         Shuffleboard.getTab("Arm Sysid Testing").addDouble("Angle Motor Current", m_motor::getOutputCurrent);        
@@ -114,15 +118,9 @@ public class ArmSubsystem extends SubsystemBase {
             encoder.setPosition(absAngleEncoder.getPosition());
             SmartDashboard.putNumber("Target Position",currentAngleRot2Degree);
         }
-        if (SmartDashboard.getBoolean("Control Mode", false)) 
+        if (SmartDashboard.getBoolean("GO", false)) 
         {
-            /*
-            * Get the target velocity from SmartDashboard and set it as the setpoint
-            * for the closed loop controller.
-            */
-            double targetVelocity = SmartDashboard.getNumber("Target Velocity", 0);
-            closedLoopController.setSetpoint(targetVelocity, ControlType.kVelocity, ClosedLoopSlot.kSlot1);
-        } else {
+            SmartDashboard.putBoolean("GO", false);
             /*
             * Get the target position from SmartDashboard and set it as the setpoint
             * for the closed loop controller.
@@ -137,6 +135,32 @@ public class ArmSubsystem extends SubsystemBase {
             }
             double targetPositionRotations = Units.degreesToRotations(targetPosition);
 
+            //Read PID values
+            // read PID coefficients from SmartDashboard
+            double p = SmartDashboard.getNumber("P Gain", 0);
+            double i = SmartDashboard.getNumber("I Gain", 0);
+            double d = SmartDashboard.getNumber("D Gain", 0);
+            
+            // if PID coefficients on SmartDashboard have changed, write new values to controller
+            boolean updatePID = false;
+            if((p != kP)) { updatePID = true;  kP = p; }
+            if((i != kI)) { updatePID = true;  kI = i; }
+            if((d != kD)) { updatePID = true; kD = d; }
+
+            if (updatePID)
+            {
+                //Update the PID on close loopController
+                m_baseConfig.closedLoop
+                        .p(kP)
+                        .i(kI)
+                        .d(kD)
+                        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+                        .outputRange(-0.3,0.3); // set PID and 1/3 max speeds
+                //Update the motoro config to use PID
+                m_motor.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+            } //end if updatePID
+
+            //Run the motor
             closedLoopController.setSetpoint(targetPositionRotations, ControlType.kPosition, ClosedLoopSlot.kSlot0);
         }
     }
