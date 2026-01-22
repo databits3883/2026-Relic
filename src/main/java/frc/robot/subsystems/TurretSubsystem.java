@@ -135,21 +135,28 @@ public class TurretSubsystem extends SubsystemBase {
     {
         //Get the current rotations from the motorController
         double currentRotations = turretEncoder.getPosition();
+        SmartDashboard.putNumber("Turret current rotations", currentRotations);
+
         double currentAngleDegrees = getTurretDegrees(currentRotations);
+        SmartDashboard.putNumber("Turret current angle before mod", currentAngleDegrees);
 
         //If negative convert to 0-359
         if (currentAngleDegrees < 0) currentAngleDegrees = 360+currentAngleDegrees;
 
         //Now find delta of current Angle and target angle
-        double deltaAngle = currentAngleDegrees - targetDegree;
+        double deltaAngle = targetDegree - currentAngleDegrees;
+        SmartDashboard.putNumber("Turret delta before", deltaAngle);
         //If delta > 180, subtract 360 to get obtimal delta and reverse for negative
         if (deltaAngle < -180) deltaAngle = deltaAngle + 360;
         if (deltaAngle > 180) deltaAngle = deltaAngle - 360;
+        SmartDashboard.putNumber("Turret delta AFTER", deltaAngle);
 
         //Get rotation of deltaAngle in Rotations
         double deltaRotations = getTurretRotations(deltaAngle);
         //Finally add this value to the current rotations for the new target
         double targetRotations = currentRotations + deltaRotations;
+        SmartDashboard.putNumber("Turret targerrotations", targetRotations);
+
         return targetRotations;
     }
     
@@ -162,11 +169,15 @@ public class TurretSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Turret Actual Position", currentMotorRotations);
         SmartDashboard.putNumber("Turret Actual Velocity", turretEncoder.getVelocity());
         double currentAngleRot2Degree = getTurretDegrees(currentMotorRotations);
+        //Update negative values back to positoive
+        if (currentAngleRot2Degree < 0) currentAngleRot2Degree = 360+currentAngleRot2Degree;
         SmartDashboard.putNumber("Turret Relative Angle rot2deg", currentAngleRot2Degree);
         SmartDashboard.putNumber("Turret IAccum", closedLoopController.getIAccum());
 
         if (SmartDashboard.getBoolean("Turret Reset Encoder", false)) {
             SmartDashboard.putBoolean("Turret Reset Encoder", false);
+            // make sure to stop pid loop
+            stop();
             // Reset the encoder position to abs value
             turretEncoder.setPosition(0);
             SmartDashboard.putNumber("Turret Target Position",0);
