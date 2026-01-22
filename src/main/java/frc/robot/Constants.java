@@ -28,4 +28,9 @@ public final class Constants {
     public static final double ARM_KI_ANGLE = 0;//0.001 gains for no coral and set()
     public static final double ARM_KD_ANGLE = 0;    
   }
+
+  public static class TurretConstants {
+    public static final int TURRET_MOTOR_ID = 9;
+
+  }
 }

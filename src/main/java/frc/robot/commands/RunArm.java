@@ -13,7 +13,7 @@ public class RunArm  extends Command {
   /** Creates a new runSpinner. */
   public RunArm (int m_targetAngle) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.armSubsystem);
+    //addRequirements(RobotContainer.armSubsystem);
     targetAngle = m_targetAngle;
   }
 
@@ -21,7 +21,7 @@ public class RunArm  extends Command {
   @Override
   public void initialize() {
     System.out.println("RunArm:init:about to stop arm");
-    RobotContainer.armSubsystem.stop();
+    //RobotContainer.armSubsystem.stop();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -37,7 +37,7 @@ public class RunArm  extends Command {
       //We do not need to do anything special if this gets interrupted early
     }
     System.out.println("RunArm:end:about to stop motor");
-    RobotContainer.armSubsystem.stop();
+    //RobotContainer.armSubsystem.stop();
   }
   
   // Returns true when the command should end.
