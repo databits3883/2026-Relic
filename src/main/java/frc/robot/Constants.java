@@ -32,5 +32,13 @@ public final class Constants {
   public static class TurretConstants {
     public static final int TURRET_MOTOR_ID = 9;
 
+    public static double KP = 0.5; // Proportional gain
+    public static double KI = 0.0001; // Integral gain
+    public static double KD = 0.0; // Derivative gain
+    public static double MAX_OUTPUT = 0.3;
+    public static final double MAX_VELOCITY = 1.0; // Max velocity in units/sec
+    public static final double MAX_ACCELERATION = 0.5; // Max acceleration in units/sec^2
+    public static final double TURRET_GEAR_RATIO = 1.00/15.00;// 15 dev of moter is one rev of turret
+
   }
 }

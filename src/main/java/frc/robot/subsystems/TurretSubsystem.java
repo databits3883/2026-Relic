@@ -21,21 +21,18 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class TurretSubsystem extends SubsystemBase {
-    //private final VictorSP armMotor;
-    //private final Encoder armEncoder;
-    //private final ProfiledPIDController armController;
-
+     
     // PID Gains and Motion Profile Constraints
-    private static double kP = 0.5; // Proportional gain
-    private static double kI = 0.0001; // Integral gain
-    private static double kD = 0.0; // Derivative gain
-    private static double maxOutput = 0.3;
-    private static final double kMaxVelocity = 1.0; // Max velocity in units/sec
-    private static final double kMaxAcceleration = 0.5; // Max acceleration in units/sec^2
-    private static final double kTurretGearRatio = 1.00/15.00;// 15 dev of moter is one rev of turret
-
+    private static double kP = Constants.TurretConstants.KP;
+    private static double kI = Constants.TurretConstants.KI;
+    private static double kD = Constants.TurretConstants.KD;
+    private static double maxOutput = Constants.TurretConstants.MAX_OUTPUT;
+    private static final double kMaxVelocity = Constants.TurretConstants.MAX_VELOCITY;
+    private static final double kMaxAcceleration = Constants.TurretConstants.MAX_ACCELERATION;
+    private static final double kTurretGearRatio = Constants.TurretConstants.TURRET_GEAR_RATIO;
+    
     private SparkMax m_motor = new SparkMax(Constants.TurretConstants.TURRET_MOTOR_ID, MotorType.kBrushless);
-    //public SparkAbsoluteEncoder absAngleEncoder = m_motor.getAbsoluteEncoder();
+    
        
     //private SparkMaxConfig m_config = new SparkMaxConfig();
     private SparkMaxConfig m_baseConfig = new SparkMaxConfig();
