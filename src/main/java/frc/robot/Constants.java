@@ -42,9 +42,9 @@ public final class Constants {
 
   }
   public static class StageConstants {
-    public static final int STAGE_MOTOR_ID = 10;
+    public static final int STAGE_MOTOR_ID = 18;
 
-    public static double KP = 0.01; // Proportional gain
+    public static double KP = 0.000195; // Proportional gain
     public static double KI = 0.0; // Integral gain
     public static double KD = 0.0; // Derivative gain
     public static double MAX_OUTPUT = 1.0;
