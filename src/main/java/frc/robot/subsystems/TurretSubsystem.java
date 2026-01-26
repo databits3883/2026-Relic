@@ -16,6 +16,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.util.Units;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -60,7 +61,7 @@ public class TurretSubsystem extends SubsystemBase {
         //Update the motoro config to use PID
         m_motor.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
-            // Initialize dashboard values
+        // Initialize dashboard values
         SmartDashboard.setDefaultNumber("Turret Target Position", 0);
         SmartDashboard.setDefaultNumber("Turret Target Velocity", 0);
         SmartDashboard.setDefaultBoolean("Turret GO", false);
@@ -71,7 +72,8 @@ public class TurretSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Turret D Gain", kD);
         SmartDashboard.putNumber("Turret IAccum", 0);
         SmartDashboard.setDefaultBoolean("Turret Stop", false);
-
+        //ShuffleboardTab turretTab = Shuffleboard.getTab("Turret");
+    
         Shuffleboard.getTab("Turret Sysid Testing").addDouble("Turret Relative Angle", turretEncoder::getPosition);
         Shuffleboard.getTab("Turret Sysid Testing").addDouble("Turret Angle ProfileGoal", () -> angleSetpoint);
         Shuffleboard.getTab("Turret Sysid Testing").addDouble("Turret Angle Motor Current", m_motor::getOutputCurrent);        
