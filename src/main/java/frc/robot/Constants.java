@@ -66,8 +66,8 @@ public final class Constants {
   public static class StageConstants {
     public static final int STAGE_MOTOR_ID = 18;
 
-    public static double KP = 0.000195; // Proportional gain
-    public static double KI = 0.0; // Integral gain
+    public static double KP = 0.00005; // Proportional gain
+    public static double KI = 0.000001; // Integral gain
     public static double KD = 0.0; // Derivative gain
     public static double MAX_OUTPUT = 1.0;
     public static final double MAX_VELOCITY = 1.0; // Max velocity in units/sec
@@ -79,10 +79,10 @@ public final class Constants {
   public static class LaunchConstants {
     public static final int LAUNCH_MOTOR_ID_A = 12;
     public static final int LAUNCH_MOTOR_ID_B = 11;
-    public static double KP;
-    public static double KI;
-    public static double KD;
-    public static double MAX_OUTPUT;
+    public static double KP = 0.000195;
+    public static double KI = 0.0;
+    public static double KD = 0.0;
+    public static double MAX_OUTPUT = 1;
     public static final double MAX_VELOCITY = 1.0;
     public static final double MAX_ACCELERATION = 0.5 ;
   }

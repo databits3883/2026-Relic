@@ -48,10 +48,15 @@ public class StageSubsystem extends SubsystemBase {
                         .i(kI)
                         .d(kD)
                         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                        .outputRange((-1 * maxOutput),maxOutput)
+                        //.outputRange((-1 * maxOutput),maxOutput)
+                        
                         //.feedForward.kV(12.0/917) // set PID 
                         ;                        
-        m_baseConfig.idleMode(IdleMode.kCoast);
+        m_baseConfig.idleMode(IdleMode.kCoast)
+                    .smartCurrentLimit(40)
+                    .voltageCompensation(12)
+          ;
+
         //m_baseConfig.encoder.velocityConversionFactor(0.5);
 
         //Update the motoro config to use PID

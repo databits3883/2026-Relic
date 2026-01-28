@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.RunArm;
 import frc.robot.commands.TurretAim;
+import frc.robot.subsystems.LaunchSubsystem;
 import frc.robot.subsystems.StageSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -50,6 +51,7 @@ public class RobotContainer
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/platform"));
   public static TurretSubsystem turretSubsystem  = new TurretSubsystem();
   public static StageSubsystem stageSubsystem  = new StageSubsystem();
+  public static LaunchSubsystem launchSubsystem = new LaunchSubsystem();
 
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing selection of desired auto
   private final SendableChooser<Command> autoChooser;
