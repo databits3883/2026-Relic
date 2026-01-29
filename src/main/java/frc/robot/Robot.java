@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,7 +26,9 @@ public class Robot extends TimedRobot
   private static Robot   instance;
   private        Command m_autonomousCommand;
 
-  //public static final AprilTagFieldLayout aprilTagFieldLayout_AllTags = AprilTagFieldLayout.loadField(AprilTagFields.);
+  private static final AprilTagFields fieldToUse = AprilTagFields.k2026RebuiltWelded;
+  public static final AprilTagFieldLayout aprilTagFieldLayout_AllTags = AprilTagFieldLayout.loadField(fieldToUse);
+  public static boolean isRedAlliance = false;
 
   private RobotContainer m_robotContainer;
 
@@ -104,6 +109,8 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit()
   {
+    updateAlliance();
+
     m_robotContainer.setMotorBrake(true);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -130,6 +137,7 @@ public class Robot extends TimedRobot
   @Override
   public void teleopInit()
   {
+    updateAlliance();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -181,4 +189,14 @@ public class Robot extends TimedRobot
   public void simulationPeriodic()
   {
   }
+
+  public void updateAlliance()
+  {
+    Optional<Alliance> myAlliance = DriverStation.getAlliance();
+    if(myAlliance.isPresent())
+    {
+      isRedAlliance = myAlliance.get() == Alliance.Red;
+    }
+  }
+
 }
