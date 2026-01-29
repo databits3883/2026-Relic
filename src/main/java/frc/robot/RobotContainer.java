@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.RunArm;
+import frc.robot.commands.Shoot;
 import frc.robot.commands.TurretAim;
 import frc.robot.subsystems.LaunchSubsystem;
 import frc.robot.subsystems.StageSubsystem;
@@ -203,7 +204,8 @@ public class RobotContainer
       driverJoystick.button(14).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverJoystick.button(15).onTrue(Commands.none());
       
-      driverJoystick.button(1).onTrue(new TurretAim(camera));
+      //driverJoystick.button(1).onTrue(new TurretAim(camera));
+      driverJoystick.button(1).onTrue(new Shoot(launchSubsystem, stageSubsystem));
 
       /* Disable actuator
       driverJoystick.povUp().whileTrue(new RunActuator(Constants.ACTUATOR_MOTOR_UP));
