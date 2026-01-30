@@ -34,7 +34,8 @@ public class LaunchSubsystem extends SubsystemBase
   private SparkFlex m_motor_b = new SparkFlex(Constants.LaunchConstants.LAUNCH_MOTOR_ID_B, MotorType.kBrushless);
       
   //private SparkMaxConfig m_config = new SparkMaxConfig();
-  private SparkFlexConfig m_baseConfig = new SparkFlexConfig();
+  private SparkFlexConfig m_baseConfig_a = new SparkFlexConfig();
+  private SparkFlexConfig m_baseConfig_b = new SparkFlexConfig();
   private SparkClosedLoopController closedLoopController_a = m_motor_a.getClosedLoopController();
   //private SparkClosedLoopController closedLoopController_b = m_motor_b.getClosedLoopController();
   private RelativeEncoder launchEncoder_a=null;
@@ -45,7 +46,7 @@ public class LaunchSubsystem extends SubsystemBase
   {   
     launchEncoder_a = m_motor_a.getEncoder();      
       
-    m_baseConfig.closedLoop
+    m_baseConfig_a.closedLoop
                 .p(kP)
                 .i(kI)
                 .d(kD)
@@ -53,17 +54,29 @@ public class LaunchSubsystem extends SubsystemBase
                 .outputRange((-1 * maxOutput),maxOutput)
                 //.feedForward.kV(12.0/917) // set PID 
                 ;                        
-      m_baseConfig.idleMode(IdleMode.kCoast)
+      m_baseConfig_a.idleMode(IdleMode.kCoast)
                   //.smartCurrentLimit(Constants.LaunchConstants.MAX_CURRENT)
                   //.voltageCompensation(Constants.LaunchConstants.MAX_VOLTAGE)
                   ;
 
       //Update the motoro config to use PID
       //TODO: invert primary motor
-      m_motor_a.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+      m_motor_a.configure(m_baseConfig_a, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
       //update config for follower
-      m_baseConfig.follow(Constants.LaunchConstants.LAUNCH_MOTOR_ID_A,true);
-      m_motor_b.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+      m_baseConfig_b.closedLoop
+                .p(kP)
+                .i(kI)
+                .d(kD)
+                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                .outputRange((-1 * maxOutput),maxOutput)
+                //.feedForward.kV(12.0/917) // set PID 
+                ;                        
+      m_baseConfig_b.idleMode(IdleMode.kCoast)
+                  //.smartCurrentLimit(Constants.LaunchConstants.MAX_CURRENT)
+                  //.voltageCompensation(Constants.LaunchConstants.MAX_VOLTAGE)
+                  ;
+      m_baseConfig_b.follow(Constants.LaunchConstants.LAUNCH_MOTOR_ID_A,true);
+      m_motor_b.configure(m_baseConfig_b, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
   
       SmartDashboard.setDefaultNumber("Launch Target Velocity", 0);
       SmartDashboard.setDefaultBoolean("Launch Run Motor", false);
@@ -167,7 +180,13 @@ public class LaunchSubsystem extends SubsystemBase
       if (updatePID)
       {
         //Update the PID on close loopController
-        m_baseConfig.closedLoop
+        m_baseConfig_a.closedLoop
+                    .p(kP)
+                    .i(kI)
+                    .d(kD)
+                    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                    .outputRange((-1 * maxOutput),maxOutput); // set PID 
+         m_baseConfig_b.closedLoop
                     .p(kP)
                     .i(kI)
                     .d(kD)
@@ -175,9 +194,9 @@ public class LaunchSubsystem extends SubsystemBase
                     .outputRange((-1 * maxOutput),maxOutput); // set PID 
 
         //Update the motoro config to use PID
-        m_motor_a.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-        m_baseConfig.follow(Constants.LaunchConstants.LAUNCH_MOTOR_ID_A,true);
-        m_motor_b.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        m_motor_a.configure(m_baseConfig_a, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        //m_baseConfig_b.follow(Constants.LaunchConstants.LAUNCH_MOTOR_ID_A,true);
+        m_motor_b.configure(m_baseConfig_b, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
       } //end if updatePID
     } //end update PID
     
