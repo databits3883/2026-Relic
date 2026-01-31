@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.TurretAim;
 import frc.robot.subsystems.LaunchSubsystem;
 import frc.robot.subsystems.StageSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
@@ -54,8 +55,6 @@ public class RobotContainer
 
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing selection of desired auto
   private final SendableChooser<Command> autoChooser;
-
-  private PhotonCamera camera = new PhotonCamera("CameraB");
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -204,7 +203,7 @@ public class RobotContainer
       driverJoystick.button(14).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverJoystick.button(15).onTrue(Commands.none());
       
-      //driverJoystick.button(1).onTrue(new TurretAim(camera));
+      driverJoystick.button(14).onTrue(new TurretAim(Robot.aprilTagFieldLayout_AllTags.getTagPose(10),drivebase));
       driverJoystick.button(1).onTrue(new Shoot(launchSubsystem, stageSubsystem));
 
       /* Disable actuator

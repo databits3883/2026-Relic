@@ -4,68 +4,62 @@
 
 package frc.robot.commands;
 
-import java.util.List;
+import java.util.Optional;
 
-import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
-
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TurretAim  extends Command {
-  double targetAngle = 0;
-  PhotonCamera x_camera = null;
+  private double targetAngle = 0;
+  private final double DEADBAND = 4; //degrees in deadband
 
   /** Creates a new runSpinner. */
-  public TurretAim (PhotonCamera camera) {
+  public TurretAim (Optional<Pose3d> tagToAim, SwerveSubsystem swerveSubsystem) 
+  {
+      System.out.println("TurretAim:const:about to run constructor");
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.turretSubsystem);
-    x_camera = camera;
+    //TODO: use tag vs robots current pose
+    Pose2d currentRobotPose = swerveSubsystem.getPose();
+
+    //Get the april tag pose passed in, default to robot if not set
+    Pose2d targetPose = currentRobotPose;
+    if (tagToAim.isPresent()) targetPose = tagToAim.get().toPose2d();
+    //Get the rotation Between robot and target
+    Pose2d relativePose = currentRobotPose.relativeTo(targetPose);
+    double relativeRotationDeg = relativePose.getRotation().getDegrees();
+    //Get current robotRotation
+    double robotHeadingDeg = swerveSubsystem.getHeading().getDegrees();
+    //Need to know what to do with these angles, add heading?  Subtract heading?
+
+    SmartDashboard.putNumber("Turret targetX", targetPose.getX());
+    SmartDashboard.putNumber("Turret targetY", targetPose.getY());
+    SmartDashboard.putNumber("Turret relativeRot", relativeRotationDeg);
+    SmartDashboard.putNumber("Turret robotX", currentRobotPose.getX());
+    SmartDashboard.putNumber("Turret robotY", currentRobotPose.getY());
+    SmartDashboard.putNumber("Turret robotRot", robotHeadingDeg);
+
+    //Right now set target to just the angle to tag
+    targetAngle = relativeRotationDeg;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("TurretAim:init:about to run turret to " + targetAngle);
-      PhotonPipelineResult result = null;
-      double target = 0;
-      System.out.println("TurretAim:const:checking camera");
-      if (x_camera != null) 
-      {
-        System.out.println("TurretAim:const:camera!=null");
-        List<PhotonPipelineResult>  allresults = x_camera.getAllUnreadResults();
-        if ((allresults!= null) && (allresults.size() > 0)) result = allresults.get(0);
-        if (result != null)
-        {
-            System.out.println("TurretAim:const:result!=null");
-            boolean hasTargets = result.hasTargets();
-            SmartDashboard.putBoolean("Turret Camera hasTargets",hasTargets);
-            System.out.println("TurretAim:const:hasTargets="+hasTargets);
+      System.out.println("TurretAim:init:about to run turret to " + targetAngle);
+      double currentAngle = RobotContainer.turretSubsystem.getCurrentTurretAngle();
+      double deltaAngle = Math.abs(currentAngle - targetAngle);
 
-            PhotonTrackedTarget photonTarget = null;
-            if (result.hasTargets()) photonTarget = result.getBestTarget();
-            if (photonTarget != null)
-            {
-              SmartDashboard.putNumber("Turret Camera bestTarget",photonTarget.fiducialId);
-              System.out.println("TurretAim:const:bestTarget="+photonTarget.fiducialId);
-              double getYawOfTarget = photonTarget.getYaw();
-              //assume this is in degrees
-              System.out.println("TurretAim:const:getYawOfTarget="+getYawOfTarget);
-              //set as new target
-              target = getYawOfTarget;
-              //The 0 of turrent is pointing to the right, camera is in front
-              //Add 270 to the target
-              target += 270;
-            }
-        }
-      }
-      if (target != 0) 
+      //Only turn turret if greater than 5 degrees, 
+      //TODO change this
+      if (deltaAngle > DEADBAND) 
       {
-        targetAngle = target;
         RobotContainer.turretSubsystem.setTurretSetPoint(targetAngle);
       }
       else end(false);
@@ -73,7 +67,10 @@ public class TurretAim  extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    //TODO get updated robot pose
+    //TODO update target angle setpoint
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -89,12 +86,12 @@ public class TurretAim  extends Command {
   
   // Returns true when the command should end.
   @Override
-  public boolean isFinished() {
-    int deadband = 4; //degrees
+  public boolean isFinished() 
+  {
     double currentAngle = RobotContainer.turretSubsystem.getCurrentTurretAngle();
     double currentRots = Units.degreesToRotations(currentAngle);
     double targetRots = Units.degreesToRotations(targetAngle);
-    double deadbandRots = Units.degreesToRotations(deadband);
+    double deadbandRots = Units.degreesToRotations(DEADBAND);
     //If we get inside the deadband stop
     if (Math.abs(currentRots - targetRots) <= deadbandRots)
     {
