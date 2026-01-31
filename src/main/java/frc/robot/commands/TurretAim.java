@@ -17,29 +17,37 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TurretAim  extends Command {
   private double targetAngle = 0;
+  private Pose2d targetTagPose = null;
+  private SwerveSubsystem swerveSubsystem = null;
   private final double DEADBAND = 4; //degrees in deadband
 
   /** Creates a new runSpinner. */
-  public TurretAim (Optional<Pose3d> tagToAim, SwerveSubsystem swerveSubsystem) 
+  public TurretAim (Optional<Pose3d> tagToAim, SwerveSubsystem swerveSub) 
   {
       System.out.println("TurretAim:const:about to run constructor");
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.turretSubsystem);
-    //TODO: use tag vs robots current pose
+
+    swerveSubsystem = swerveSub;
+    targetTagPose = swerveSubsystem.getPose();
+    if (tagToAim.isPresent()) targetTagPose = tagToAim.get().toPose2d();
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
     Pose2d currentRobotPose = swerveSubsystem.getPose();
 
     //Get the april tag pose passed in, default to robot if not set
-    Pose2d targetPose = currentRobotPose;
-    if (tagToAim.isPresent()) targetPose = tagToAim.get().toPose2d();
     //Get the rotation Between robot and target
-    Pose2d relativePose = currentRobotPose.relativeTo(targetPose);
+    Pose2d relativePose = currentRobotPose.relativeTo(targetTagPose);
     double relativeRotationDeg = relativePose.getRotation().getDegrees();
     //Get current robotRotation
     double robotHeadingDeg = swerveSubsystem.getHeading().getDegrees();
     //Need to know what to do with these angles, add heading?  Subtract heading?
 
-    SmartDashboard.putNumber("Turret targetX", targetPose.getX());
-    SmartDashboard.putNumber("Turret targetY", targetPose.getY());
+    SmartDashboard.putNumber("Turret targetX", targetTagPose.getX());
+    SmartDashboard.putNumber("Turret targetY", targetTagPose.getY());
     SmartDashboard.putNumber("Turret relativeRot", relativeRotationDeg);
     SmartDashboard.putNumber("Turret robotX", currentRobotPose.getX());
     SmartDashboard.putNumber("Turret robotY", currentRobotPose.getY());
@@ -47,11 +55,7 @@ public class TurretAim  extends Command {
 
     //Right now set target to just the angle to tag
     targetAngle = relativeRotationDeg;
-  }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
       System.out.println("TurretAim:init:about to run turret to " + targetAngle);
       double currentAngle = RobotContainer.turretSubsystem.getCurrentTurretAngle();
       double deltaAngle = Math.abs(currentAngle - targetAngle);
