@@ -240,8 +240,8 @@ public class TurretSubsystem extends SubsystemBase {
     {
         angleSetpoint = setPointAngle;
         //TODO remove this button   
-        SmartDashboard.putNumber("Turret Target Position",setPointAngle);
-        SmartDashboard.putBoolean("Turret GO", true);
+        //SmartDashboard.putNumber("Turret Target Position",setPointAngle);
+        //SmartDashboard.putBoolean("Turret GO", true);
     }
 
 }
