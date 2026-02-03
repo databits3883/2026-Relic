@@ -172,7 +172,7 @@ public class TurretSubsystem extends SubsystemBase {
         //Update alignment trigger data
         boolean alignmentTrigger = turretAlignmentSwitch.get();
         SmartDashboard.putBoolean("Turret Alignment Trigger", alignmentTrigger);
-        //TODO: If pressed reset turrent angle to some known value ~15 degrees
+        
         if (alignmentTrigger == true){
             currentAngleRot2Degree = 15;
             currentMotorRotations = getTurretRotations(currentAngleRot2Degree);
@@ -245,7 +245,7 @@ public class TurretSubsystem extends SubsystemBase {
     public void setTurretSetPoint(double setPointAngle)
     {
         angleSetpoint = setPointAngle;
-        //TODO remove this button   
+          
         //SmartDashboard.putNumber("Turret Target Position",setPointAngle);
         //SmartDashboard.putBoolean("Turret GO", true);
     }

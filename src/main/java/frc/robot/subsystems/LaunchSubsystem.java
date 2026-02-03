@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
@@ -60,8 +61,8 @@ public class LaunchSubsystem extends SubsystemBase
                   ;
 
       //Update the motoro config to use PID
-      //TODO: invert primary motor
-      m_motor_a.configure(m_baseConfig_a, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+      //m_motor_a.setInverted(isRunning);
+      m_motor_a.configure(m_baseConfig_a.inverted(true), ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
       //update config for follower
       m_baseConfig_b.closedLoop
                 .p(kP)
