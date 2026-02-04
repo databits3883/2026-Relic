@@ -56,7 +56,9 @@ public final class Constants {
   public static class TurretConstants {
     public static final int TURRET_MOTOR_ID = 9;
 
-    public static double KP = 12; // Proportional gain
+    //OLD kp that was working
+    //public static double KP = 12; // Proportional gain
+    public static double KP = 6; // Proportional gain
     public static double KI = 0.00008; // Integral gain
     public static double KD = 0.0; // Derivative gain
     public static double MAX_OUTPUT = 0.3;
@@ -66,7 +68,7 @@ public final class Constants {
     public static final double ALIGNMENT_SWITCH_ANGLE = 15.0; // The angle that the alignment switch sets the turret at
 
     public static final double MID_FIELD_Y = Units.inchesToMeters(158.84);
-    public static final double RED_X_PLAYER = Units.inchesToMeters(651 -182.11 );
+    public static final double RED_X_PLAYER = Units.inchesToMeters(651 - 182.11 );
     public static final double BLUE_X_PLAYER = Units.inchesToMeters(182.11);
 
     //public static final Pose2d RED_HUB_POSE = new Pose2d(11.3118646, 4.3902376, new Rotation2d(0)); 

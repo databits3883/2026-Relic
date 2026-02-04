@@ -151,6 +151,8 @@ public class Robot extends TimedRobot
       CommandScheduler.getInstance().cancelAll();
     }
 
+    //Enable auto aim
+    RobotContainer.turretSubsystem.enableAutoAim();
   }
 
   /**

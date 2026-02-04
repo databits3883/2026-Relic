@@ -25,7 +25,7 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class TurretSubsystem extends SubsystemBase {
      
-    private static boolean CALIBRATION_MODE = false;
+    private static boolean CALIBRATION_MODE = true;
 
     // PID Gains and Motion Profile Constraints
     private static double kP = Constants.TurretConstants.KP;
@@ -46,7 +46,6 @@ public class TurretSubsystem extends SubsystemBase {
     
     //Default the turret to start at the angle alignment switch
     private double angleSetpoint = Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE;
-    private double x_currentAngleRot2Degree = 0;
     
     private boolean isTurretEnabled = false;
     private boolean isAutoAiming = false;
@@ -70,15 +69,16 @@ public class TurretSubsystem extends SubsystemBase {
     private double redXPlayer = Constants.TurretConstants.RED_X_PLAYER;
     private double blueXPlayer = Constants.TurretConstants.BLUE_X_PLAYER;
 
+    private long lastOuput = System.currentTimeMillis();
+    private int lastTaget = 0;
+
     //Set up the field object to allow us to show the current target on the field
     private final Field2d m_field = new Field2d();
 
     public TurretSubsystem() 
     {
-        // angleSetpoint = absAngleEncoder.getPosition(); //Gets position in rotations        
-
         turretEncoder = m_motor.getEncoder();
-        turretEncoder.setPosition(angleSetpoint); //update the position on motor encoder
+        turretEncoder.setPosition(getTargetRotationsFromDegrees(angleSetpoint)); //update the position on motor encoder
         isTurretEnabled = false;
         
         m_baseConfig.closedLoop
@@ -99,8 +99,8 @@ public class TurretSubsystem extends SubsystemBase {
         //Aim system
         //Set up the field positions
         midFieldY = redHubPose.getY();
-        redXPlayer = redTopPose.getX();
-        blueXPlayer = blueTopPose.getX();
+        redXPlayer = redHubPose.getX();
+        blueXPlayer = blueHubPose.getX();
 
         //find target to aim based on the robot position
         targetTagPose = findTargetToAim(swerveSubsystem.getPose());
@@ -115,6 +115,7 @@ public class TurretSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Turret IAccum", 0);
         SmartDashboard.putNumber("Turret MaxAccel", Constants.TurretConstants.MAX_ACCELERATION);
         SmartDashboard.setDefaultBoolean("Turret Stop", false);
+        SmartDashboard.putNumber("Turret Target Position",angleSetpoint);
     }
     
     /**
@@ -137,7 +138,7 @@ public class TurretSubsystem extends SubsystemBase {
     {
         //set the current setpoint to the current angle
         double currentAngle = getTurretDegrees(turretEncoder.getPosition());
-        closedLoopController.setSetpoint(currentAngle, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        closedLoopController.setSetpoint(turretEncoder.getPosition(), ControlType.kPosition, ClosedLoopSlot.kSlot0);
         //Clear the i buildup
         closedLoopController.setIAccum(0);
         //turn off motor
@@ -208,6 +209,7 @@ public class TurretSubsystem extends SubsystemBase {
      * Return the current turret angle
      * @return
      */
+    /*` 
     public double getCurrentTurretAngle()
     {
         return x_currentAngleRot2Degree;        
@@ -216,6 +218,7 @@ public class TurretSubsystem extends SubsystemBase {
      * Set the backend angle, does not change the encoder or setpoint
      * @param angle
      */
+    /* 
     public void setCurrentTurretAngle(double angle)
     {
         x_currentAngleRot2Degree = angle;
@@ -252,20 +255,28 @@ public class TurretSubsystem extends SubsystemBase {
         boolean alignmentTrigger = turretAlignmentSwitch.get();
         
         //if the alignment switch is triggered force the turret encoder to update its position
-        if (alignmentTrigger)
+        //disable this code for now
+        if (alignmentTrigger && 1==0)
         {
             currentAngleRot2Degree = Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE;
-            currentMotorRotations = getTurretRotations(currentAngleRot2Degree);
-            turretEncoder.setPosition(currentMotorRotations);            
+            currentMotorRotations = getTurretRotations(currentAngleRot2Degree);            
+            turretEncoder.setPosition(currentMotorRotations);     
+            //Since the encoder has been reset, define new set point based on new encoder position
+            closedLoopController.setSetpoint(getTargetRotationsFromDegrees(angleSetpoint), ControlType.kPosition, ClosedLoopSlot.kSlot0);            
         } 
 
         //Update negative values back to positoive
         if (currentAngleRot2Degree < 0) currentAngleRot2Degree = 360+currentAngleRot2Degree;
-        setCurrentTurretAngle(currentAngleRot2Degree);
+        //Update the angleSetPoint
+        angleSetpoint = currentAngleRot2Degree;
 
-        SmartDashboard.putBoolean("Turret Alignment Trigger", alignmentTrigger);
-        SmartDashboard.putNumber("Turret Relative Angle rot2deg", currentAngleRot2Degree);
-        SmartDashboard.putNumber("Turret IAccum", closedLoopController.getIAccum());
+        if (CALIBRATION_MODE)
+        {
+          SmartDashboard.putBoolean("Turret Alignment Trigger", alignmentTrigger);
+          SmartDashboard.putNumber("Turret Relative Angle rot2deg", currentAngleRot2Degree);
+          SmartDashboard.putNumber("Turret Encoder rots", turretEncoder.getPosition());
+          SmartDashboard.putNumber("Turret SetPoint rots", closedLoopController.getSetpoint());
+        }
 
         if (SmartDashboard.getBoolean("Turret Stop", false)) 
         {
@@ -295,6 +306,8 @@ public class TurretSubsystem extends SubsystemBase {
                 targetPositionDegrees = 360 + targetPositionDegrees;
             }
             if (CALIBRATION_MODE) SmartDashboard.putNumber("Turret Target Position",targetPositionDegrees);
+            //Put target back into dashboard
+            SmartDashboard.putNumber("Turret Target Position",targetPositionDegrees);
             
             //get the optimal target in rotations                
             double targetPositionRotations = getTargetRotationsFromDegrees(targetPositionDegrees);
@@ -331,6 +344,8 @@ public class TurretSubsystem extends SubsystemBase {
             } // end calibration mode check
 
             //Run the motor
+            //Update the angleSetPoint
+            angleSetpoint = getTurretDegrees(targetPositionRotations);
             closedLoopController.setSetpoint(targetPositionRotations, ControlType.kPosition, ClosedLoopSlot.kSlot0);
         } // end if enabled
     }
@@ -341,6 +356,8 @@ public class TurretSubsystem extends SubsystemBase {
      */
     public void setTurretSetPoint(double setPointAngle)
     {
+        // If calibration mode is enabled set the target set point on the dashboard as well
+        if (CALIBRATION_MODE) SmartDashboard.putNumber("Turret Target Position",setPointAngle);
         angleSetpoint = setPointAngle;
         isTurretEnabled = true;
     }
@@ -362,17 +379,29 @@ public class TurretSubsystem extends SubsystemBase {
       {
         inPlayerArea = true;
         targetPose = redHubPose;
-        System.out.println("picked target redHub");
+        if (this.lastTaget != 1)
+        {
+          System.out.println("picked target redHub");
+          lastTaget = 1;
+        }
       }
       else if (robotY > midFieldY)
       {
         targetPose = redTopPose;
-        System.out.println("picked target redTop");
+        if (this.lastTaget != 2)
+        {
+            System.out.println("picked target redTop");
+            lastTaget = 2;
+        }
       }
       else
       {
         targetPose = redBottomPose;
-        System.out.println("picked target redBottom");
+        if (this.lastTaget != 3)
+        {
+            System.out.println("picked target redBottom");
+            lastTaget = 3;
+        }
       }
     } //end red alliance
     else
@@ -381,17 +410,29 @@ public class TurretSubsystem extends SubsystemBase {
       {
         inPlayerArea = true;
         targetPose = blueHubPose;
-        System.out.println("picked target blueHub");
+        if (this.lastTaget != 4)
+        {
+            System.out.println("picked target blueHub");
+            lastTaget = 4;
+        }
       }
       else if (robotY > midFieldY)
       {
         targetPose = blueTopPose;
-        System.out.println("picked target blueTop");
+        if (this.lastTaget != 5)
+        {
+            System.out.println("picked target blueTop");
+            lastTaget = 5;
+        }
       }
       else
       {
         targetPose = blueBottomPose;
-        System.out.println("picked target bluBottom");
+        if (this.lastTaget != 6)
+        {
+            System.out.println("picked target bluBottom");
+            lastTaget = 6;
+        }
       }
     }  //End blue alliance
     //If no target is found turn off aim, do we need this??
@@ -436,7 +477,15 @@ public class TurretSubsystem extends SubsystemBase {
     //Put back to -359 to 359 range
     relativeRotationDeg = relativeRotationDeg % 360;
     output.append("finalTargetDeg:").append(relativeRotationDeg).append(",");
-    System.out.println(output.toString());
+
+    //only output debugging every second
+    long currentTime = System.currentTimeMillis();
+    long delta = currentTime - lastOuput;
+    if (delta > 1000) 
+    {
+        System.out.println(output.toString());
+        lastOuput = currentTime;
+    }
 
     //Right now set target to just the angle to tag
     return relativeRotationDeg;
