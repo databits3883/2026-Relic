@@ -25,6 +25,8 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class TurretSubsystem extends SubsystemBase {
      
+    private static boolean CALIBRATION_MODE = false;
+
     // PID Gains and Motion Profile Constraints
     private static double kP = Constants.TurretConstants.KP;
     private static double kI = Constants.TurretConstants.KI;
@@ -114,7 +116,6 @@ public class TurretSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Turret MaxAccel", Constants.TurretConstants.MAX_ACCELERATION);
         SmartDashboard.setDefaultBoolean("Turret Stop", false);
     }
-
     
     /**
      * Used to set the turret to a voltage instead of a position
@@ -144,6 +145,8 @@ public class TurretSubsystem extends SubsystemBase {
 
         //turn off the control mode
         isTurretEnabled = false;
+        //turn off auto aiming
+        isAutoAiming = false;
     }
 
     /**
@@ -161,6 +164,9 @@ public class TurretSubsystem extends SubsystemBase {
         return (turretDegrees);
     }
 
+    /** 
+     * Get the turret's position in rotations
+     */
     private double getTurretRotations(double turretDegrees)
     {
         //get normal rotations from degrees
@@ -223,6 +229,19 @@ public class TurretSubsystem extends SubsystemBase {
     }
 
     /**
+     * Finds the best target and sets the turret to aim there
+     */
+    private void autoAimToBestTarget()
+    {
+        Pose2d currentRobotPose = swerveSubsystem.getPose();
+        //Find new target based on robot positon
+        targetTagPose = findTargetToAim(swerveSubsystem.getPose());    
+        targetAngle = getAngle(currentRobotPose, targetTagPose);
+        //update the turret setpoint
+        setTurretSetPoint(targetAngle);
+    }
+
+    /**
      * This runs every 10ms or so
      */
     public void periodic() 
@@ -256,51 +275,60 @@ public class TurretSubsystem extends SubsystemBase {
         }
         else if (isTurretEnabled)
         {
-            //SmartDashboard.putBoolean("Turret GO", false);
+            //check if auto aim is defined, if so get the new target
+            if (isAutoAiming)
+            {
+                autoAimToBestTarget();
+            }
             /*
             * Get the target position from SmartDashboard and set it as the setpoint
             * for the closed loop controller.
             */
-            double targetPositionDegrees = SmartDashboard.getNumber("Turret Target Position", angleSetpoint);
+            double targetPositionDegrees = this.angleSetpoint;
+            //If we are in calibration mode read target from dashboard
+            if (CALIBRATION_MODE) targetPositionDegrees = SmartDashboard.getNumber("Turret Target Position", angleSetpoint);
+            
             targetPositionDegrees = targetPositionDegrees % 360;;
             if (targetPositionDegrees < 0) 
             {
                 //convert from negative rotation to positive rotation degrees
                 targetPositionDegrees = 360 + targetPositionDegrees;
             }
-            SmartDashboard.putNumber("Turret Target Position",targetPositionDegrees);
+            if (CALIBRATION_MODE) SmartDashboard.putNumber("Turret Target Position",targetPositionDegrees);
             
             //get the optimal target in rotations                
             double targetPositionRotations = getTargetRotationsFromDegrees(targetPositionDegrees);
             double maxAccel =  SmartDashboard.getNumber("Turret MaxAccel",0);
 
-            //FUTURE: Toggle the pid setting to a debug variable, so we do not do this check on every loop
-            //Read PID values
-            // read PID coefficients from SmartDashboard
-            double p = SmartDashboard.getNumber("Turret P Gain", 0);
-            double i = SmartDashboard.getNumber("Turret I Gain", 0);
-            double d = SmartDashboard.getNumber("Turret D Gain", 0);
-            
-            // if PID coefficients on SmartDashboard have changed, write new values to controller
-            boolean updatePID = false;
-            if((p != kP)) { updatePID = true;  kP = p; }
-            if((i != kI)) { updatePID = true;  kI = i; }
-            if((d != kD)) { updatePID = true; kD = d; }
-
-            if (updatePID)
+            if (CALIBRATION_MODE)
             {
-                //Update the PID on close loopController
-                m_baseConfig.closedLoop
-                         .p(kP)
-                        .i(kI)
-                        .d(kD)
-                        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                        .outputRange((-1 * maxOutput),maxOutput)
-                        .maxMotion.maxAcceleration(maxAccel)
-                        ; // set PID
-               //Update the motoro config to use PID
-                m_motor.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-            } //end if updatePID
+                //Read PID values
+                // read PID coefficients from SmartDashboard
+                double p = SmartDashboard.getNumber("Turret P Gain", 0);
+                double i = SmartDashboard.getNumber("Turret I Gain", 0);
+                double d = SmartDashboard.getNumber("Turret D Gain", 0);
+                
+                // if PID coefficients on SmartDashboard have changed, write new values to controller
+                boolean updatePID = false;
+                if((p != kP)) { updatePID = true;  kP = p; }
+                if((i != kI)) { updatePID = true;  kI = i; }
+                if((d != kD)) { updatePID = true; kD = d; }
+
+                if (updatePID)
+                {
+                    //Update the PID on close loopController
+                    m_baseConfig.closedLoop
+                            .p(kP)
+                            .i(kI)
+                            .d(kD)
+                            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                            .outputRange((-1 * maxOutput),maxOutput)
+                            .maxMotion.maxAcceleration(maxAccel)
+                            ; // set PID
+                    //Update the motoro config to use PID
+                    m_motor.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+                } //end if updatePID
+            } // end calibration mode check
 
             //Run the motor
             closedLoopController.setSetpoint(targetPositionRotations, ControlType.kPosition, ClosedLoopSlot.kSlot0);
@@ -414,15 +442,26 @@ public class TurretSubsystem extends SubsystemBase {
     return relativeRotationDeg;
   }
 
+  public void disableAutoAim()
+  {
+    isAutoAiming = false;
+    //Should we stop the turret altogether, for now yes
+    stop();
+  }
   public void enableAutoAim()
   {
-
-    Pose2d currentRobotPose = swerveSubsystem.getPose();
-    //Find new target based on robot positon
-    targetTagPose = findTargetToAim(swerveSubsystem.getPose());    
-    targetAngle = getAngle(currentRobotPose, targetTagPose);
-    setTurrentAngle(targetAngle);
-    
+    isAutoAiming = true;
+    isTurretEnabled = true;
   }
+  public boolean isAutoAiming()
+  {
+    return isAutoAiming;
+  }
+  public void toggleAutoAim()
+  {
+    if (!isAutoAiming) enableAutoAim();
+    else disableAutoAim();
+  }
+
     
 }

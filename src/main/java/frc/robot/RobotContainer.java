@@ -198,7 +198,7 @@ public class RobotContainer
       driverJoystick.button(14).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverJoystick.button(15).onTrue(Commands.none());
       
-      //Start or stop aiming at target
+      //Start or stop aiming at target, call the TurretAim to toggle on/off
       driverJoystick.button(14).onTrue(new TurretAim());
       driverJoystick.button(1).onTrue(new Shoot(launchSubsystem, stageSubsystem));
       driverJoystick.button(15).onTrue(Commands.runOnce(turretSubsystem::zeroEncoder));
