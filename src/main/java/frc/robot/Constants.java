@@ -84,7 +84,10 @@ public final class Constants {
   public static class Intake 
   {
     public static final int FOUR_BAR_MOTOR_ID = 13;
+    public static double FOUR_BAR_POWER = 1.0;
+
     public static final int INTAKE_MOTOR_ID = 14;
+    public static double INTAKE_MOTOR_POWER = 1.0;
   }
 
   public static class Indexer
