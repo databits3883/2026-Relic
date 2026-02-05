@@ -85,6 +85,7 @@ public final class Constants {
   {
     public static final int FOUR_BAR_MOTOR_ID = 13;
     public static double FOUR_BAR_POWER = 1.0;
+    public static int FOUR_BAR_TIMEOUT_SEC = 4; /* Max run time in case we do not hit limit */
 
     public static final int INTAKE_MOTOR_ID = 14;
     public static double INTAKE_MOTOR_POWER = 1.0;

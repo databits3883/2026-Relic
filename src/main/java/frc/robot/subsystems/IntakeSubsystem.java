@@ -77,6 +77,15 @@ public class IntakeSubsystem extends SubsystemBase
     runFourBar(-1*m_fourBarPower);
   }
 
+  /**
+   * Stop the intake from spinning
+   */
+  public void stopFourBar()
+  {
+    //turn off motor
+    m_four_bar_motor.setVoltage(0);
+    m_isFourBarRunning = false;
+  }
 
   /**
    * Returns true if the intake motor is running
@@ -94,6 +103,7 @@ public class IntakeSubsystem extends SubsystemBase
   {
     //turn off motor
     m_intake_motor.setVoltage(0);
+    m_isIntakeRunning = false;
   }
 
   /**

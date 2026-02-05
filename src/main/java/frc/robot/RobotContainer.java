@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.TurretAim;
+import frc.robot.commands.intake.Deploy;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LaunchSubsystem;
 import frc.robot.subsystems.StageSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
@@ -50,6 +52,7 @@ public class RobotContainer
   public static TurretSubsystem turretSubsystem  = new TurretSubsystem();
   public static StageSubsystem stageSubsystem  = new StageSubsystem();
   public static LaunchSubsystem launchSubsystem = new LaunchSubsystem();
+  public static IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing selection of desired auto
   private final SendableChooser<Command> autoChooser;
@@ -202,13 +205,9 @@ public class RobotContainer
       driverJoystick.button(14).onTrue(new TurretAim());
       driverJoystick.button(1).onTrue(new Shoot(launchSubsystem, stageSubsystem));
       driverJoystick.button(15).onTrue(Commands.runOnce(turretSubsystem::zeroEncoder));
+      driverJoystick.button(3).onTrue(new Deploy(intakeSubsystem));
+      //driverJoystick.button(3).onTrue(new Retract(intakeSubsystem));
 
-      /* Disable actuator
-      driverJoystick.povUp().whileTrue(new RunActuator(Constants.ACTUATOR_MOTOR_UP));
-      driverJoystick.povDown().whileTrue(new RunActuator(Constants.ACTUATOR_MOTOR_DOWN));
-      driverJoystick.povRight().onTrue(new RunActuatorTime(Constants.ACTUATOR_MOTOR_UP));
-      driverJoystick.povLeft().onTrue(new RunActuatorTime(Constants.ACTUATOR_MOTOR_DOWN));
-       */
     }
 
   }
