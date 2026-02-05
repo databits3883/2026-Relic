@@ -95,6 +95,8 @@ public class TurretSubsystem extends SubsystemBase {
 
         //Update the motoro config to use PID
         m_motor.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        //set the setpoint to the current location
+        closedLoopController.setSetpoint(turretEncoder.getPosition(), ControlType.kPosition, ClosedLoopSlot.kSlot0);
 
         //Aim system
         //Set up the field positions
@@ -255,14 +257,16 @@ public class TurretSubsystem extends SubsystemBase {
         boolean alignmentTrigger = turretAlignmentSwitch.get();
         
         //if the alignment switch is triggered force the turret encoder to update its position
-        //disable this code for now
-        if (alignmentTrigger && 1==0)
+        //no wires on the DIO is true, so switch will set FALSE
+        if (alignmentTrigger == false)
         {
             currentAngleRot2Degree = Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE;
-            currentMotorRotations = getTurretRotations(currentAngleRot2Degree);            
+            currentMotorRotations = getTurretRotations(currentAngleRot2Degree);  
+            if (CALIBRATION_MODE) System.out.println("Switch: previous position: "+ turretEncoder.getPosition() + " target.pos: " + closedLoopController.getSetpoint());                      
             turretEncoder.setPosition(currentMotorRotations);     
             //Since the encoder has been reset, define new set point based on new encoder position
             closedLoopController.setSetpoint(getTargetRotationsFromDegrees(angleSetpoint), ControlType.kPosition, ClosedLoopSlot.kSlot0);            
+            if (CALIBRATION_MODE) System.out.println("Switch: current position: "+ turretEncoder.getPosition() + " target.pos: " + closedLoopController.getSetpoint());                      
         } 
 
         //Update negative values back to positoive
