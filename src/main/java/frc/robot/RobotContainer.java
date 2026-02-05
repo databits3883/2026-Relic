@@ -26,6 +26,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.TurretAim;
 import frc.robot.commands.intake.Deploy;
+import frc.robot.commands.intake.Retract;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LaunchSubsystem;
 import frc.robot.subsystems.StageSubsystem;
@@ -206,7 +207,7 @@ public class RobotContainer
       driverJoystick.button(1).onTrue(new Shoot(launchSubsystem, stageSubsystem));
       driverJoystick.button(15).onTrue(Commands.runOnce(turretSubsystem::zeroEncoder));
       driverJoystick.button(3).onTrue(new Deploy(intakeSubsystem));
-      //driverJoystick.button(3).onTrue(new Retract(intakeSubsystem));
+      driverJoystick.button(4).onTrue(new Retract(intakeSubsystem));
 
     }
 
