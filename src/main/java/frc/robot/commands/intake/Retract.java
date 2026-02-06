@@ -42,7 +42,7 @@ public class Retract extends Command {
         //Calculate the delta time in ms and we can abort after X milliseconds
         long delta = System.currentTimeMillis() - startTime;
         
-        boolean atLimit = intake.isFourBarForwardLimit();
+        boolean atLimit = intake.isFourBarReverseLimit();
         boolean overTime = (delta > ABORT_TIME);
         boolean finished = false;
         if (atLimit) finished = true;

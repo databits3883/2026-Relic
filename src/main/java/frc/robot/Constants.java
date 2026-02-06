@@ -45,7 +45,7 @@ public final class Constants {
 
     //OLD kp that was working
     //public static double KP = 12; // Proportional gain
-    public static double KP = 6; // Proportional gain
+    public static double KP = 10; // Proportional gain
     public static double KI = 0.00008; // Integral gain
     public static double KD = 0.0; // Derivative gain
     public static double MAX_OUTPUT = 0.3;
