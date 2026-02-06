@@ -43,11 +43,8 @@ public class Shoot extends Command {
 
     @Override
     public boolean isFinished() {
-        long delta = System.currentTimeMillis() - startTime;
-        //return beamBreak.get() == false;
-
-        //Run for 7 seconds
-        return (delta > 7000);
+        //Run until user released button, which will call end
+        return false;
     }
 
 }
