@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -17,6 +18,7 @@ public class ClimberSubsystem extends SubsystemBase
   private SparkLimitSwitch m_climberLimitSwitch_forward = null;
   private SparkLimitSwitch m_climberLimitSwitch_reverse = null;
   private SparkMax m_secondary_motor = new SparkMax(Constants.Climber.SECONDARY_MOTOR_ID, MotorType.kBrushless);
+  private RelativeEncoder climberEncoder;
 
   private double m_climberPower = Constants.Climber.MAX_POWER;
   //private double m_fourBarPower = Constants.Climber.MAX_POWER;
@@ -28,7 +30,10 @@ public class ClimberSubsystem extends SubsystemBase
       m_climberLimitSwitch_forward = m_primary_motor.getForwardLimitSwitch();
       m_climberLimitSwitch_reverse = m_primary_motor.getReverseLimitSwitch();
   }
-
+  public boolean isStalled() {
+      // TODO find when the motor is stalled
+      return false;
+  }
   /**
    * returns true if the intake 4 bar is at reverse limit
    * @return
@@ -94,6 +99,10 @@ public class ClimberSubsystem extends SubsystemBase
     runClimber(-1*m_climberPower);
   }
 
+   public double getCurrentClimberPosition()
+    { 
+        return (climberEncoder.getPosition());  
+    }  
   @Override
   public void periodic() 
   {
