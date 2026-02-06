@@ -7,22 +7,18 @@ import frc.robot.subsystems.StageSubsystem;
 public class Shoot extends Command {
     private final LaunchSubsystem launcher;
     private final StageSubsystem stager;
-    private long startTime = 0;
-    //private final BeamBreak beamBreak;
 
-    public Shoot(LaunchSubsystem launchSubsystem, StageSubsystem stageSubsystem /* BeamBreak beamBreak*/) 
+    public Shoot(LaunchSubsystem launchSubsystem, StageSubsystem stageSubsystem) 
     {
         this.launcher = launchSubsystem;
         this.stager = stageSubsystem;
         //this.beamBreak = beamBreak;
-        addRequirements(launchSubsystem, stageSubsystem /*, beamBreak */);
+        addRequirements(launchSubsystem, stageSubsystem);
     }
 
     @Override
     public void initialize() {
         launcher.runLauncher();
-        //start a timer, use until we get a fuel sensor
-        startTime = System.currentTimeMillis();
     }
 
     @Override
