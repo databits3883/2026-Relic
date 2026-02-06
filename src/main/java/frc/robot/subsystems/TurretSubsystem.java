@@ -27,7 +27,7 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class TurretSubsystem extends SubsystemBase {
      
-    private static boolean CALIBRATION_MODE = false;
+    private static boolean CALIBRATION_MODE = true;
 
     // PID Gains and Motion Profile Constraints
     private static double kP = Constants.TurretConstants.KP;
@@ -123,6 +123,7 @@ public class TurretSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Turret MaxAccel", Constants.TurretConstants.MAX_ACCELERATION);
         SmartDashboard.setDefaultBoolean("Turret Stop", false);
         SmartDashboard.putNumber("Turret Target Position",angleSetpoint);
+        SmartDashboard.putNumber("Turret Distance To Target",distanceToTarget);
     }
     
     /**
@@ -289,6 +290,7 @@ public class TurretSubsystem extends SubsystemBase {
           SmartDashboard.putNumber("Turret Relative Angle rot2deg", currentAngleRot2Degree);
           SmartDashboard.putNumber("Turret Encoder rots", turretEncoder.getPosition());
           SmartDashboard.putNumber("Turret SetPoint rots", closedLoopController.getSetpoint());
+          SmartDashboard.putNumber("Turret Distance To Target",getDistanceToTarget());
         }
 
         if (SmartDashboard.getBoolean("Turret Stop", false)) 
