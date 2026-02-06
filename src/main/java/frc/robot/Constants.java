@@ -40,19 +40,6 @@ public final class Constants {
     public static final double WHEEL_LOCK_TIME = 10; // seconds
   }
 
-
-  public static class ArmConstants {
-    public static final int ARM_MOTOR_ID = 17;
-
-    //Gains for the Arm angle controllers, both FF and PID
-    public static final double ARM_KS_ANGLE = 0;
-    public static final double ARM_KG_ANGLE = 0.35;
-    public static final double ARM_KV_ANGLE = 0;
-    public static final double ARM_KP_ANGLE = 0.09;
-    public static final double ARM_KI_ANGLE = 0;
-    public static final double ARM_KD_ANGLE = 0;    
-  }
-
   public static class TurretConstants {
     public static final int TURRET_MOTOR_ID = 9;
 
