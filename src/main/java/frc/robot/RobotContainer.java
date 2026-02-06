@@ -27,6 +27,7 @@ import frc.robot.commands.Shoot;
 import frc.robot.commands.TurretAim;
 import frc.robot.commands.intake.Deploy;
 import frc.robot.commands.intake.Retract;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LaunchSubsystem;
 import frc.robot.subsystems.StageSubsystem;
@@ -54,6 +55,7 @@ public class RobotContainer
   public static StageSubsystem stageSubsystem  = new StageSubsystem();
   public static LaunchSubsystem launchSubsystem = new LaunchSubsystem();
   public static IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  public static ClimberSubsystem climberSubsystem = new ClimberSubsystem();
 
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing selection of desired auto
   private final SendableChooser<Command> autoChooser;
