@@ -91,6 +91,13 @@ public final class Constants {
     public static double INTAKE_MOTOR_POWER = 1.0;
   }
 
+  public static class Climber
+  {
+    public static final int PRIMARY_MOTOR_ID = 16;
+    public static final int SECONDARY_MOTOR_ID = 16; /* This will follow the primary, just adding id for clarrity */
+    public static double MAX_POWER = 1.0;
+  }
+
   public static class Indexer
   {
     public static final int MOTOR_ID = 15;
