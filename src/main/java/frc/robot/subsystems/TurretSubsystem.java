@@ -478,7 +478,7 @@ public class TurretSubsystem extends SubsystemBase {
 
     double theta = Math.atan2(targetY-robotY, targetX-robotX);
     //We need to invert this angle from clockwise to counterclockwise if we are not in player area
-    if (!inPlayerArea) theta = theta * -1;
+    //if (!inPlayerArea) theta = theta * -1;
 
     //Get the rotation from the center of the robot to the target if the robot was facing 0 (blue)
     double relativeRotationDeg = Units.radiansToDegrees(theta);
