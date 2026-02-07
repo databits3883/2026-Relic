@@ -1,4 +1,4 @@
-package frc.robot.commands.climberCommands;
+package frc.robot.commands.ClimberCommands;
 
 public class ReleaseFromClimb {
     

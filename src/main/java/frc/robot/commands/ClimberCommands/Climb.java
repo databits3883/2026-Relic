@@ -4,20 +4,20 @@ import frc.robot.Constants;
 import frc.robot.subsystems.ClimberSubsystem;
 
 public class Climb extends Command {
-    private final ClimberSubsystem Climber;
-    private final long ABORT_TIME = Constants.Intake.FOUR_BAR_TIMEOUT_SEC * 1000; /* in millis */
+    private final ClimberSubsystem climberSubsystem;
+    private final long ABORT_TIME = Constants.Climber.CLIMBER_TIMEOUT_SEC * 1000; /* in millis */
     private long startTime = 0;
 
-    public Climb(ClimberSubsystem) 
+    public Climb(ClimberSubsystem climerSub) 
     {
-        this.Climber = ClimberSubsystem;
+        this.climberSubsystem = climerSub;
 
-        addRequirements(ClimberSubsystem);
+        addRequirements(climerSub);
     }
 
     @Override
     public void initialize() {
-        Climb.runClimber();
+        climberSubsystem.runClimber();
         //start a timer, We can stop after X seconds if it does not reach limit
         startTime = System.currentTimeMillis();
     }
@@ -32,7 +32,7 @@ public class Climb extends Command {
     public void end(boolean interrupted) 
     {
         //Stop running if told to stop
-        intake.stopFourBar();
+        climberSubsystem.stopClimber();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class Climb extends Command {
         //Calculate the delta time in ms and we can abort after X milliseconds
         long delta = System.currentTimeMillis() - startTime;
         
-        boolean atLimit = intake.isFourBarForwardLimit();
+        boolean atLimit = climberSubsystem.isClimberForwardLimit();
         boolean overTime = (delta > ABORT_TIME);
         boolean finished = false;
         if (atLimit) finished = true;
