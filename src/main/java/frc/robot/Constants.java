@@ -52,7 +52,7 @@ public final class Constants {
     public static final double MAX_VELOCITY = 1.0; // Max velocity in units/sec
     public static final double MAX_ACCELERATION = 0.5; // Max acceleration in units/sec^2
     public static final double TURRET_GEAR_RATIO = 1.00/15.00;// 15 dev of moter is one rev of turret
-    public static final double ALIGNMENT_SWITCH_ANGLE = 195.0; // The angle that the alignment switch sets the turret at
+    public static final double ALIGNMENT_SWITCH_ANGLE = 215.0; // The angle that the alignment switch sets the turret at
     public static final double START_TURRET_ANGLE = 0; //The angle the turret starts in
 
     public static final double MID_FIELD_Y = Units.inchesToMeters(158.84);
@@ -84,6 +84,7 @@ public final class Constants {
     public static final int PRIMARY_MOTOR_ID = 16;
     public static final int SECONDARY_MOTOR_ID = 16; /* This will follow the primary, just adding id for clarrity */
     public static double MAX_POWER = 1.0;
+    public static int CLIMBER_TIMEOUT_SEC = 4;
   }
 
   public static class Indexer

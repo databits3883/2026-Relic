@@ -1,24 +1,23 @@
 package frc.robot.commands.ClimberCommands;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.ClimberSubsystem;
 
 public class Climb extends Command {
-    private final ClimberSubsystem ;
+    private final ClimberSubsystem Climber;
     private final long ABORT_TIME = Constants.Intake.FOUR_BAR_TIMEOUT_SEC * 1000; /* in millis */
     private long startTime = 0;
 
-    public Deploy(IntakeSubsystem intakeSubsystem) 
+    public Climb(ClimberSubsystem) 
     {
-        this.intake = intakeSubsystem;
+        this.Climber = ClimberSubsystem;
 
-        addRequirements(intakeSubsystem);
+        addRequirements(ClimberSubsystem);
     }
 
     @Override
     public void initialize() {
-        intake.runFourBar();
+        Climb.runClimber();
         //start a timer, We can stop after X seconds if it does not reach limit
         startTime = System.currentTimeMillis();
     }
