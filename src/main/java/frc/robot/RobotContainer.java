@@ -200,7 +200,8 @@ public class RobotContainer
       //driverJoystick.button(13).onTrue(Commands.runOnce(drivebase::zeroGyro));
       //zero with the correct alliance
       driverJoystick.button(13).onTrue(Commands.runOnce(drivebase::zeroGyroWithAlliance));
-
+      //driverJoystick.button(13).onTrue(Commands.runOnce(drivebase::zeroGyro));
+      
       driverJoystick.button(14).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverJoystick.button(15).onTrue(Commands.none());
       
