@@ -32,6 +32,7 @@ public class Robot extends TimedRobot
   private boolean hasRunAuto = false;
 
   private RobotContainer m_robotContainer;
+  public char AUTO_WINNER_CODE = 'U';
 
   private Timer disabledTimer;
 
@@ -80,6 +81,33 @@ public class Robot extends TimedRobot
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    //Get the winner of auto
+    //TODO need to build a timer check to see when "we" can score
+    if (AUTO_WINNER_CODE == 'U')
+    {
+      String gameData;
+      gameData = DriverStation.getGameSpecificMessage();
+      if(gameData.length() > 0)
+      {
+        switch (gameData.charAt(0))
+        {
+          case 'B' : 
+            //Blue case code
+            AUTO_WINNER_CODE = 'B';
+            break;
+          case 'R' :
+            //Red case code
+            AUTO_WINNER_CODE = 'R';
+            break;
+          default :
+            //This is corrupt data
+            break;
+        }
+      } else {
+        //Code for no data received yet
+      }
+    }
   }
 
   /**
