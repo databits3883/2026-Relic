@@ -15,6 +15,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -238,12 +239,16 @@ public class TurretSubsystem extends SubsystemBase {
      */
     private void autoAimToBestTarget()
     {
-        Pose2d currentRobotPose = swerveSubsystem.getPose();
+        Pose2d robotPose = swerveSubsystem.getPose();
+
+        //Transform robot pose
+        Pose2d turretPose = robotPose.plus(Constants.TurretConstants.CENTER_TURRET_FROM_CENTER_BOT_RIGHT);
+
         //Find new target based on robot positon
-        targetPose = findTargetToAim(swerveSubsystem.getPose());    
-        targetAngle = getAngle(currentRobotPose, targetPose);
+        targetPose = findTargetToAim(turretPose);    
+        targetAngle = getAngle(turretPose, targetPose);
         //Use PhotonVision helper method to get distance
-        distanceToTarget = PhotonUtils.getDistanceToPose(currentRobotPose, targetPose);
+        distanceToTarget = PhotonUtils.getDistanceToPose(turretPose, targetPose);
         //update the turret setpoint
         setTurretSetPoint(targetAngle);
     }
@@ -383,17 +388,19 @@ public class TurretSubsystem extends SubsystemBase {
    * This will check the alliance and position of the robot
    * to determine what april tag the turret should point to
    */
-  private Pose2d findTargetToAim(Pose2d robotPose)
+  private Pose2d findTargetToAim(Pose2d turretPose)
   {
     Pose2d targetPose = null;
     boolean isRedAlliance = Robot.isRedAlliance;
-    double robotX = robotPose.getX();
-    double robotY = robotPose.getY();
+
+    double turretX = turretPose.getX();
+    double turretY = turretPose.getY();
+     m_field.getObject("TurretPose").setPose(turretPose);
 
     if (isRedAlliance)
     {
       inPlayerArea = false;
-      if (robotX > redXPlayer)
+      if (turretX > redXPlayer)
       {
         inPlayerArea = true;
         targetPose = redHubPose;
@@ -403,7 +410,7 @@ public class TurretSubsystem extends SubsystemBase {
           lastTaget = 1;
         }
       }
-      else if (robotY > midFieldY)
+      else if (turretY > midFieldY)
       {
         targetPose = redTopPose;
         if (this.lastTaget != 2)
@@ -424,7 +431,7 @@ public class TurretSubsystem extends SubsystemBase {
     } //end red alliance
     else
     {
-      if (robotX < blueXPlayer)
+      if (turretX < blueXPlayer)
       {
         inPlayerArea = true;
         targetPose = blueHubPose;
@@ -434,7 +441,7 @@ public class TurretSubsystem extends SubsystemBase {
             lastTaget = 4;
         }
       }
-      else if (robotY > midFieldY)
+      else if (turretY > midFieldY)
       {
         targetPose = blueTopPose;
         if (this.lastTaget != 5)

@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Meter;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -74,6 +75,11 @@ public final class Constants {
     public static final Pose2d BLUE_BOTTOM_POSE = new Pose2d((BLUE_X_PLAYER/2), RED_BOTTOM_POSE.getY(), new Rotation2d(0)); 
     public static final Pose2d BLUE_HUB_POSE = new Pose2d(BLUE_X_PLAYER, MID_FIELD_Y, new Rotation2d(0)); 
     public static final Pose2d BLUE_TOP_POSE = new Pose2d((BLUE_X_PLAYER/2), RED_TOP_POSE.getY(), new Rotation2d(0)); 
+
+    //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_BACK = new Transform2d(Units.inchesToMeters(-7),0,new Rotation2d(0));
+    //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_FRONT = new Transform2d(Units.inchesToMeters(7),0,new Rotation2d(0));
+    //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_LEFT = new Transform2d(0,Units.inchesToMeters(7),new Rotation2d(0));
+    public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_RIGHT = new Transform2d(0,Units.inchesToMeters(-7),new Rotation2d(0));
   }
   
   public static class Intake 
@@ -94,7 +100,7 @@ public final class Constants {
     
     public static double MAX_POWER = 1.0;
     public static double SLOW_REVERSE_SPEED = -0.3;
-    
+
     public static int CLIMBER_TIMEOUT_SEC = 4;
     public static int STOW_TIMEOUT_SEC = 4;
   }
