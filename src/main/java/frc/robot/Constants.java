@@ -136,6 +136,8 @@ public final class Constants {
     public static final double MAX_VOLTAGE = 12; //volts
     public static final double TARGET_VELOCITY_RPS = 2500; 
     public static final double TOLERANCE = 100; //rps
+
+    public static final double MAX_SHOOTING_DISTANCE = 5; //Max distance we can shoot at max velocity in meters
   }
 
 }

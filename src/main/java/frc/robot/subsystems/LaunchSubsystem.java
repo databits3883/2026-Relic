@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import javax.xml.transform.TransformerFactoryConfigurationError;
+
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
@@ -18,6 +20,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 public class LaunchSubsystem extends SubsystemBase 
 {
@@ -140,6 +143,30 @@ public class LaunchSubsystem extends SubsystemBase
     return Math.abs(getVelocity() - targetVelocity) < tolerance;
   }
 
+  /** 
+   * Use some function to get the target velocity based on distance to target
+   */
+  private double estimateVelocityForTargetDistance(double targetDistanceMeters)
+  {
+    //Find the 
+    double newTargetVelocity = 0;
+    if (targetDistanceMeters >= Constants.LaunchConstants.MAX_SHOOTING_DISTANCE)
+    {
+      newTargetVelocity = Constants.LaunchConstants.MAX_VELOCITY;
+    }
+    else 
+    {
+      //Right now do a percentage of the max distance for velocity, this is wrong
+      //TODO find values, either try different distances and find optimal speeds, etc
+      double percentageDistance = targetDistanceMeters / Constants.LaunchConstants.MAX_SHOOTING_DISTANCE;
+      newTargetVelocity = Constants.LaunchConstants.MAX_VELOCITY * percentageDistance;
+    }
+
+    //TODO have a public function exposed to Robot Container for co-pilot to add/subtract percentage on speed
+    //TODO: apply that new value here.
+    return newTargetVelocity;
+  }
+
   @Override
   public void periodic() 
   {
@@ -147,6 +174,7 @@ public class LaunchSubsystem extends SubsystemBase
     if(!isRunning && (SmartDashboard.getBoolean("Launch Run Motor", false)))
     {
       double targetVelocityDB = SmartDashboard.getNumber("Launch Target Velocity", targetVelocity);
+
       targetVelocity = targetVelocityDB;
       runLauncher(targetVelocity);
     } 
@@ -157,6 +185,10 @@ public class LaunchSubsystem extends SubsystemBase
       {
         stop();
       }
+
+      //Estimate velocity based on distance
+      double newTargetVelocity = estimateVelocityForTargetDistance(RobotContainer.turretSubsystem.getDistanceToTarget());
+      targetVelocity = newTargetVelocity;
     }
 
     if(SmartDashboard.getBoolean("Launch Update PID", false))
