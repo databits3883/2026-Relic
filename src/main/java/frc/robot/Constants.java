@@ -121,8 +121,11 @@ public final class Constants {
     public static final double TARGET_VELOCITY_RPS = 7000; 
     public static final double TOLERANCE = 100; //rps
 
-    public static final int INDEXER_MOTOR_ID = 15;
-    public static double INDEXER_MOTOR_POWER = 1.0;
+    public static final int SPINDEXER_MOTOR_ID = 15;
+    public static double SPINDEXER_MOTOR_POWER = 1.0;
+
+    public static final int OMNIDEXER_MOTOR_ID = 15;
+    public static double OMNIDEXER_MOTOR_POWER = 1.0;
   }
 
   public static class LaunchConstants {

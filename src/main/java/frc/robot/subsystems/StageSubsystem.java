@@ -31,9 +31,13 @@ public class StageSubsystem extends SubsystemBase
   private SparkMax m_motor = new SparkMax(Constants.StageConstants.STAGE_MOTOR_ID, MotorType.kBrushless);
     
   //Setup the indexer, it should run when the stage is run
-  private SparkMax m_indexer_motor = new SparkMax(Constants.StageConstants.INDEXER_MOTOR_ID, MotorType.kBrushless);
-  private double m_indexerSpinningPower = Constants.StageConstants.INDEXER_MOTOR_POWER;
-  private boolean m_isIndexerRunning = false;
+  private SparkMax m_spindexer_motor = new SparkMax(Constants.StageConstants.SPINDEXER_MOTOR_ID, MotorType.kBrushless);
+  private double m_spindexerSpinningPower = Constants.StageConstants.SPINDEXER_MOTOR_POWER;
+  private boolean m_isSpindexerRunning = false;
+
+  private SparkMax m_omnidexer_motor = new SparkMax(Constants.StageConstants.SPINDEXER_MOTOR_ID, MotorType.kBrushless);
+  private double m_omnidexerSpinningPower = Constants.StageConstants.SPINDEXER_MOTOR_POWER;
+  private boolean m_isOmnidexerRunning = false;
       
   private boolean isRunning = false;      
   private SparkMaxConfig m_baseConfig = new SparkMaxConfig();
@@ -82,8 +86,10 @@ public class StageSubsystem extends SubsystemBase
     closedLoopController.setIAccum(0);
     //turn off motor
     m_motor.setVoltage(0);
-    //turn off the indexer
-    stopIndexer();
+    //turn off the spindexer
+    stopSpindexer();
+    //Turn off omnidexer
+    stopOmnidexer();
   }
 
   /**
@@ -109,43 +115,85 @@ public class StageSubsystem extends SubsystemBase
   /**
    * Stop the indexer from spinning
    */
-  public void stopIndexer()
+  public void stopSpindexer()
   {
     //turn off motor
-    m_indexer_motor.setVoltage(0);
-    m_isIndexerRunning = false;
+    m_spindexer_motor.setVoltage(0);
+    m_isSpindexerRunning = false;
   }
 
   /**
-   * Run the indexer motor to the default configured velocity
+   * Run the spindexer motor to the default configured velocity
    */
-  public void runIndexer()
+  public void runSpindexer()
   {
     //Run to the default target power
-    runIndexer(m_indexerSpinningPower);
+    runSpindexer(m_spindexerSpinningPower);
   }
   /** Run the motor to a given power */
-  public void runIndexer(double targetVoltage)
+  public void runSpindexer(double targetVoltage)
   {
-    m_indexer_motor.setVoltage(targetVoltage);
-    if (targetVoltage != 0) m_isIndexerRunning = true; 
-    else m_isIndexerRunning = false;
+    m_spindexer_motor.setVoltage(targetVoltage);
+    if (targetVoltage != 0) m_isSpindexerRunning = true; 
+    else m_isSpindexerRunning = false;
   }
   /**
-   * Run the indexer reverse speed
+   * Run the spindexer reverse speed
    */
-  public void reverseIndexer()
+  public void reverseSpindexer()
   {
-    runIndexer(-1*m_indexerSpinningPower);
+    runSpindexer(-1*m_spindexerSpinningPower);
   }
 
   /**
    * Returns true if the indexer motor is running
    * @return
    */
-  public boolean isIndexerRunning()
+  public boolean isSpindexerRunning()
   {
-    return m_isIndexerRunning;
+    return m_isSpindexerRunning;
+  }
+
+  /**
+   * Stop the indexer from spinning
+   */
+  public void stopOmnidexer()
+  {
+    //turn off motor
+    m_omnidexer_motor.setVoltage(0);
+    m_isOmnidexerRunning = false;
+  }
+
+    /**
+   * Run the omnidexer motor to the default configured velocity
+   */
+  public void runOmnidexer()
+  {
+    //Run to the default target power
+    runOmnidexer(m_omnidexerSpinningPower);
+  }
+  /** Run the motor to a given power */
+  public void runOmnidexer(double targetVoltage)
+  {
+    m_omnidexer_motor.setVoltage(targetVoltage);
+    if (targetVoltage != 0) m_isOmnidexerRunning = true; 
+    else m_isOmnidexerRunning = false;
+  }
+  /**
+   * Run the indexer reverse speed
+   */
+  public void reverseOmnidexer()
+  {
+    runOmnidexer(-1*m_omnidexerSpinningPower);
+  }
+
+  /**
+   * Returns true if the indexer motor is running
+   * @return
+   */
+  public boolean isOmnidexerRunning()
+  {
+    return m_isOmnidexerRunning;
   }
 
   /**

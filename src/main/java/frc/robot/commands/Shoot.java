@@ -25,10 +25,12 @@ public class Shoot extends Command {
     public void execute() {
         launcher.runLauncher();
         if (launcher.atTargetVelocity()) {
-            stager.runIndexer();
+            stager.runSpindexer();
+            stager.runOmnidexer();
             stager.runStage();
         } else {
-            stager.stopIndexer();
+            stager.stopSpindexer();
+            stager.stopOmnidexer();
             stager.stop();
         }
     }
@@ -36,7 +38,8 @@ public class Shoot extends Command {
     @Override
     public void end(boolean interrupted) {
         launcher.stop();
-        stager.stopIndexer();
+        stager.stopSpindexer();
+        stager.stopOmnidexer();
         stager.stop();
     }
 

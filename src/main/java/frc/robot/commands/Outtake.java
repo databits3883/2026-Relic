@@ -10,7 +10,8 @@ public class Outtake extends Command {
     private final StageSubsystem stager;
     private final double maxLauncherSpeed = Constants.LaunchConstants.TARGET_VELOCITY_RPS;
     private final double maxStageSpeed = Constants.StageConstants.TARGET_VELOCITY_RPS;
-    private final double maxIndexerPower = Constants.StageConstants.INDEXER_MOTOR_POWER;
+    private final double maxSpindexerPower = Constants.StageConstants.SPINDEXER_MOTOR_POWER;
+    private final double maxOmnidexerPower = Constants.StageConstants.OMNIDEXER_MOTOR_POWER;
 
     public Outtake(LaunchSubsystem launchSubsystem, StageSubsystem stageSubsystem) 
     {
@@ -25,7 +26,8 @@ public class Outtake extends Command {
     {
         launcher.runLauncher(-1 * maxLauncherSpeed);
         stager.runStage(-1 * maxStageSpeed);
-        stager.runIndexer(-1 * maxIndexerPower);
+        stager.runSpindexer(-1 * maxSpindexerPower);
+        stager.runOmnidexer(-1 * maxOmnidexerPower);
     }
 
     @Override
@@ -38,7 +40,8 @@ public class Outtake extends Command {
     public void end(boolean interrupted) 
     {
         launcher.stop();
-        stager.stopIndexer();
+        stager.stopSpindexer();
+        stager.stopOmnidexer();
         stager.stop();
     }
 

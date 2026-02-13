@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import org.ejml.dense.row.linsol.qr.AdjLinearSolverQr_FDRM;
-
 import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
