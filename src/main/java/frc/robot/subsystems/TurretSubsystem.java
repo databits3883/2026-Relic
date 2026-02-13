@@ -9,6 +9,7 @@ import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -39,7 +40,8 @@ public class TurretSubsystem extends SubsystemBase {
     private SparkMax m_motor = new SparkMax(Constants.TurretConstants.TURRET_MOTOR_ID, MotorType.kBrushless);
 
     //Set up the "zero" alignment triffer
-    private DigitalInput turretAlignmentSwitch = new DigitalInput(0);    
+    //private DigitalInput turretAlignmentSwitch = new DigitalInput(0);    
+    private SparkLimitSwitch turretAlignmentSwitch = m_motor.getForwardLimitSwitch();
        
     //private SparkMaxConfig m_config = new SparkMaxConfig();
     private SparkMaxConfig m_baseConfig = new SparkMaxConfig();
@@ -272,11 +274,10 @@ public class TurretSubsystem extends SubsystemBase {
         double currentMotorRotations = turretEncoder.getPosition();
         double currentAngleRot2Degree = getTurretDegrees(currentMotorRotations);
         //Update alignment trigger data
-        boolean alignmentTrigger = turretAlignmentSwitch.get();
+        boolean alignmentTrigger = turretAlignmentSwitch.isPressed();
         
         //if the alignment switch is triggered force the turret encoder to update its position
-        //no wires on the DIO is true, so switch will set FALSE
-        if (alignmentTrigger == false)
+        if (alignmentTrigger == true)
         {
             currentAngleRot2Degree = Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE;
             currentMotorRotations = getTurretRotations(currentAngleRot2Degree);  
