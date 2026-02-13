@@ -365,7 +365,7 @@ public class Vision
      * Center Camera
      */
     CENTER_CAM("CameraB",
-               new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(-15)),
+               new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(-90)),
                new Translation3d(Units.inchesToMeters(-9.758),
                                  Units.inchesToMeters(-4.25),
                                  Units.inchesToMeters(13.375)),
