@@ -35,7 +35,7 @@ public class StageSubsystem extends SubsystemBase
   private double m_spindexerSpinningPower = Constants.StageConstants.SPINDEXER_MOTOR_POWER;
   private boolean m_isSpindexerRunning = false;
 
-  private SparkMax m_omnidexer_motor = new SparkMax(Constants.StageConstants.SPINDEXER_MOTOR_ID, MotorType.kBrushless);
+  private SparkMax m_omnidexer_motor = new SparkMax(Constants.StageConstants.OMNIDEXER_MOTOR_ID, MotorType.kBrushless);
   private double m_omnidexerSpinningPower = Constants.StageConstants.SPINDEXER_MOTOR_POWER;
   private boolean m_isOmnidexerRunning = false;
       

@@ -124,7 +124,7 @@ public final class Constants {
     public static final int SPINDEXER_MOTOR_ID = 15;
     public static double SPINDEXER_MOTOR_POWER = 1.0;
 
-    public static final int OMNIDEXER_MOTOR_ID = 15;
+    public static final int OMNIDEXER_MOTOR_ID = 18;
     public static double OMNIDEXER_MOTOR_POWER = 1.0;
   }
 
