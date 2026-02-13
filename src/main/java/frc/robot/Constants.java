@@ -79,7 +79,9 @@ public final class Constants {
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_BACK = new Transform2d(Units.inchesToMeters(-7),0,new Rotation2d(0));
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_FRONT = new Transform2d(Units.inchesToMeters(7),0,new Rotation2d(0));
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_LEFT = new Transform2d(0,Units.inchesToMeters(7),new Rotation2d(0));
-    public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_RIGHT = new Transform2d(0,Units.inchesToMeters(-7),new Rotation2d(0));
+    //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_RIGHT = new Transform2d(0,Units.inchesToMeters(-7),new Rotation2d(0));
+    public static final Transform2d BACK_RIGHT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(-6.125),Units.inchesToMeters(3.25),new Rotation2d(0));
+    
   }
   
   public static class Intake 
