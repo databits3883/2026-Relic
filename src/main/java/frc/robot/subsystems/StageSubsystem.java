@@ -87,7 +87,7 @@ public class StageSubsystem extends SubsystemBase
       SmartDashboard.putNumber("Stage Current Velocity", 0);
   }
 
- public void stop()
+ public void stopStageSystem()
   {
     isRunning = false;
     SmartDashboard.putBoolean("Stage Run Motor", false);
@@ -263,7 +263,7 @@ public class StageSubsystem extends SubsystemBase
       long delta = System.currentTimeMillis()-startTime;
       if ((delta > 500) && !SmartDashboard.getBoolean("Stage Run Motor", false))
       {
-        stop();
+        stopStageSystem();
       }
     }
 

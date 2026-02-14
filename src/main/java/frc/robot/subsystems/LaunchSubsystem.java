@@ -149,13 +149,18 @@ public class LaunchSubsystem extends SubsystemBase
    */
   private double estimateVelocityForTargetDistance(double targetDistanceMeters)
   {
+    //Found 2500RPM works from 3.5-3.7
     //Find the 
     double newTargetVelocity = Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM;
     if (targetDistanceMeters >= Constants.LaunchConstants.MAX_SHOOTING_DISTANCE)
     {
       newTargetVelocity = Constants.LaunchConstants.TARGET_VELOCITY_RPM;
     }
-    else 
+    else if (targetDistanceMeters >= 3.5)
+    {
+      newTargetVelocity = 2500;
+    }
+    else
     {
       //Right now do a percentage of the max distance for velocity, this is wrong
       //TODO find values, either try different distances and find optimal speeds, etc
@@ -166,8 +171,7 @@ public class LaunchSubsystem extends SubsystemBase
     //TODO have a public function exposed to Robot Container for co-pilot to add/subtract percentage on speed
     //TODO: apply that new value here.
     if (newTargetVelocity < Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM) newTargetVelocity = Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM;
-    //Hard code to max
-    newTargetVelocity = Constants.LaunchConstants.TARGET_VELOCITY_RPM;
+
     SmartDashboard.putNumber("Launch Calc Velocity", newTargetVelocity);
     return newTargetVelocity;
   }

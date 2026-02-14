@@ -29,18 +29,14 @@ public class Shoot extends Command {
             stager.runOmnidexer();
             stager.runStage();
         } else {
-            //stager.stopSpindexer();
-            //stager.stopOmnidexer();
-            //stager.stop();
+            stager.stopStageSystem();
         }
     }
 
     @Override
     public void end(boolean interrupted) {
         launcher.stop();
-        stager.stopSpindexer();
-        stager.stopOmnidexer();
-        stager.stop();
+        stager.stopStageSystem();
     }
 
     @Override

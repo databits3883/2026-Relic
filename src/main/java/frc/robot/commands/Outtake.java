@@ -40,9 +40,7 @@ public class Outtake extends Command {
     public void end(boolean interrupted) 
     {
         launcher.stop();
-        stager.stopSpindexer();
-        stager.stopOmnidexer();
-        stager.stop();
+        stager.stopStageSystem();
     }
 
     @Override
