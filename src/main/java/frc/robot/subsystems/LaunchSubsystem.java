@@ -169,21 +169,25 @@ public class LaunchSubsystem extends SubsystemBase
     {
       newTargetVelocity = Constants.LaunchConstants.TARGET_VELOCITY_RPM;
     }
-    else if (targetDistanceMeters >= 3.5)
+    else if (targetDistanceMeters >= 3.2)
     {
       newTargetVelocity = 2500;
     }
-    else if (targetDistanceMeters >= 3.0)
+    else if (targetDistanceMeters >= 2.7)
     {
       newTargetVelocity = 2300;
     }
-    else if (targetDistanceMeters >= 2.7)
+    else if (targetDistanceMeters >= 2.0)
     {
       newTargetVelocity = 2100;
     }
-    else if (targetDistanceMeters >= 2.3)
+    else if (targetDistanceMeters >= 1.5)
     {
       newTargetVelocity = 1900;
+    }
+    else if (targetDistanceMeters >= 1.2)
+    {
+      newTargetVelocity = 1700;
     }
     else
     {
