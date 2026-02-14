@@ -126,6 +126,17 @@ public class LaunchSubsystem extends SubsystemBase
   }
 
   /**
+   * Use turret estimated distance to target to adjust launch velocity
+   * @param useTargetDistance
+   */
+  public void runLauncher(boolean useTargetDistance)
+  {
+    if (useTargetDistance)
+       runLauncher(estimateVelocityForTargetDistance(RobotContainer.turretSubsystem.getDistanceToTarget()));
+    else runLauncher();
+  }
+
+  /**
    * Get the current velocity of the motor
    * @return
    */

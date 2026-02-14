@@ -18,12 +18,12 @@ public class Shoot extends Command {
 
     @Override
     public void initialize() {
-        launcher.runLauncher();
+        launcher.runLauncher(true);
     }
 
     @Override
     public void execute() {
-        launcher.runLauncher();
+        launcher.runLauncher(true);
         if (launcher.atTargetVelocity()) {
             stager.runSpindexer();
             stager.runOmnidexer();

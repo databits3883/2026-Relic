@@ -14,6 +14,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.LimitSwitchConfig.Behavior;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
@@ -28,6 +29,7 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 public class TurretSubsystem extends SubsystemBase {
      
     private static boolean CALIBRATION_MODE = true;
+    private static boolean CALIBRATION_MODE_EXTREME = false;
 
     // PID Gains and Motion Profile Constraints
     private static double kP = Constants.TurretConstants.KP;
@@ -273,8 +275,9 @@ public class TurretSubsystem extends SubsystemBase {
     private boolean updateTurrentAngleBySwitch(double currentMotorRotations, double currentAngleRot2Degree)
     {
       boolean updated = false;
+      if (currentAngleRot2Degree < 0) currentAngleRot2Degree += 360;
       double deltaAngleError = Math.abs(currentAngleRot2Degree - Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE);
-      if (CALIBRATION_MODE) System.out.println("Switch: delta Angle: "+deltaAngleError);
+      if (CALIBRATION_MODE) System.out.println("Switch: delta Angle: "+deltaAngleError + " cur: " + currentAngleRot2Degree);
       if (deltaAngleError >= Constants.TurretConstants.MAX_ANGLE_ERROR)
       {
         currentAngleRot2Degree = Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE;
@@ -396,6 +399,9 @@ public class TurretSubsystem extends SubsystemBase {
                             .outputRange((-1 * maxOutput),maxOutput)
                             .maxMotion.maxAcceleration(maxAccel)
                             ; // set PID
+                    //Ensure limit switches keep moving on turret
+                    m_baseConfig.limitSwitch.forwardLimitSwitchTriggerBehavior(Behavior.kKeepMovingMotor);
+                    m_baseConfig.limitSwitch.reverseLimitSwitchTriggerBehavior(Behavior.kKeepMovingMotor);
                     //Update the motoro config to use PID
                     m_motor.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
                 } //end if updatePID
@@ -439,7 +445,6 @@ public class TurretSubsystem extends SubsystemBase {
         targetPose = redHubPose;
         if (this.lastTaget != 1)
         {
-          System.out.println("picked target redHub");
           lastTaget = 1;
         }
       }
@@ -448,7 +453,6 @@ public class TurretSubsystem extends SubsystemBase {
         targetPose = redTopPose;
         if (this.lastTaget != 2)
         {
-            System.out.println("picked target redTop");
             lastTaget = 2;
         }
       }
@@ -457,7 +461,6 @@ public class TurretSubsystem extends SubsystemBase {
         targetPose = redBottomPose;
         if (this.lastTaget != 3)
         {
-            System.out.println("picked target redBottom");
             lastTaget = 3;
         }
       }
@@ -469,7 +472,6 @@ public class TurretSubsystem extends SubsystemBase {
         targetPose = blueHubPose;
         if (this.lastTaget != 4)
         {
-            System.out.println("picked target blueHub");
             lastTaget = 4;
         }
       }
@@ -478,7 +480,6 @@ public class TurretSubsystem extends SubsystemBase {
         targetPose = blueTopPose;
         if (this.lastTaget != 5)
         {
-            System.out.println("picked target blueTop");
             lastTaget = 5;
         }
       }
@@ -487,7 +488,6 @@ public class TurretSubsystem extends SubsystemBase {
         targetPose = blueBottomPose;
         if (this.lastTaget != 6)
         {
-            System.out.println("picked target bluBottom");
             lastTaget = 6;
         }
       }
@@ -538,12 +538,13 @@ public class TurretSubsystem extends SubsystemBase {
     //only output debugging every second
     long currentTime = System.currentTimeMillis();
     long delta = currentTime - lastOuput;
-    if (CALIBRATION_MODE && (delta > 1000))
+    if (CALIBRATION_MODE_EXTREME && (delta > 1000))
     {
         System.out.println(output.toString());
         lastOuput = currentTime;
     }
-
+    //Adjust Angle by offset , We found the angle is off for some reason, fix with offset
+    relativeRotationDeg += Constants.TurretConstants.TURRET_ANGLE_OFFSET;
     //Right now set target to just the angle to tag
     return relativeRotationDeg;
   }
