@@ -28,10 +28,12 @@ public class StageSubsystem extends SubsystemBase
   private static double maxOutput = Constants.StageConstants.MAX_OUTPUT;
   private double targetVelocity = Constants.StageConstants.TARGET_VELOCITY_RPS;
   
-  private SparkMax m_motor = new SparkMax(Constants.StageConstants.STAGE_MOTOR_ID, MotorType.kBrushless);
+  private SparkMax m_stageMotor = new SparkMax(Constants.StageConstants.STAGE_MOTOR_ID, MotorType.kBrushless);
     
   //Setup the indexer, it should run when the stage is run
   private SparkMax m_spindexer_motor = new SparkMax(Constants.StageConstants.SPINDEXER_MOTOR_ID, MotorType.kBrushless);
+  private SparkMaxConfig m_spindexerConfig = new SparkMaxConfig();
+
   private double m_spindexerSpinningPower = Constants.StageConstants.SPINDEXER_MOTOR_POWER;
   private boolean m_isSpindexerRunning = false;
 
@@ -41,14 +43,14 @@ public class StageSubsystem extends SubsystemBase
       
   private boolean isRunning = false;      
   private SparkMaxConfig m_baseConfig = new SparkMaxConfig();
-  private SparkClosedLoopController closedLoopController = m_motor.getClosedLoopController();
+  private SparkClosedLoopController closedLoopController = m_stageMotor.getClosedLoopController();
   private RelativeEncoder stageEncoder=null;
   private long startTime = 0;
 
 
   public StageSubsystem() 
   { 
-      stageEncoder = m_motor.getEncoder();   
+      stageEncoder = m_stageMotor.getEncoder();   
         
       m_baseConfig.closedLoop
                   .p(kP)
@@ -62,10 +64,15 @@ public class StageSubsystem extends SubsystemBase
       m_baseConfig.idleMode(IdleMode.kCoast)
                   .smartCurrentLimit(Constants.StageConstants.MAX_CURRENT)
                   .voltageCompensation(Constants.StageConstants.MAX_VOLTAGE)
+                  .inverted(Constants.StageConstants.STAGE_INVERSE)
                   ;
 
       //Update the motoro config to use PID
-      m_motor.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+      m_stageMotor.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+
+      //Spindexer
+      m_spindexerConfig.inverted(Constants.StageConstants.SPINDEXER_INVERSE);
+      m_spindexer_motor.configure(m_spindexerConfig, ResetMode.kResetSafeParameters,PersistMode.kNoPersistParameters);
       SmartDashboard.setDefaultNumber("Stage Target Velocity", targetVelocity);
       SmartDashboard.setDefaultBoolean("Stage Run Motor", isRunning);
       SmartDashboard.setDefaultBoolean("Stage Update PID", false);
@@ -85,7 +92,7 @@ public class StageSubsystem extends SubsystemBase
     closedLoopController.setSetpoint(0, ControlType.kVelocity);
     closedLoopController.setIAccum(0);
     //turn off motor
-    m_motor.setVoltage(0);
+    m_stageMotor.setVoltage(0);
     //turn off the spindexer
     stopSpindexer();
     //Turn off omnidexer
@@ -262,7 +269,7 @@ public class StageSubsystem extends SubsystemBase
                   .outputRange((-1 * maxOutput),maxOutput)
                   ;
           //Update the motoro config to use PID
-          m_motor.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+          m_stageMotor.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
       } //end if updatePID
     } // end update stage PID 
     

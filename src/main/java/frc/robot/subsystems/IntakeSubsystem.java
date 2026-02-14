@@ -36,7 +36,7 @@ public class IntakeSubsystem extends SubsystemBase
   { 
       m_fouSparkLimitSwitch_forward = m_four_bar_motor.getForwardLimitSwitch();
       m_fouSparkLimitSwitch_reverse = m_four_bar_motor.getReverseLimitSwitch();
-      m_intakeConfig.idleMode(IdleMode.kBrake).inverted(true);
+      m_intakeConfig.idleMode(IdleMode.kBrake).inverted(Constants.Intake.INTAKE_MOTOR_INVERSE);
 
       //Update the motor config
       m_intake_motor.configure(m_intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);

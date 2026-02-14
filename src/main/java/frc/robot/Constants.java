@@ -92,7 +92,8 @@ public final class Constants {
     public static int FOUR_BAR_BACKWARD_TIMEOUT_SEC = 4; /* Max run time in case we do not hit limit */
 
     public static final int INTAKE_MOTOR_ID = 14;
-    public static double INTAKE_MOTOR_POWER = 10.0;
+    public static double INTAKE_MOTOR_POWER = 12.0;
+    public static boolean INTAKE_MOTOR_INVERSE = true;
   }
 
   public static class Climber
@@ -110,6 +111,7 @@ public final class Constants {
 
   public static class StageConstants {
     public static final int STAGE_MOTOR_ID = 10;
+    public static boolean STAGE_INVERSE = true;
 
     public static double KP = 0.00015; // Proportional gain
     public static double KI = 0.0000004; // Integral gain
@@ -124,6 +126,7 @@ public final class Constants {
 
     public static final int SPINDEXER_MOTOR_ID = 15;
     public static double SPINDEXER_MOTOR_POWER = 3.0;
+    public static boolean SPINDEXER_INVERSE = true;
 
     public static final int OMNIDEXER_MOTOR_ID = 18;
     public static double OMNIDEXER_MOTOR_POWER = 3.0;
