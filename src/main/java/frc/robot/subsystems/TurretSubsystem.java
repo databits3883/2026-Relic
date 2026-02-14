@@ -267,6 +267,31 @@ public class TurretSubsystem extends SubsystemBase {
     }
     
     /**
+     * See if we need to update the turret's encoder position.
+     * This only happens if the turrents estimated position is off by more than a defined constant angle
+     */
+    private boolean updateTurrentAngleBySwitch(double currentMotorRotations, double currentAngleRot2Degree)
+    {
+      boolean updated = false;
+      double deltaAngleError = Math.abs(currentAngleRot2Degree - Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE);
+      if (CALIBRATION_MODE) System.out.println("Switch: delta Angle: "+deltaAngleError);
+      if (deltaAngleError >= Constants.TurretConstants.MAX_ANGLE_ERROR)
+      {
+        currentAngleRot2Degree = Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE;
+        currentMotorRotations = getTurretRotations(currentAngleRot2Degree);  
+        if (CALIBRATION_MODE) System.out.println("Switch: previous position: "+ turretEncoder.getPosition() + " target.pos: " + closedLoopController.getSetpoint());                      
+        turretEncoder.setPosition(currentMotorRotations);     
+        //Since the encoder has been reset, define new set point based on new encoder position
+        closedLoopController.setSetpoint(getTargetRotationsFromDegrees(angleSetpoint), ControlType.kPosition, ClosedLoopSlot.kSlot0);            
+        if (CALIBRATION_MODE) System.out.println("Switch: current position: "+ turretEncoder.getPosition() + " target.pos: " + closedLoopController.getSetpoint());                      
+        updated = true;
+      }
+      else if (CALIBRATION_MODE) System.out.println("delta Angle too small");
+
+      return updated;
+    }
+
+    /**
      * This runs every 10ms or so
      */
     public void periodic() 
@@ -280,15 +305,15 @@ public class TurretSubsystem extends SubsystemBase {
         if (alignmentTrigger == true && alignmentToggle == false) alignmentToggle = true; //Set the trigger to indicate we have seen the trigger
         if (alignmentTrigger == false && alignmentToggle == true)
         {
-          //We are coming off the toggle
           alignmentToggle = false;
-          currentAngleRot2Degree = Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE;
-          currentMotorRotations = getTurretRotations(currentAngleRot2Degree);  
-          if (CALIBRATION_MODE) System.out.println("Switch: previous position: "+ turretEncoder.getPosition() + " target.pos: " + closedLoopController.getSetpoint());                      
-          turretEncoder.setPosition(currentMotorRotations);     
-          //Since the encoder has been reset, define new set point based on new encoder position
-          closedLoopController.setSetpoint(getTargetRotationsFromDegrees(angleSetpoint), ControlType.kPosition, ClosedLoopSlot.kSlot0);            
-          if (CALIBRATION_MODE) System.out.println("Switch: current position: "+ turretEncoder.getPosition() + " target.pos: " + closedLoopController.getSetpoint());                      
+          //We are coming off the toggle, check what angle we think we are in vs the Alignment switch angle
+          boolean updatedPosition = updateTurrentAngleBySwitch(currentMotorRotations, currentAngleRot2Degree);
+          if (updatedPosition)
+          {
+            //If we updated the turrent encoder position, sanity check and updated these values
+            currentMotorRotations = turretEncoder.getPosition();
+            currentAngleRot2Degree = getTurretDegrees(currentMotorRotations);
+          }
         } 
 
         //Update negative values back to positoive
@@ -304,7 +329,6 @@ public class TurretSubsystem extends SubsystemBase {
           SmartDashboard.putNumber("Turret SetPoint rots", closedLoopController.getSetpoint());
           SmartDashboard.putNumber("Turret Distance To Target",getDistanceToTarget());
           SmartDashboard.putNumber("Turret Motor Current",m_motor.getAppliedOutput());
-
         }
 
         if (SmartDashboard.getBoolean("Turret Stop", false)) 

@@ -8,7 +8,7 @@ import frc.robot.subsystems.StageSubsystem;
 public class Outtake extends Command {
     private final LaunchSubsystem launcher;
     private final StageSubsystem stager;
-    private final double maxLauncherSpeed = Constants.LaunchConstants.TARGET_VELOCITY_RPS;
+    private final double maxLauncherSpeed = Constants.LaunchConstants.TARGET_VELOCITY_RPM;
     private final double maxStageSpeed = Constants.StageConstants.TARGET_VELOCITY_RPS;
     private final double maxSpindexerPower = Constants.StageConstants.SPINDEXER_MOTOR_POWER;
     private final double maxOmnidexerPower = Constants.StageConstants.OMNIDEXER_MOTOR_POWER;

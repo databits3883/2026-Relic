@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
@@ -21,7 +19,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
-import pabeles.concurrency.ConcurrencyOps.NewInstance;
 
 public class LaunchSubsystem extends SubsystemBase 
 {
@@ -30,7 +27,8 @@ public class LaunchSubsystem extends SubsystemBase
   private static double kI = Constants.LaunchConstants.KI;
   private static double kD = Constants.LaunchConstants.KD;
   private static double maxOutput = Constants.LaunchConstants.MAX_OUTPUT;
-  private double targetVelocity = Constants.LaunchConstants.TARGET_VELOCITY_RPS;
+  private double currentSetPointRPM = 0;
+  private double defaultSetPointRPM =  Constants.LaunchConstants.TARGET_VELOCITY_RPM;
   private boolean isRunning = false;
   private long startTime = 0;
   
@@ -80,7 +78,7 @@ public class LaunchSubsystem extends SubsystemBase
       m_baseConfig_b.follow(Constants.LaunchConstants.LAUNCH_MOTOR_ID_A,true);
       m_motor_b.configure(m_baseConfig_b, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
   
-      SmartDashboard.setDefaultNumber("Launch Target Velocity", targetVelocity);
+      SmartDashboard.setDefaultNumber("Launch Target Velocity", defaultSetPointRPM);
       SmartDashboard.setDefaultBoolean("Launch Run Motor", false);
       SmartDashboard.setDefaultBoolean("Launch Update PID", false);
       SmartDashboard.putNumber("Launch P Gain", kP);
@@ -97,6 +95,7 @@ public class LaunchSubsystem extends SubsystemBase
 
     //set the current
     closedLoopController_a.setSetpoint(0, ControlType.kVelocity);
+    currentSetPointRPM = 0;
     //turn off motor
     m_motor_a.setVoltage(0);
     //turn off the control mode
@@ -104,9 +103,9 @@ public class LaunchSubsystem extends SubsystemBase
 
   /**
    * Run the launcher to a given velocity
-   * @param targetVelocityRPS
+   * @param targetVelocityRPM
    */
-  public void runLauncher(double targetVelocityRPS)
+  public void runLauncher(double targetVelocityRPM)
   {
     if (!isRunning)
     {
@@ -114,7 +113,8 @@ public class LaunchSubsystem extends SubsystemBase
       startTime = System.currentTimeMillis();
       SmartDashboard.putBoolean("Launch Run Motor", true);
     }
-    closedLoopController_a.setSetpoint(targetVelocityRPS, ControlType.kVelocity);
+    currentSetPointRPM = targetVelocityRPM;
+    closedLoopController_a.setSetpoint(targetVelocityRPM, ControlType.kVelocity);
   }
    
   /**
@@ -122,7 +122,7 @@ public class LaunchSubsystem extends SubsystemBase
    */
   public void runLauncher() 
   {
-    runLauncher(targetVelocity);
+    runLauncher(defaultSetPointRPM);
   }
 
   /**
@@ -140,8 +140,8 @@ public class LaunchSubsystem extends SubsystemBase
    */
   public boolean atTargetVelocity() 
   {
-    double tolerance = 100.0; // RPM tolerance
-    return Math.abs(targetVelocity - getVelocity()) < tolerance;
+    double tolerance = Constants.LaunchConstants.TOLERANCE; // RPM tolerance
+    return Math.abs(currentSetPointRPM - getVelocity()) < tolerance;
   }
 
   /** 
@@ -150,7 +150,7 @@ public class LaunchSubsystem extends SubsystemBase
   private double estimateVelocityForTargetDistance(double targetDistanceMeters)
   {
     //Find the 
-    double newTargetVelocity = Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPS;
+    double newTargetVelocity = Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM;
     if (targetDistanceMeters >= Constants.LaunchConstants.MAX_SHOOTING_DISTANCE)
     {
       newTargetVelocity = Constants.LaunchConstants.MAX_VELOCITY;
@@ -165,7 +165,7 @@ public class LaunchSubsystem extends SubsystemBase
 
     //TODO have a public function exposed to Robot Container for co-pilot to add/subtract percentage on speed
     //TODO: apply that new value here.
-    if (newTargetVelocity < Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPS) newTargetVelocity = Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPS;
+    if (newTargetVelocity < Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM) newTargetVelocity = Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM;
     //Hard code to max
     newTargetVelocity = Constants.LaunchConstants.MAX_VELOCITY;
     SmartDashboard.putNumber("Launch Calc Velocity", newTargetVelocity);
@@ -178,10 +178,9 @@ public class LaunchSubsystem extends SubsystemBase
     // This method will be called once per scheduler run
     if(!isRunning && (SmartDashboard.getBoolean("Launch Run Motor", false)))
     {
-      double targetVelocityDB = SmartDashboard.getNumber("Launch Target Velocity", targetVelocity);
+      double targetVelocityDB = SmartDashboard.getNumber("Launch Target Velocity", defaultSetPointRPM);
 
-      targetVelocity = targetVelocityDB;
-      runLauncher(targetVelocity);
+      runLauncher(targetVelocityDB);
     } 
     else if (isRunning)    
     {
@@ -190,10 +189,12 @@ public class LaunchSubsystem extends SubsystemBase
       {
         stop();
       }
-
-      //Estimate velocity based on distance
-      double newTargetVelocity = estimateVelocityForTargetDistance(RobotContainer.turretSubsystem.getDistanceToTarget());
-      targetVelocity = newTargetVelocity;
+      else
+      {
+        //Estimate velocity based on distance
+        double newTargetVelocity = estimateVelocityForTargetDistance(RobotContainer.turretSubsystem.getDistanceToTarget());
+        runLauncher(newTargetVelocity);
+      }
     }
 
     if(SmartDashboard.getBoolean("Launch Update PID", false))
