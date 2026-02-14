@@ -4,9 +4,14 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -14,12 +19,15 @@ import frc.robot.Constants;
 public class IntakeSubsystem extends SubsystemBase 
 {
   private SparkMax m_four_bar_motor = new SparkMax(Constants.Intake.FOUR_BAR_MOTOR_ID, MotorType.kBrushless);
+  private SparkMaxConfig m_intakeConfig = new SparkMaxConfig();
+
   private SparkLimitSwitch m_fouSparkLimitSwitch_forward = null;
   private SparkLimitSwitch m_fouSparkLimitSwitch_reverse = null;
   private SparkMax m_intake_motor = new SparkMax(Constants.Intake.INTAKE_MOTOR_ID, MotorType.kBrushless);
 
   private double m_intakeSpinningPower = Constants.Intake.INTAKE_MOTOR_POWER;
-  private double m_fourBarPower = Constants.Intake.FOUR_BAR_POWER;
+  private double m_fourBarForwardPower = Constants.Intake.FOUR_BAR_FORWARD_POWER;
+  private double m_fourBarBackwardPower = Constants.Intake.FOUR_BAR_BACKWARD_POWER;
   
   private boolean m_isIntakeRunning = false;
   private boolean m_isFourBarRunning = false;
@@ -28,6 +36,10 @@ public class IntakeSubsystem extends SubsystemBase
   { 
       m_fouSparkLimitSwitch_forward = m_four_bar_motor.getForwardLimitSwitch();
       m_fouSparkLimitSwitch_reverse = m_four_bar_motor.getReverseLimitSwitch();
+      m_intakeConfig.idleMode(IdleMode.kBrake).inverted(true);
+
+      //Update the motor config
+      m_intake_motor.configure(m_intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   /**
@@ -61,7 +73,7 @@ public class IntakeSubsystem extends SubsystemBase
   public void runFourBar()
   {
     //Run to the default target power
-    runFourBar(m_fourBarPower);
+    runFourBar(m_fourBarForwardPower);
   }
   /** Run the motor to a given power */
   public void runFourBar(double targetVoltage)
@@ -75,7 +87,7 @@ public class IntakeSubsystem extends SubsystemBase
    */
   public void reverseFourBar()
   {
-    runFourBar(-1*m_fourBarPower);
+    runFourBar(-1*m_fourBarBackwardPower);
   }
 
   /**

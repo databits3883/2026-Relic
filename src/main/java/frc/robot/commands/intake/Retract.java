@@ -6,7 +6,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class Retract extends Command {
     private final IntakeSubsystem intake;
-    private final long ABORT_TIME = Constants.Intake.FOUR_BAR_TIMEOUT_SEC * 1000; /* in millis */
+    private final long ABORT_TIME = Constants.Intake.FOUR_BAR_BACKWARD_TIMEOUT_SEC * 1000; /* in millis */
     private long startTime = 0;
 
     public Retract(IntakeSubsystem intakeSubsystem) 

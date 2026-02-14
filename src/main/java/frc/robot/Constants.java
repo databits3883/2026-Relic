@@ -86,11 +86,13 @@ public final class Constants {
   public static class Intake 
   {
     public static final int FOUR_BAR_MOTOR_ID = 13;
-    public static double FOUR_BAR_POWER = 1.0;
-    public static int FOUR_BAR_TIMEOUT_SEC = 4; /* Max run time in case we do not hit limit */
+    public static double FOUR_BAR_FORWARD_POWER = 2.0;
+    public static int FOUR_BAR_FORWARD_TIMEOUT_SEC = 4; /* Max run time in case we do not hit limit */
+    public static double FOUR_BAR_BACKWARD_POWER = 4.0;
+    public static int FOUR_BAR_BACKWARD_TIMEOUT_SEC = 4; /* Max run time in case we do not hit limit */
 
     public static final int INTAKE_MOTOR_ID = 14;
-    public static double INTAKE_MOTOR_POWER = 1.0;
+    public static double INTAKE_MOTOR_POWER = 10.0;
   }
 
   public static class Climber
@@ -99,7 +101,7 @@ public final class Constants {
     /* Secondary will follow the primary, just adding id for clarrity */
     public static final int SECONDARY_MOTOR_ID = 17; 
     
-    public static double MAX_POWER = 1.0;
+    public static double MAX_POWER = 10.0;
     public static double SLOW_REVERSE_SPEED = -0.3;
 
     public static int CLIMBER_TIMEOUT_SEC = 4;
@@ -121,10 +123,10 @@ public final class Constants {
     public static final double TOLERANCE = 100; //rps
 
     public static final int SPINDEXER_MOTOR_ID = 15;
-    public static double SPINDEXER_MOTOR_POWER = 1.0;
+    public static double SPINDEXER_MOTOR_POWER = 3.0;
 
     public static final int OMNIDEXER_MOTOR_ID = 18;
-    public static double OMNIDEXER_MOTOR_POWER = 1.0;
+    public static double OMNIDEXER_MOTOR_POWER = 3.0;
   }
 
   public static class LaunchConstants {
