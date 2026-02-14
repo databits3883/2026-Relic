@@ -163,14 +163,15 @@ public class LaunchSubsystem extends SubsystemBase
   private double estimateVelocityForTargetDistance(double targetDistanceMeters)
   {
     //Found 2500RPM works from 3.5-3.7
-    //Find the 
     double newTargetVelocity = Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM;
+    //If we are further than a max distance just shoot full power
     if (targetDistanceMeters >= Constants.LaunchConstants.MAX_SHOOTING_DISTANCE)
     {
       newTargetVelocity = Constants.LaunchConstants.TARGET_VELOCITY_RPM;
     }
     else if (targetDistanceMeters >= 3.2)
     {
+      //We know 3.2  - 3.7 at least works at 2500, can remove if we want to use equation for everything
       newTargetVelocity = 2500;
     }
     else
@@ -182,7 +183,7 @@ public class LaunchSubsystem extends SubsystemBase
       //newTargetVelocity = ((3.5 - targetDistanceMeters ) / 0.3) * 200;
     }
 
-    //apply that new value here.
+    //If we are below a min velocity just use the min velocity
     if (newTargetVelocity < Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM) newTargetVelocity = Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM;
 
     SmartDashboard.putNumber("Launch Calc Velocity", newTargetVelocity);
