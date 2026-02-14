@@ -80,7 +80,7 @@ public final class Constants {
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_FRONT = new Transform2d(Units.inchesToMeters(7),0,new Rotation2d(0));
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_LEFT = new Transform2d(0,Units.inchesToMeters(7),new Rotation2d(0));
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_RIGHT = new Transform2d(0,Units.inchesToMeters(-7),new Rotation2d(0));
-    public static final Transform2d BACK_RIGHT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(-6.125),Units.inchesToMeters(3.25),new Rotation2d(0));
+    public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(6.125),Units.inchesToMeters(3.25),new Rotation2d(0));
     
   }
   
@@ -88,12 +88,12 @@ public final class Constants {
   {
     public static final int FOUR_BAR_MOTOR_ID = 13;
     public static double FOUR_BAR_FORWARD_POWER = 2.0;
-    public static int FOUR_BAR_FORWARD_TIMEOUT_SEC = 4; /* Max run time in case we do not hit limit */
+    public static int FOUR_BAR_FORWARD_TIMEOUT_SEC = 1; /* Max run time in case we do not hit limit */
     public static double FOUR_BAR_BACKWARD_POWER = 4.0;
     public static int FOUR_BAR_BACKWARD_TIMEOUT_SEC = 4; /* Max run time in case we do not hit limit */
 
     public static final int INTAKE_MOTOR_ID = 14;
-    public static double INTAKE_MOTOR_POWER = 12.0;
+    public static double INTAKE_MOTOR_POWER = 14.0;
     public static boolean INTAKE_MOTOR_INVERSE = true;
   }
 
@@ -113,15 +113,15 @@ public final class Constants {
   public static class StageConstants {
     public static final int STAGE_MOTOR_ID = 10;
     public static boolean STAGE_INVERSE = true;
+    public static boolean STAGE_USE_PID = false;
 
-    public static double KP = 0.00015; // Proportional gain
-    public static double KI = 0.0000004; // Integral gain
+    public static double KP = 0.0004; // Proportional gain
+    public static double KI = 0.0000009; // Integral gain
     public static double KD = 0.000001; // Derivative gain
     public static double MAX_OUTPUT = 1.0;
-    public static final double MAX_VELOCITY = 1.0; // Max velocity in units/sec
     public static final double MAX_ACCELERATION = 0.5; // Max acceleration in units/sec^2
     public static final int MAX_CURRENT = 40; //amps
-    public static final double MAX_VOLTAGE = 12; //volts
+    public static final double MAX_VOLTAGE = 14;  // Max voltage when in non-pid mode
     public static final double TARGET_VELOCITY_RPS = 7000; 
     public static final double TOLERANCE = 100; //rps
 
@@ -144,7 +144,7 @@ public final class Constants {
     public static final double MAX_ACCELERATION = 0.5 ;
     public static final int MAX_CURRENT = 60; //amps
     public static final double MAX_VOLTAGE = 12; //volts
-    public static final double TARGET_VELOCITY_RPM = 2000; 
+    public static final double TARGET_VELOCITY_RPM = 2500; 
     public static final double TOLERANCE = 100; //rps
 
     public static final double MAX_SHOOTING_DISTANCE = 5; //Max distance we can shoot at max velocity in meters

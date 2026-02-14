@@ -25,7 +25,7 @@ public class Outtake extends Command {
     public void initialize() 
     {
         launcher.runLauncher(-1 * maxLauncherSpeed);
-        stager.runStage(-1 * maxStageSpeed);
+        stager.runStageVelocity(-1 * maxStageSpeed);
         stager.runSpindexer(-1 * maxSpindexerPower);
         stager.runOmnidexer(-1 * maxOmnidexerPower);
     }

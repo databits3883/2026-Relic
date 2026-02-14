@@ -42,6 +42,7 @@ public class StageSubsystem extends SubsystemBase
   private boolean m_isOmnidexerRunning = false;
       
   private boolean isRunning = false;      
+  private boolean isPIDControl = Constants.StageConstants.STAGE_USE_PID;
   private SparkMaxConfig m_baseConfig = new SparkMaxConfig();
   private SparkClosedLoopController closedLoopController = m_stageMotor.getClosedLoopController();
   private RelativeEncoder stageEncoder=null;
@@ -52,7 +53,9 @@ public class StageSubsystem extends SubsystemBase
   { 
       stageEncoder = m_stageMotor.getEncoder();   
         
-      m_baseConfig.closedLoop
+      if (isPIDControl)
+      {
+        m_baseConfig.closedLoop
                   .p(kP)
                   .i(kI)
                   .d(kD)
@@ -61,6 +64,7 @@ public class StageSubsystem extends SubsystemBase
                   
                   //.feedForward.kV(12.0/917) // set PID 
                   ;                        
+      }
       m_baseConfig.idleMode(IdleMode.kCoast)
                   .smartCurrentLimit(Constants.StageConstants.MAX_CURRENT)
                   .voltageCompensation(Constants.StageConstants.MAX_VOLTAGE)
@@ -105,10 +109,13 @@ public class StageSubsystem extends SubsystemBase
   public void runStage()
   {
     //Run to the default target speed
-    runStage(targetVelocity);
+    if (isPIDControl)
+      runStageVelocity(targetVelocity);
+    else
+      runStageVoltage(Constants.StageConstants.MAX_VOLTAGE);
   }
   /** Run the motor to a given speed */
-  public void runStage(double targetVelocityRPS)
+  public void runStageVelocity(double targetVelocityRPS)
   {
     if (!isRunning)
     {
@@ -117,6 +124,21 @@ public class StageSubsystem extends SubsystemBase
       SmartDashboard.putBoolean("Stage Run Motor", isRunning);
     }
     closedLoopController.setSetpoint(targetVelocityRPS, ControlType.kVelocity);
+  }
+
+  /**
+   * Run the staging motor with voiltage, not PID
+   * @param voltage
+   */
+  public void runStageVoltage(double voltage)
+  {
+    if (!isRunning)
+    {
+      startTime = System.currentTimeMillis();
+      isRunning = true;
+      SmartDashboard.putBoolean("Stage Run Motor", isRunning);
+    }
+    m_stageMotor.setVoltage(voltage);
   }
 
   /**
@@ -218,6 +240,9 @@ public class StageSubsystem extends SubsystemBase
    */
   public boolean atTargetVelocity() 
   {
+    //If we are not PID controlled return true if running
+    if (!isPIDControl) return isRunning;
+
     double tolerance = 100.0; // RPM tolerance
     return Math.abs(getVelocity() - targetVelocity) < tolerance;
   }

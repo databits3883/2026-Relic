@@ -246,7 +246,7 @@ public class TurretSubsystem extends SubsystemBase {
         Pose2d robotPose = swerveSubsystem.getPose();
 
         //Transform robot pose
-        Pose2d turretPose = robotPose.plus(Constants.TurretConstants.BACK_RIGHT_TURRET_FROM_CENTER_BOT);
+        Pose2d turretPose = robotPose.plus(Constants.TurretConstants.BACK_LEFT_TURRET_FROM_CENTER_BOT);
 
         //Find new target based on robot positon
         targetPose = findTargetToAim(turretPose);    

@@ -153,21 +153,21 @@ public class LaunchSubsystem extends SubsystemBase
     double newTargetVelocity = Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM;
     if (targetDistanceMeters >= Constants.LaunchConstants.MAX_SHOOTING_DISTANCE)
     {
-      newTargetVelocity = Constants.LaunchConstants.MAX_VELOCITY;
+      newTargetVelocity = Constants.LaunchConstants.TARGET_VELOCITY_RPM;
     }
     else 
     {
       //Right now do a percentage of the max distance for velocity, this is wrong
       //TODO find values, either try different distances and find optimal speeds, etc
       double percentageDistance = targetDistanceMeters / Constants.LaunchConstants.MAX_SHOOTING_DISTANCE;
-      newTargetVelocity = Constants.LaunchConstants.MAX_VELOCITY * percentageDistance;
+      newTargetVelocity = Constants.LaunchConstants.TARGET_VELOCITY_RPM * percentageDistance;
     }
 
     //TODO have a public function exposed to Robot Container for co-pilot to add/subtract percentage on speed
     //TODO: apply that new value here.
     if (newTargetVelocity < Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM) newTargetVelocity = Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM;
     //Hard code to max
-    newTargetVelocity = Constants.LaunchConstants.MAX_VELOCITY;
+    newTargetVelocity = Constants.LaunchConstants.TARGET_VELOCITY_RPM;
     SmartDashboard.putNumber("Launch Calc Velocity", newTargetVelocity);
     return newTargetVelocity;
   }
@@ -238,6 +238,7 @@ public class LaunchSubsystem extends SubsystemBase
     
     SmartDashboard.putNumber("Launch Current Velocity", getVelocity());
     SmartDashboard.putNumber("Launch IAccum", closedLoopController_a.getIAccum());
+    SmartDashboard.getNumber("Launch Target Velocity", currentSetPointRPM);
   }
 
   @Override
