@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
@@ -171,12 +173,24 @@ public class LaunchSubsystem extends SubsystemBase
     {
       newTargetVelocity = 2500;
     }
+    else if (targetDistanceMeters >= 3.0)
+    {
+      newTargetVelocity = 2300;
+    }
+    else if (targetDistanceMeters >= 2.7)
+    {
+      newTargetVelocity = 2100;
+    }
+    else if (targetDistanceMeters >= 2.3)
+    {
+      newTargetVelocity = 1900;
+    }
     else
     {
-      //Right now do a percentage of the max distance for velocity, this is wrong
       //TODO find values, either try different distances and find optimal speeds, etc
-      double percentageDistance = targetDistanceMeters / Constants.LaunchConstants.MAX_SHOOTING_DISTANCE;
-      newTargetVelocity = Constants.LaunchConstants.TARGET_VELOCITY_RPM * percentageDistance;
+
+      //Assume 200 rpm for every .3 Meters
+      newTargetVelocity = ((3.5 - targetDistanceMeters ) / 0.3) * 200;
     }
 
     //TODO have a public function exposed to Robot Container for co-pilot to add/subtract percentage on speed

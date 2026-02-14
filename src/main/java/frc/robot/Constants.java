@@ -82,7 +82,7 @@ public final class Constants {
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_RIGHT = new Transform2d(0,Units.inchesToMeters(-7),new Rotation2d(0));
     //public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(6.125),Units.inchesToMeters(3.25),new Rotation2d(0));
     public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(3.25),Units.inchesToMeters(6.125),new Rotation2d(0));
-    public static final double TURRET_ANGLE_OFFSET = 30; //Offset all targets by 30 degrees clockwise
+    public static final double TURRET_ANGLE_OFFSET = 20; //Offset all targets by 30 degrees clockwise
   }
   
   public static class Intake 

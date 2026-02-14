@@ -102,9 +102,11 @@ public class TurretSubsystem extends SubsystemBase {
                         .maxMotion.maxAcceleration(Constants.TurretConstants.MAX_ACCELERATION)
                         ; // set PID
         m_baseConfig.idleMode(IdleMode.kCoast);
-        
+        //Ensure limit switches keep moving on turret
+        m_baseConfig.limitSwitch.forwardLimitSwitchTriggerBehavior(Behavior.kKeepMovingMotor);
+        m_baseConfig.limitSwitch.reverseLimitSwitchTriggerBehavior(Behavior.kKeepMovingMotor);
         m_baseConfig.encoder.positionConversionFactor(kTurretGearRatio);
-
+        
         //Update the motoro config to use PID
         m_motor.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
         //set the setpoint to the current location
