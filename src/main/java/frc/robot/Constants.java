@@ -148,8 +148,8 @@ public final class Constants {
     public static final double TARGET_VELOCITY_RPM = 2700; 
     public static final double TOLERANCE = 100; //rps
 
-    public static final double MAX_SHOOTING_DISTANCE = 5; //Max distance we can shoot at max velocity in meters
-    public static final double MIN_SHOOTING_MIN_VELOCITY_RPM = 1500;
+    public static final double MAX_SHOOTING_DISTANCE = 4; //Max distance we can shoot at max velocity in meters
+    public static final double MIN_SHOOTING_MIN_VELOCITY_RPM = 2100;
   }
 
 }

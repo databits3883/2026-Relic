@@ -173,32 +173,16 @@ public class LaunchSubsystem extends SubsystemBase
     {
       newTargetVelocity = 2500;
     }
-    else if (targetDistanceMeters >= 2.7)
-    {
-      newTargetVelocity = 2300;
-    }
-    else if (targetDistanceMeters >= 2.0)
-    {
-      newTargetVelocity = 2100;
-    }
-    else if (targetDistanceMeters >= 1.5)
-    {
-      newTargetVelocity = 1900;
-    }
-    else if (targetDistanceMeters >= 1.2)
-    {
-      newTargetVelocity = 1700;
-    }
     else
     {
-      //TODO find values, either try different distances and find optimal speeds, etc
+      //first rough equation, best fit from a few values - https://mycurvefit.com/
+      newTargetVelocity = 153.8462*targetDistanceMeters + 1930.769;
 
       //Assume 200 rpm for every .3 Meters
-      newTargetVelocity = ((3.5 - targetDistanceMeters ) / 0.3) * 200;
+      //newTargetVelocity = ((3.5 - targetDistanceMeters ) / 0.3) * 200;
     }
 
-    //TODO have a public function exposed to Robot Container for co-pilot to add/subtract percentage on speed
-    //TODO: apply that new value here.
+    //apply that new value here.
     if (newTargetVelocity < Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM) newTargetVelocity = Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM;
 
     SmartDashboard.putNumber("Launch Calc Velocity", newTargetVelocity);
