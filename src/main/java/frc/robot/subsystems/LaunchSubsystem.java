@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import pabeles.concurrency.ConcurrencyOps.NewInstance;
 
 public class LaunchSubsystem extends SubsystemBase 
 {
@@ -140,7 +141,7 @@ public class LaunchSubsystem extends SubsystemBase
   public boolean atTargetVelocity() 
   {
     double tolerance = 100.0; // RPM tolerance
-    return Math.abs(getVelocity() - targetVelocity) < tolerance;
+    return Math.abs(targetVelocity - getVelocity()) < tolerance;
   }
 
   /** 
@@ -149,7 +150,7 @@ public class LaunchSubsystem extends SubsystemBase
   private double estimateVelocityForTargetDistance(double targetDistanceMeters)
   {
     //Find the 
-    double newTargetVelocity = 0;
+    double newTargetVelocity = Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPS;
     if (targetDistanceMeters >= Constants.LaunchConstants.MAX_SHOOTING_DISTANCE)
     {
       newTargetVelocity = Constants.LaunchConstants.MAX_VELOCITY;
@@ -164,6 +165,10 @@ public class LaunchSubsystem extends SubsystemBase
 
     //TODO have a public function exposed to Robot Container for co-pilot to add/subtract percentage on speed
     //TODO: apply that new value here.
+    if (newTargetVelocity < Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPS) newTargetVelocity = Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPS;
+    //Hard code to max
+    newTargetVelocity = Constants.LaunchConstants.MAX_VELOCITY;
+    SmartDashboard.putNumber("Launch Calc Velocity", newTargetVelocity);
     return newTargetVelocity;
   }
 

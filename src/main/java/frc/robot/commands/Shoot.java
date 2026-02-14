@@ -29,9 +29,9 @@ public class Shoot extends Command {
             stager.runOmnidexer();
             stager.runStage();
         } else {
-            stager.stopSpindexer();
-            stager.stopOmnidexer();
-            stager.stop();
+            //stager.stopSpindexer();
+            //stager.stopOmnidexer();
+            //stager.stop();
         }
     }
 
