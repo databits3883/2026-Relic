@@ -54,8 +54,7 @@ public final class Constants {
     public static final int TURRET_MOTOR_ID = 9;
 
     //OLD kp that was working, but might have smoked motor
-    //public static double KP = 12; // Proportional gain
-    public static double KP = 10; // Proportional gain
+    public static double KP = 5; // Proportional gain
     public static double KI = 0.00008; // Integral gain
     public static double KD = 0.0; // Derivative gain
     public static double MAX_OUTPUT = 0.3;

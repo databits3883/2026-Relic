@@ -17,7 +17,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -54,6 +53,7 @@ public class TurretSubsystem extends SubsystemBase {
     private boolean isTurretEnabled = false;
     private boolean isAutoAiming = false;
     private boolean isManuallyAiming = false;
+    private boolean alignmentToggle = false;
 
     //Manual Aim Targert
     private double manualAimTargetDegrees = 0;
@@ -277,15 +277,18 @@ public class TurretSubsystem extends SubsystemBase {
         boolean alignmentTrigger = turretAlignmentSwitch.isPressed();
         
         //if the alignment switch is triggered force the turret encoder to update its position
-        if (alignmentTrigger == true)
+        if (alignmentTrigger == true && alignmentToggle == false) alignmentToggle = true; //Set the trigger to indicate we have seen the trigger
+        if (alignmentTrigger == false && alignmentToggle == true)
         {
-            currentAngleRot2Degree = Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE;
-            currentMotorRotations = getTurretRotations(currentAngleRot2Degree);  
-            if (CALIBRATION_MODE) System.out.println("Switch: previous position: "+ turretEncoder.getPosition() + " target.pos: " + closedLoopController.getSetpoint());                      
-            turretEncoder.setPosition(currentMotorRotations);     
-            //Since the encoder has been reset, define new set point based on new encoder position
-            closedLoopController.setSetpoint(getTargetRotationsFromDegrees(angleSetpoint), ControlType.kPosition, ClosedLoopSlot.kSlot0);            
-            if (CALIBRATION_MODE) System.out.println("Switch: current position: "+ turretEncoder.getPosition() + " target.pos: " + closedLoopController.getSetpoint());                      
+          //We are coming off the toggle
+          alignmentToggle = false;
+          currentAngleRot2Degree = Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE;
+          currentMotorRotations = getTurretRotations(currentAngleRot2Degree);  
+          if (CALIBRATION_MODE) System.out.println("Switch: previous position: "+ turretEncoder.getPosition() + " target.pos: " + closedLoopController.getSetpoint());                      
+          turretEncoder.setPosition(currentMotorRotations);     
+          //Since the encoder has been reset, define new set point based on new encoder position
+          closedLoopController.setSetpoint(getTargetRotationsFromDegrees(angleSetpoint), ControlType.kPosition, ClosedLoopSlot.kSlot0);            
+          if (CALIBRATION_MODE) System.out.println("Switch: current position: "+ turretEncoder.getPosition() + " target.pos: " + closedLoopController.getSetpoint());                      
         } 
 
         //Update negative values back to positoive
