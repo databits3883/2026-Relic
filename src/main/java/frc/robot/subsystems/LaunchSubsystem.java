@@ -81,7 +81,7 @@ public class LaunchSubsystem extends SubsystemBase
       m_motor_b.configure(m_baseConfig_b, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
   
       SmartDashboard.setDefaultNumber("Launch Target Velocity", defaultSetPointRPM);
-      SmartDashboard.setDefaultBoolean("Launch Run Motor", false);
+      SmartDashboard.setDefaultBoolean("Launch Override Velocity", false);
       SmartDashboard.setDefaultBoolean("Launch Update PID", false);
       SmartDashboard.putNumber("Launch P Gain", kP);
       SmartDashboard.putNumber("Launch I Gain", kI);
@@ -93,7 +93,6 @@ public class LaunchSubsystem extends SubsystemBase
  public void stop()
   {
     isRunning = false;
-    SmartDashboard.putBoolean("Launch Run Motor", false);
 
     //set the current
     closedLoopController_a.setSetpoint(0, ControlType.kVelocity);
@@ -113,7 +112,6 @@ public class LaunchSubsystem extends SubsystemBase
     {
       isRunning = true;
       startTime = System.currentTimeMillis();
-      SmartDashboard.putBoolean("Launch Run Motor", true);
     }
     currentSetPointRPM = targetVelocityRPM;
     closedLoopController_a.setSetpoint(targetVelocityRPM, ControlType.kVelocity);
@@ -194,25 +192,23 @@ public class LaunchSubsystem extends SubsystemBase
   public void periodic() 
   {
     // This method will be called once per scheduler run
-    if(!isRunning && (SmartDashboard.getBoolean("Launch Run Motor", false)))
-    {
-      double targetVelocityDB = SmartDashboard.getNumber("Launch Target Velocity", defaultSetPointRPM);
-
-      runLauncher(targetVelocityDB);
-    } 
-    else if (isRunning)    
+    if (isRunning)    
     {
       long delta = System.currentTimeMillis() - startTime;
-      if ((delta > 500) && !SmartDashboard.getBoolean("Launch Run Motor", false))
+      //Estimate velocity based on distance
+      double newTargetVelocity = estimateVelocityForTargetDistance(RobotContainer.turretSubsystem.getDistanceToTarget());
+      //TODO read if we are overriding launcher
+      if (SmartDashboard.getBoolean("Launch Override Velocity", false))
       {
-        stop();
+        //Read manual velocity
+        newTargetVelocity = SmartDashboard.getNumber("Launch Current Velocity", 0);
       }
       else
       {
-        //Estimate velocity based on distance
-        double newTargetVelocity = estimateVelocityForTargetDistance(RobotContainer.turretSubsystem.getDistanceToTarget());
-        runLauncher(newTargetVelocity);
+        //Update the launch velocity smartdashboard
+        SmartDashboard.putNumber("Launch Current Velocity", getVelocity());
       }
+      runLauncher(newTargetVelocity);
     }
 
     if(SmartDashboard.getBoolean("Launch Update PID", false))
@@ -254,7 +250,6 @@ public class LaunchSubsystem extends SubsystemBase
       } //end if updatePID
     } //end update PID
     
-    SmartDashboard.putNumber("Launch Current Velocity", getVelocity());
     SmartDashboard.putNumber("Launch IAccum", closedLoopController_a.getIAccum());
     SmartDashboard.getNumber("Launch Target Velocity", currentSetPointRPM);
   }
