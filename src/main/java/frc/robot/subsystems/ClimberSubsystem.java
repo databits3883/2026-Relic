@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkSoftLimit;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -51,6 +52,10 @@ public class ClimberSubsystem extends SubsystemBase
     m_climberEncoder = m_primary_motor.getEncoder();
     //Track the last time we read the encoder
     lastPositionRead = m_climberEncoder.getPosition();
+
+    //For debugging, climber position
+    SmartDashboard.putNumber("Climber Current Position",0);
+
   }
 
   //This will determine if the motor is stalled
@@ -171,6 +176,9 @@ public class ClimberSubsystem extends SubsystemBase
   {
     //Update the last position reading
     lastPositionRead = getCurrentClimberPosition();
+    SmartDashboard.putNumber("Climber Current Position",lastPositionRead);
+
+    //Stop the climber if we are running in reverse and at limit
     if (isClimberReverseLimit() && isClimberRunning() && m_currentPowerLevel < 0)
     {
       stopClimber();
