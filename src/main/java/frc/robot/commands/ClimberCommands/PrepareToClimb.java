@@ -18,7 +18,7 @@ public class PrepareToClimb extends Command {
 
     @Override
     public void initialize() {
-        climberSub.reverseClimber(Constants.Climber.SLOW_REVERSE_SPEED);
+        climberSub.runClimber(Constants.Climber.SLOW_FORWARD_SPEED);
         //start a timer, We can stop after X seconds if it does not reach limit
         startTime = System.currentTimeMillis();
     }
@@ -43,7 +43,7 @@ public class PrepareToClimb extends Command {
         long delta = System.currentTimeMillis() - startTime;
 
         //Check the soft limit
-        boolean atLimit = climberSub.isAtClimbLimit();        
+        boolean atLimit = climberSub.isAtPrepareToClimbLimit();        
         boolean overTime = (delta > ABORT_TIME);
         boolean finished = false;
         if (atLimit) finished = true;

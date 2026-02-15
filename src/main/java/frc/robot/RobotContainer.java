@@ -29,6 +29,7 @@ import frc.robot.commands.TurretAutoAim;
 import frc.robot.commands.TurretManualAim;
 import frc.robot.commands.ClimberCommands.Climb;
 import frc.robot.commands.ClimberCommands.PrepareToClimb;
+import frc.robot.commands.ClimberCommands.StowClimber;
 import frc.robot.commands.intake.Deploy;
 import frc.robot.commands.intake.Retract;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -232,7 +233,7 @@ public class RobotContainer
       //Climber
       driverJoystick.button(7).onTrue(new PrepareToClimb(climberSubsystem));
       driverJoystick.button(8).onTrue(new Climb(climberSubsystem));
-      //TODO: Duncan needs to define button for Stow Climber
+      driverJoystick.button(9).onTrue(new StowClimber(climberSubsystem));
       //TODO: Build new button to fully retract climber
 
     }

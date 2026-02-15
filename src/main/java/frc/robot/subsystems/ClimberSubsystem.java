@@ -4,9 +4,12 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkSoftLimit;
 
@@ -16,14 +19,16 @@ import frc.robot.Constants;
 public class ClimberSubsystem extends SubsystemBase 
 {
   private SparkMax m_primary_motor = new SparkMax(Constants.Climber.PRIMARY_MOTOR_ID, MotorType.kBrushless);
-  private SparkLimitSwitch m_climberLimitSwitch_forward = null;
+  private SparkMaxConfig m_climbConfig = new SparkMaxConfig();
+  private SparkLimitSwitch m_climberClimbingLimit = null;
   private SparkLimitSwitch m_climberLimitSwitch_reverse = null;
   private SparkMax m_secondary_motor = new SparkMax(Constants.Climber.SECONDARY_MOTOR_ID, MotorType.kBrushless);
   private RelativeEncoder m_climberEncoder;
-  private SparkSoftLimit m_climberClimbingLimit = null;
+  //private SparkSoftLimit m_climberClimbingLimit = null;
 
   private double m_climberPower = Constants.Climber.MAX_POWER;
   private boolean m_isClimberRunning = false;
+  private double m_currentPowerLevel = 0;
 
   private double lastPositionRead = 0;
     
@@ -32,10 +37,16 @@ public class ClimberSubsystem extends SubsystemBase
    */
   public ClimberSubsystem() 
   {     
-    //Create the limit switches
-    m_climberLimitSwitch_forward = m_primary_motor.getForwardLimitSwitch();
+    //Invert
+    m_climbConfig.inverted(Constants.Climber.INVERT);
+    m_primary_motor.configure(m_climbConfig, ResetMode.kResetSafeParameters,PersistMode.kNoPersistParameters);
+
+    //Create the limit switches (reverse is limit switch on ground, forward is at climb depth, no forward limit, use rotations)
+    m_climberClimbingLimit = m_primary_motor.getForwardLimitSwitch();
     m_climberLimitSwitch_reverse = m_primary_motor.getReverseLimitSwitch();
-    m_climberClimbingLimit = m_primary_motor.getReverseSoftLimit();
+     
+    m_currentPowerLevel = 0;
+
     //create the encoder from the motor
     m_climberEncoder = m_primary_motor.getEncoder();
     //Track the last time we read the encoder
@@ -60,22 +71,38 @@ public class ClimberSubsystem extends SubsystemBase
    */
   public boolean isClimberReverseLimit()
   {
-    return m_climberLimitSwitch_reverse.isPressed();
+    boolean isReverseLimit =  m_climberLimitSwitch_reverse.isPressed();
+    if (isReverseLimit)
+    {
+      //Zero position
+      m_climberEncoder.setPosition(0);
+    }
+    return isReverseLimit;
   }
   /**
-   * returns true if the intake 4 bar is at forward limit
+   * returns true if the climber is fully extended
    * @return
    */
-  public boolean isClimberForwardLimit()
+  public boolean isAtPrepareToClimbLimit()
   {
-    return m_climberLimitSwitch_forward.isPressed();
+    double currentRotations = getCurrentClimberPosition();
+    //Return true is we are at or past the number of rotations we determined to be extended
+    return (currentRotations >= Constants.Climber.ROTATIONS_FULLY_EXTENDED);
   }
 
+  /**
+   * returns true if the climber is fully extended
+   * @return
+   */
   public boolean isAtClimbLimit()
   {
-    //TODO: This will probably be defined as a soft limit
-    //verify with build team
-    return m_climberClimbingLimit.isReached();    
+    boolean isClimbed = false;
+    double currentRotations = getCurrentClimberPosition();
+    boolean isForwardLimit =  m_climberClimbingLimit.isPressed();
+    //Return true is we are at or past the number of rotations we determined to be at climb or limit is reached
+    if (isForwardLimit) isClimbed = true;
+    if (currentRotations <= Constants.Climber.ROTATIONS_AT_CLIMB) isClimbed=true; //If we are at or less than the configured climb rots
+    return isClimbed;
   }
 
   /**
@@ -93,8 +120,10 @@ public class ClimberSubsystem extends SubsystemBase
   public void stopClimber()
   {
     //turn off motor
+    m_primary_motor.setVoltage(0);
     m_secondary_motor.setVoltage(0);
     m_isClimberRunning = false;
+     m_currentPowerLevel = 0;
   }
 
   /**
@@ -108,9 +137,13 @@ public class ClimberSubsystem extends SubsystemBase
   /** Run the motor to a given power */
   public void runClimber(double targetVoltage)
   {
+    m_primary_motor.setVoltage(targetVoltage);
     m_secondary_motor.setVoltage(targetVoltage);
     if (targetVoltage != 0) m_isClimberRunning = true; 
     else m_isClimberRunning = false;
+
+    //Update the current power level
+     m_currentPowerLevel = targetVoltage;
   }
   /**
    * Run the intake reverse speed
@@ -138,6 +171,10 @@ public class ClimberSubsystem extends SubsystemBase
   {
     //Update the last position reading
     lastPositionRead = getCurrentClimberPosition();
+    if (isClimberReverseLimit() && isClimberRunning() && m_currentPowerLevel < 0)
+    {
+      stopClimber();
+    }
   }
 
   @Override

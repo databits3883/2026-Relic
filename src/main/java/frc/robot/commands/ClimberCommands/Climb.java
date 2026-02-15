@@ -17,7 +17,7 @@ public class Climb extends Command {
 
     @Override
     public void initialize() {
-        climberSubsystem.runClimber();
+        climberSubsystem.reverseClimber();
         //start a timer, We can stop after X seconds if it does not reach limit
         startTime = System.currentTimeMillis();
     }
@@ -41,7 +41,7 @@ public class Climb extends Command {
         //Calculate the delta time in ms and we can abort after X milliseconds
         long delta = System.currentTimeMillis() - startTime;
         
-        boolean atLimit = climberSubsystem.isClimberForwardLimit();
+        boolean atLimit = climberSubsystem.isAtClimbLimit();
         boolean overTime = (delta > ABORT_TIME);
         boolean finished = false;
         if (atLimit) finished = true;
