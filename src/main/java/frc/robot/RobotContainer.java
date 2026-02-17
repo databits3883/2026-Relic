@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -206,7 +208,8 @@ public class RobotContainer
       //driverJoystick.button(13).onTrue(Commands.runOnce(drivebase::zeroGyro));
       //zero with the correct alliance
       driverJoystick.button(13).onTrue(Commands.runOnce(drivebase::zeroGyroWithAlliance));
-      //driverJoystick.button(15).onTrue(Commands.none());
+      //Death Spin, todo update button location
+      driverJoystick.button(11).whileTrue(new RunCommand(() -> drivebase.setChassisSpeeds(new ChassisSpeeds(0, 0, 12)), drivebase));
       
       driverJoystick.button(15).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       
@@ -216,9 +219,8 @@ public class RobotContainer
       driverJoystick.button(12).whileTrue(new TurretManualAim());
       driverJoystick.povUp().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(0);}));
       driverJoystick.povDown().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(180);}));
-      //driverJoystick.povLeft().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(90);}));
+      driverJoystick.povLeft().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(90);}));
       driverJoystick.povRight().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(270);}));
-      driverJoystick.povLeft().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(10);}));
 
       //Shoot while button is held
       driverJoystick.button(1).whileTrue(new Shoot(launchSubsystem, stageSubsystem));
@@ -229,6 +231,10 @@ public class RobotContainer
       //Intake deploy/retract
       driverJoystick.button(3).onTrue(new Deploy(intakeSubsystem));
       driverJoystick.button(4).onTrue(new Retract(intakeSubsystem));
+
+      //Run intake while this button is off and stop when button is on, TODO, remap to copilot box
+      driverJoystick.button(3).whileTrue(Commands.runOnce(intakeSubsystem::overrideStopIntake, drivebase).repeatedly());
+      driverJoystick.button(3).whileFalse(Commands.runOnce(intakeSubsystem::overrideStartIntake, drivebase).repeatedly());
 
       //Climber
       driverJoystick.button(7).onTrue(new PrepareToClimb(climberSubsystem));

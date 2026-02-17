@@ -31,6 +31,7 @@ public class IntakeSubsystem extends SubsystemBase
   
   private boolean m_isIntakeRunning = false;
   private boolean m_isFourBarRunning = false;
+  private boolean m_isIntakeDeployed = false;
     
   public IntakeSubsystem() 
   { 
@@ -43,12 +44,36 @@ public class IntakeSubsystem extends SubsystemBase
   }
 
   /**
+   * Used to stop the intake by a button
+   */
+  public void overrideStopIntake()
+  {
+    if (isIntakeRunning())
+    {
+      stopIntake();
+    }
+  }
+  /**
+   * Used to start the intake (if deployed) by button
+   */
+  public void overrideStartIntake()
+  {
+    if (!isIntakeRunning())
+    {
+      runIntake();
+    }
+  }
+
+  /**
    * returns true if the intake 4 bar is at reverse limit
    * @return
    */
   public boolean isFourBarReverseLimit()
   {
-    return m_fouSparkLimitSwitch_reverse.isPressed();
+    boolean isAtLimit =  m_fouSparkLimitSwitch_reverse.isPressed();
+    //Set the opposite of the limit switch for intake deployed state
+    intakeDeplyed(!isAtLimit);
+    return isAtLimit;
   }
   /**
    * returns true if the intake 4 bar is at forward limit
@@ -56,7 +81,9 @@ public class IntakeSubsystem extends SubsystemBase
    */
   public boolean isFourBarForwardLimit()
   {
-    return m_fouSparkLimitSwitch_forward.isPressed();
+    boolean isAtLimit =  m_fouSparkLimitSwitch_forward.isPressed();
+    intakeDeplyed(isAtLimit);
+    return isAtLimit;
   }
   /**
    * Returns true if the motor is spinning
@@ -110,6 +137,31 @@ public class IntakeSubsystem extends SubsystemBase
   }
 
   /**
+   * Return if the intake four bar system is deployed or not
+   * @return
+   */
+  public boolean isIntakeDeployed()
+  {
+    return m_isIntakeDeployed;
+  }
+
+  /**
+   * Update the four bar state, deployed or retracted
+   * @param fourBarState
+   */
+  public void intakeDeplyed(boolean fourBarState)
+  {
+    if (m_isIntakeDeployed != fourBarState)
+    {
+      //State of intake has changed
+      m_isIntakeDeployed = fourBarState;
+      //try to run the intake
+      if (fourBarState) runIntake();
+      else stopIntake();
+    }
+  }
+
+  /**
    * Stop the intake from spinning
    */
   public void stopIntake()
@@ -130,9 +182,13 @@ public class IntakeSubsystem extends SubsystemBase
   /** Run the motor to a given power */
   public void runIntake(double targetVoltage)
   {
-    m_intake_motor.setVoltage(targetVoltage);
-    if (targetVoltage != 0) m_isIntakeRunning = true; 
-    else m_isIntakeRunning = false;
+    //Only allow the intake to run if deployed
+    if (isIntakeDeployed())
+    {
+      m_intake_motor.setVoltage(targetVoltage);
+      if (targetVoltage != 0) m_isIntakeRunning = true; 
+      else m_isIntakeRunning = false;
+    }
   }
   /**
    * Run the intake reverse speed
