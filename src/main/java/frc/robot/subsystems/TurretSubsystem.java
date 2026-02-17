@@ -412,6 +412,12 @@ public class TurretSubsystem extends SubsystemBase {
             //Run the motor
             //Update the angleSetPoint
             angleSetpoint = getTurretDegrees(targetPositionRotations);
+            //See if the current angle is with in defined "Deadband"
+            if (Math.abs(currentAngleRot2Degree - angleSetpoint) <= Constants.TurretConstants.ANGLE_DEADBAND)
+            {
+              //If we are "close enough" just set the target to current position to "stop" the motor
+              targetPositionRotations = currentMotorRotations;
+            }
             closedLoopController.setSetpoint(targetPositionRotations, ControlType.kPosition, ClosedLoopSlot.kSlot0);
         } // end if enabled
     }
