@@ -31,7 +31,8 @@ public class ClimberSubsystem extends SubsystemBase
   private boolean m_isClimberRunning = false;
   private double m_currentPowerLevel = 0;
 
-  private double lastPositionRead = 0;
+  private double lastPositionRead = 100;
+  private long lastStallReading = 0;
     
   /**
    * Initialize the motor and other components
@@ -62,14 +63,27 @@ public class ClimberSubsystem extends SubsystemBase
   //This will determine if the motor is stalled
   public boolean isStalled() 
   {
+    long currentTime = System.currentTimeMillis();
+    long deltaTime = currentTime - lastStallReading;
+    boolean isMotorStalled = false;
+    //Only check if we are running
+    if (!isClimberRunning()) return false;  
+
+    //Check if we are moving at all
+    if (deltaTime > 50)
+    {
+      //check position every 50 ms
+      double currentPosition = getCurrentClimberPosition();
+      double deltaPosition = currentPosition - lastPositionRead;
+      if (deltaPosition < 0.02) isMotorStalled = true;      
+      lastStallReading = currentTime;
+    }
+
     //If the motor is supposed to be running, check the current draw
     double motorAppliedOutput = m_primary_motor.getAppliedOutput();
-    double currentPosition = getCurrentClimberPosition();
-    double deltaPosition = currentPosition - lastPositionRead;
-    System.out.println("IsStalled-MotorAppliedOutput="+motorAppliedOutput+ ", deltaPosition="+deltaPosition);
-    //TODO read the values above and see what values should be a stalled 
-    if (deltaPosition < 0.1) return true;
-    return false;
+    //TODO determine if we can determine anything from applied output
+
+    return isMotorStalled;
   }
   /**
    * returns true if the intake 4 bar is at reverse limit

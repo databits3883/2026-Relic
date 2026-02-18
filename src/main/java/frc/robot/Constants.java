@@ -106,7 +106,7 @@ public final class Constants {
     public static final int SECONDARY_MOTOR_ID = 17; 
     
     public static double MAX_POWER = 14.0;
-    public static double SLOW_REVERSE_SPEED = -0.3 *MAX_POWER;
+    public static double SLOW_REVERSE_SPEED = -0.3 * MAX_POWER;
     public static double SLOW_FORWARD_SPEED = 0.3 * MAX_POWER;
 
     public static int CLIMBER_TIMEOUT_SEC = 4;
@@ -114,6 +114,7 @@ public final class Constants {
     public static boolean INVERT = true;
     public static double ROTATIONS_FULLY_EXTENDED = 23.5; //Rotation count when fully extended, determine actual number
     public static double ROTATIONS_AT_CLIMB = 1; //Rotation count when fully at climb, fallback to if we drive past limit
+    public static double MAX_ROTATIONS_IN_FRAME = 1; //Max motor rotations and still keep climber in frame
   }
 
   public static class StageConstants {

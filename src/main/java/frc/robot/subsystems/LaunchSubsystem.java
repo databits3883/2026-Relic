@@ -200,7 +200,7 @@ public class LaunchSubsystem extends SubsystemBase
       long delta = System.currentTimeMillis() - startTime;
       //Estimate velocity based on distance
       double newTargetVelocity = estimateVelocityForTargetDistance(RobotContainer.turretSubsystem.getDistanceToTarget());
-      //TODO read if we are overriding launcher
+      //read if we are overriding launcher
       if (SmartDashboard.getBoolean("Launch Override Velocity", false))
       {
         //Read manual velocity
@@ -209,7 +209,7 @@ public class LaunchSubsystem extends SubsystemBase
       else
       {
         //Update the launch velocity smartdashboard
-        SmartDashboard.putNumber("Launch Target Velocity", newTargetVelocity);
+        //SmartDashboard.putNumber("Launch Target Velocity", newTargetVelocity);
       }
       runLauncher(newTargetVelocity);
     }
