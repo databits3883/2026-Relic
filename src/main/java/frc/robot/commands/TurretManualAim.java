@@ -20,7 +20,7 @@ public class TurretManualAim  extends Command
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("Toggle Manual Aim Command init()");
+    //System.out.println("Toggle Manual Aim Command init()");
     RobotContainer.turretSubsystem.enableManuallyAim();
   }
 
@@ -28,15 +28,15 @@ public class TurretManualAim  extends Command
   @Override
   public void execute() 
   {
-      System.out.println("Toggle Manual Aim Command execute()");
-}
+      //System.out.println("Toggle Manual Aim Command execute()");
+  }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) 
   {
     RobotContainer.turretSubsystem.disableManuallyAim();
-    System.out.println("Toggle Manual Aim Command end()");
+    //System.out.println("Toggle Manual Aim Command end()");
   }
 
   // Imediate end this command

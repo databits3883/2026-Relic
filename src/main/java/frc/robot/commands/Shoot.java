@@ -7,23 +7,31 @@ import frc.robot.subsystems.StageSubsystem;
 public class Shoot extends Command {
     private final LaunchSubsystem launcher;
     private final StageSubsystem stager;
+    private boolean manualLaunch;
 
     public Shoot(LaunchSubsystem launchSubsystem, StageSubsystem stageSubsystem) 
     {
+        this(launchSubsystem, stageSubsystem, false);
+    }
+
+    public Shoot(LaunchSubsystem launchSubsystem, StageSubsystem stageSubsystem, boolean manual)
+    {
+        manualLaunch = manual;
         this.launcher = launchSubsystem;
         this.stager = stageSubsystem;
         
         addRequirements(launchSubsystem, stageSubsystem);
-    }
+    } 
 
     @Override
     public void initialize() {
-        launcher.runLauncher(true);
+        //launcher.runLauncher(true);
+        launcher.runLauncher(!manualLaunch);
     }
 
     @Override
     public void execute() {
-        launcher.runLauncher(true);
+        launcher.runLauncher(!manualLaunch);
         if (launcher.atTargetVelocity()) {
             stager.runSpindexer();
             stager.runOmnidexer();

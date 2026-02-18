@@ -64,7 +64,7 @@ public final class Constants {
     public static final double ALIGNMENT_SWITCH_ANGLE = 360-40; // The angle that the alignment switch sets the turret at
     public static final double START_TURRET_ANGLE = 0; //The angle the turret starts in
     public static final double MAX_ANGLE_ERROR = 15; //If the turret is off by this or more when the switch is hit then update the angle
-    public static final double ANGLE_DEADBAND = 1.0; //If we get within one degree when moving to set point that is close enough
+    public static final double ANGLE_DEADBAND = 2.0; //If we get within one degree when moving to set point that is close enough
 
     public static final double MID_FIELD_Y = Units.inchesToMeters(158.84);
     public static final double RED_X_PLAYER = Units.inchesToMeters(651.22 - 182.11 );
@@ -83,7 +83,7 @@ public final class Constants {
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_RIGHT = new Transform2d(0,Units.inchesToMeters(-7),new Rotation2d(0));
     //public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(6.125),Units.inchesToMeters(3.25),new Rotation2d(0));
     public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(-3.25),Units.inchesToMeters(6.125),new Rotation2d(0));
-    public static final double TURRET_ANGLE_OFFSET = 10; //Offset all targets by 30 degrees clockwise
+    public static final double TURRET_ANGLE_OFFSET = 0; //Offset all targets by 30 degrees clockwise
   }
   
   public static class Intake 
@@ -153,7 +153,7 @@ public final class Constants {
     public static final int MAX_CURRENT = 60; //amps
     public static final double MAX_VOLTAGE = 12; //volts
     public static final double TARGET_VELOCITY_RPM = 2700; 
-    public static final double TOLERANCE = 100; //rps
+    public static final double TOLERANCE = 50; //rps
 
     public static final double MAX_SHOOTING_DISTANCE = 4; //Max distance we can shoot at max velocity in meters
     public static final double MIN_SHOOTING_MIN_VELOCITY_RPM = 2100;

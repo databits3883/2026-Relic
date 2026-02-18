@@ -136,7 +136,7 @@ public class LaunchSubsystem extends SubsystemBase
   {
     if (useTargetDistance)
        runLauncher(estimateVelocityForTargetDistance(RobotContainer.turretSubsystem.getDistanceToTarget()));
-    else runLauncher();
+    else runLauncher(SmartDashboard.getNumber("Launch Target Velocity", 0));
   }
 
   /**

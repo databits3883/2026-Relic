@@ -28,14 +28,14 @@ public class TurretAutoAim  extends Command
   @Override
   public void execute() 
   {
-      System.out.println("Togglet Auto Aim Command execute()");
-}
+      //System.out.println("Togglet Auto Aim Command execute()");
+  }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) 
   {
-    System.out.println("Togglet Auto Aim Command end()");
+    //System.out.println("Togglet Auto Aim Command end()");
   }
 
   
@@ -43,7 +43,7 @@ public class TurretAutoAim  extends Command
   @Override
   public boolean isFinished() 
   {
-    System.out.println("Togglet Auto Aim Command isFinished()");
-      return true;
+    //System.out.println("Togglet Auto Aim Command isFinished()");
+    return true;
   } 
 }
