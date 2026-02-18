@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Meters;
-
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
@@ -28,6 +26,7 @@ public class LaunchSubsystem extends SubsystemBase
   private static double kP = Constants.LaunchConstants.KP;
   private static double kI = Constants.LaunchConstants.KI;
   private static double kD = Constants.LaunchConstants.KD;
+  private static double kF = Constants.LaunchConstants.KF;
   private static double maxOutput = Constants.LaunchConstants.MAX_OUTPUT;
   private double currentSetPointRPM = 0;
   private double defaultSetPointRPM =  Constants.LaunchConstants.TARGET_VELOCITY_RPM;
@@ -113,8 +112,12 @@ public class LaunchSubsystem extends SubsystemBase
       isRunning = true;
       startTime = System.currentTimeMillis();
     }
-    currentSetPointRPM = targetVelocityRPM;
-    closedLoopController_a.setSetpoint(targetVelocityRPM, ControlType.kVelocity);
+    //Only update the launcher if the speed changes
+    if (currentSetPointRPM != targetVelocityRPM)
+    {
+      currentSetPointRPM = targetVelocityRPM;
+      closedLoopController_a.setSetpoint(targetVelocityRPM, ControlType.kVelocity);
+    }
   }
    
   /**
@@ -201,12 +204,12 @@ public class LaunchSubsystem extends SubsystemBase
       if (SmartDashboard.getBoolean("Launch Override Velocity", false))
       {
         //Read manual velocity
-        newTargetVelocity = SmartDashboard.getNumber("Launch Current Velocity", 0);
+        newTargetVelocity = SmartDashboard.getNumber("Launch Target Velocity", 0);
       }
       else
       {
         //Update the launch velocity smartdashboard
-        SmartDashboard.putNumber("Launch Current Velocity", getVelocity());
+        SmartDashboard.putNumber("Launch Target Velocity", newTargetVelocity);
       }
       runLauncher(newTargetVelocity);
     }
@@ -235,13 +238,17 @@ public class LaunchSubsystem extends SubsystemBase
                     .i(kI)
                     .d(kD)
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                    .outputRange((-1 * maxOutput),maxOutput); // set PID 
+                    .outputRange((-1 * maxOutput),maxOutput) // set PID 
+                    //.feedForward.kV(12.0/917)
+                    ;
          m_baseConfig_b.closedLoop
                     .p(kP)
                     .i(kI)
                     .d(kD)
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                    .outputRange((-1 * maxOutput),maxOutput); // set PID 
+                    .outputRange((-1 * maxOutput),maxOutput) // set PID 
+                    //.feedForward.kV(12.0/917)
+                    ;
 
         //Update the motoro config to use PID
         m_motor_a.configure(m_baseConfig_a, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
@@ -251,7 +258,8 @@ public class LaunchSubsystem extends SubsystemBase
     } //end update PID
     
     SmartDashboard.putNumber("Launch IAccum", closedLoopController_a.getIAccum());
-    SmartDashboard.getNumber("Launch Target Velocity", currentSetPointRPM);
+    SmartDashboard.putNumber("Launch Current Velocity",getVelocity());
+    //SmartDashboard.getNumber("Launch Target Velocity", currentSetPointRPM);
   }
 
   @Override

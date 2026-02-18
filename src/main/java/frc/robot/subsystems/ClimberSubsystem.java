@@ -9,9 +9,9 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.LimitSwitchConfig.Behavior;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkSoftLimit;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,6 +40,7 @@ public class ClimberSubsystem extends SubsystemBase
   {     
     //Invert
     m_climbConfig.inverted(Constants.Climber.INVERT);
+    m_climbConfig.limitSwitch.forwardLimitSwitchTriggerBehavior(Behavior.kKeepMovingMotor);
     m_primary_motor.configure(m_climbConfig, ResetMode.kResetSafeParameters,PersistMode.kNoPersistParameters);
 
     //Create the limit switches (reverse is limit switch on ground, forward is at climb depth, no forward limit, use rotations)
@@ -67,7 +68,7 @@ public class ClimberSubsystem extends SubsystemBase
     double deltaPosition = currentPosition - lastPositionRead;
     System.out.println("IsStalled-MotorAppliedOutput="+motorAppliedOutput+ ", deltaPosition="+deltaPosition);
     //TODO read the values above and see what values should be a stalled 
-
+    if (deltaPosition < 0.1) return true;
     return false;
   }
   /**

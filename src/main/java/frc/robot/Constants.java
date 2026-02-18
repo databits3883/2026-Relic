@@ -82,8 +82,8 @@ public final class Constants {
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_LEFT = new Transform2d(0,Units.inchesToMeters(7),new Rotation2d(0));
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_RIGHT = new Transform2d(0,Units.inchesToMeters(-7),new Rotation2d(0));
     //public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(6.125),Units.inchesToMeters(3.25),new Rotation2d(0));
-    public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(3.25),Units.inchesToMeters(6.125),new Rotation2d(0));
-    public static final double TURRET_ANGLE_OFFSET = 15; //Offset all targets by 30 degrees clockwise
+    public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(-3.25),Units.inchesToMeters(6.125),new Rotation2d(0));
+    public static final double TURRET_ANGLE_OFFSET = 10; //Offset all targets by 30 degrees clockwise
   }
   
   public static class Intake 
@@ -110,9 +110,9 @@ public final class Constants {
     public static double SLOW_FORWARD_SPEED = 0.3 * MAX_POWER;
 
     public static int CLIMBER_TIMEOUT_SEC = 4;
-    public static int STOW_TIMEOUT_SEC = 1;
+    public static double STOW_TIMEOUT_SEC = 1.5;
     public static boolean INVERT = true;
-    public static double ROTATIONS_FULLY_EXTENDED = 2; //Rotation count when fully extended, determine actual number
+    public static double ROTATIONS_FULLY_EXTENDED = 23.5; //Rotation count when fully extended, determine actual number
     public static double ROTATIONS_AT_CLIMB = 1; //Rotation count when fully at climb, fallback to if we drive past limit
   }
 
@@ -142,9 +142,10 @@ public final class Constants {
   public static class LaunchConstants {
     public static final int LAUNCH_MOTOR_ID_A = 11;
     public static final int LAUNCH_MOTOR_ID_B = 12;
-    public static double KP = 0.00031;
+    public static double KP = 0.00072;
     public static double KI = 0.0000009;
     public static double KD = 0.0;
+    public static double KF = 0.0001;
     public static double MAX_OUTPUT = 1;
     public static final double MAX_VELOCITY = 1.0;
     public static final double MAX_ACCELERATION = 0.5 ;

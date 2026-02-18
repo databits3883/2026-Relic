@@ -229,12 +229,12 @@ public class RobotContainer
       driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem));
 
       //Intake deploy/retract
-      driverJoystick.button(3).onTrue(new Deploy(intakeSubsystem));
-      driverJoystick.button(4).onTrue(new Retract(intakeSubsystem));
+      driverJoystick.button(4).onTrue(new Deploy(intakeSubsystem));
+      driverJoystick.button(3).onTrue(new Retract(intakeSubsystem));
 
       //Run intake while this button is off and stop when button is on, TODO, remap to copilot box
-      driverJoystick.button(3).whileTrue(Commands.runOnce(intakeSubsystem::overrideStopIntake, drivebase).repeatedly());
-      driverJoystick.button(3).whileFalse(Commands.runOnce(intakeSubsystem::overrideStartIntake, drivebase).repeatedly());
+      driverJoystick.button(5).whileTrue(Commands.runOnce(intakeSubsystem::overrideStopIntake, drivebase).repeatedly());
+      driverJoystick.button(5).whileFalse(Commands.runOnce(intakeSubsystem::overrideStartIntake, drivebase).repeatedly());
 
       //Climber
       driverJoystick.button(7).onTrue(new PrepareToClimb(climberSubsystem));

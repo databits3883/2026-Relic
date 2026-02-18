@@ -45,9 +45,11 @@ public class StowClimber extends Command {
         //Check the soft limit
         boolean atLimit = climberSub.isClimberReverseLimit();        
         boolean overTime = (delta > ABORT_TIME);
+        boolean isStalled = climberSub.isStalled();
         boolean finished = false;
         if (atLimit) finished = true;
         if (overTime) finished = true;
+        //if (isStalled) finished = true;
         
         //Stop if at limit or if we ran too long
         return finished;
