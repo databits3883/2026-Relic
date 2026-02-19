@@ -111,6 +111,8 @@ public class TurretSubsystem extends SubsystemBase {
         m_motor.configure(m_baseConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
         //set the setpoint to the current location
         closedLoopController.setSetpoint(turretEncoder.getPosition(), ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        //Update the back end set point angle
+        angleSetpoint = getTurretDegrees(turretEncoder.getPosition());
 
         //Aim system
         //Set up the field positions
@@ -155,8 +157,10 @@ public class TurretSubsystem extends SubsystemBase {
     public void stop()
     {
         //set the current setpoint to the current angle
-        double currentAngle = getTurretDegrees(turretEncoder.getPosition());
-        closedLoopController.setSetpoint(currentAngle, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        double currentPosition = turretEncoder.getPosition();
+        //Set the PID setpoint to the current position
+        angleSetpoint = getTurretDegrees(currentPosition);
+        closedLoopController.setSetpoint(currentPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
         //Clear the i buildup
         closedLoopController.setIAccum(0);
         //turn off motor
@@ -282,11 +286,14 @@ public class TurretSubsystem extends SubsystemBase {
       if (CALIBRATION_MODE) System.out.println("Switch: delta Angle: "+deltaAngleError + " cur: " + currentAngleRot2Degree);
       if (deltaAngleError >= Constants.TurretConstants.MAX_ANGLE_ERROR)
       {
-        currentAngleRot2Degree = Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE;
-        currentMotorRotations = getTurretRotations(currentAngleRot2Degree);  
-        if (CALIBRATION_MODE) System.out.println("Switch: previous position: "+ turretEncoder.getPosition() + " target.pos: " + closedLoopController.getSetpoint());                      
-        turretEncoder.setPosition(currentMotorRotations);     
+        double switchAngle = Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE;
+        double newRotations = getTurretRotations(switchAngle);  
+        double previousSetPoint = closedLoopController.getSetpoint();
+        double previousSetAngle = getTurretDegrees(previousSetPoint);
+        if (CALIBRATION_MODE) System.out.println("Switch: previous position: "+ currentMotorRotations + " target.pos: " + previousSetPoint);                      
+        turretEncoder.setPosition(newRotations);     
         //Since the encoder has been reset, define new set point based on new encoder position
+        angleSetpoint = previousSetAngle;
         closedLoopController.setSetpoint(getTargetRotationsFromDegrees(angleSetpoint), ControlType.kPosition, ClosedLoopSlot.kSlot0);            
         if (CALIBRATION_MODE) System.out.println("Switch: current position: "+ turretEncoder.getPosition() + " target.pos: " + closedLoopController.getSetpoint());                      
         updated = true;
