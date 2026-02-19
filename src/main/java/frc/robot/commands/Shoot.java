@@ -37,7 +37,7 @@ public class Shoot extends Command {
             stager.runOmnidexer();
             stager.runStage();
         } else {
-            stager.stopStageSystem();
+            //stager.stopStageSystem();
         }
     }
 

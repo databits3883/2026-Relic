@@ -113,7 +113,7 @@ public final class Constants {
     public static double STOW_TIMEOUT_SEC = 1.5;
     public static boolean INVERT = true;
     public static double ROTATIONS_FULLY_EXTENDED = 23.5; //Rotation count when fully extended, determine actual number
-    public static double ROTATIONS_AT_CLIMB = 1; //Rotation count when fully at climb, fallback to if we drive past limit
+    public static double ROTATIONS_AT_CLIMB = 3.4; //Rotation count when fully at climb, fallback to if we drive past limit
     public static double MAX_ROTATIONS_IN_FRAME = 1; //Max motor rotations and still keep climber in frame
   }
 
@@ -130,7 +130,8 @@ public final class Constants {
     public static final int MAX_CURRENT = 40; //amps
     public static final double MAX_VOLTAGE = 14;  // Max voltage when in non-pid mode
     public static final double TARGET_VELOCITY_RPS = 7000; 
-    public static final double TOLERANCE = 100; //rps
+    //not used for now
+    public static final double TOLERANCE = 500; //rps
 
     public static final int SPINDEXER_MOTOR_ID = 15;
     public static double SPINDEXER_MOTOR_POWER = 3.0;

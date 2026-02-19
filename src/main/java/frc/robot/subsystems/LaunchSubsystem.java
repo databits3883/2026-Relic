@@ -36,7 +36,7 @@ public class LaunchSubsystem extends SubsystemBase
   private double defaultSetPointRPM =  Constants.LaunchConstants.TARGET_VELOCITY_RPM;
   private boolean isRunning = false;
   private boolean x_useTargetDistance = true;
-  private boolean x_useSlot0 = true;
+  private boolean x_useSlot0 = false;
   
   private SparkFlex m_motor_a = new SparkFlex(Constants.LaunchConstants.LAUNCH_MOTOR_ID_A, MotorType.kBrushless);
   private SparkFlex m_motor_b = new SparkFlex(Constants.LaunchConstants.LAUNCH_MOTOR_ID_B, MotorType.kBrushless);
@@ -91,11 +91,21 @@ public class LaunchSubsystem extends SubsystemBase
       SmartDashboard.setDefaultNumber("Launch Target Velocity", defaultSetPointRPM);
       SmartDashboard.setDefaultBoolean("Launch Override Velocity", false);
       SmartDashboard.setDefaultBoolean("Launch Update PID", false);
-      SmartDashboard.setDefaultBoolean("Launch PID Slot 0", true);
-      SmartDashboard.putNumber("Launch P Gain", SLOT0_kP);
-      SmartDashboard.putNumber("Launch I Gain", SLOT0_kI);
-      SmartDashboard.putNumber("Launch D Gain", SLOT0_kD);
-      SmartDashboard.putNumber("Launch V Gain", 0);
+      SmartDashboard.setDefaultBoolean("Launch PID Slot 0", false);
+      if (x_useSlot0)
+      {
+        SmartDashboard.putNumber("Launch P Gain", SLOT0_kP);
+        SmartDashboard.putNumber("Launch I Gain", SLOT0_kI);
+        SmartDashboard.putNumber("Launch D Gain", SLOT0_kD);
+        SmartDashboard.putNumber("Launch V Gain", 0);
+      }
+      else
+      {
+        SmartDashboard.putNumber("Launch P Gain", SLOT1_kP);
+        SmartDashboard.putNumber("Launch I Gain", SLOT1_kI);
+        SmartDashboard.putNumber("Launch D Gain", SLOT1_kD);
+        SmartDashboard.putNumber("Launch V Gain", SLOT1_kV);
+      }
       SmartDashboard.putNumber("Launch IAccum", 0);
       SmartDashboard.putNumber("Launch Current Velocity",0);
   }
@@ -131,7 +141,7 @@ public class LaunchSubsystem extends SubsystemBase
       if (x_useSlot0)
         closedLoopController_a.setSetpoint(targetVelocityRPM, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
       else
-        closedLoopController_a.setSetpoint(targetVelocityRPM, ControlType.kVelocity,ClosedLoopSlot.kSlot1);
+        closedLoopController_a.setSetpoint(targetVelocityRPM*1.1, ControlType.kVelocity,ClosedLoopSlot.kSlot1);
     }
   }
    
@@ -187,15 +197,18 @@ public class LaunchSubsystem extends SubsystemBase
     {
       newTargetVelocity = Constants.LaunchConstants.TARGET_VELOCITY_RPM;
     }
+    /* //disable this section
     else if (targetDistanceMeters >= 3.2)
     {
       //We know 3.2  - 3.7 at least works at 2500, can remove if we want to use equation for everything
       newTargetVelocity = 2500;
-    }
+    } */
     else
     {
       //first rough equation, best fit from a few values - https://mycurvefit.com/
-      newTargetVelocity = 153.8462*targetDistanceMeters + 1930.769;
+      //newTargetVelocity = 153.8462*targetDistanceMeters + 1930.769;
+      //new estimate
+      newTargetVelocity = 1835+0.125*targetDistanceMeters + 0.0132*newTargetVelocity*newTargetVelocity;
 
       //Assume 200 rpm for every .3 Meters
       //newTargetVelocity = ((3.5 - targetDistanceMeters ) / 0.3) * 200;
