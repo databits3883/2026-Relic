@@ -64,7 +64,7 @@ public final class Constants {
     public static final double ALIGNMENT_SWITCH_ANGLE = 360-40; // The angle that the alignment switch sets the turret at
     public static final double START_TURRET_ANGLE = 0; //The angle the turret starts in
     public static final double MAX_ANGLE_ERROR = 15; //If the turret is off by this or more when the switch is hit then update the angle
-    public static final double ANGLE_DEADBAND = 2.0; //If we get within one degree when moving to set point that is close enough
+    public static final double ANGLE_DEADBAND = 3.0; //If we get within one degree when moving to set point that is close enough
 
     public static final double MID_FIELD_Y = Units.inchesToMeters(158.84);
     public static final double RED_X_PLAYER = Units.inchesToMeters(651.22 - 182.11 );
@@ -143,10 +143,14 @@ public final class Constants {
   public static class LaunchConstants {
     public static final int LAUNCH_MOTOR_ID_A = 11;
     public static final int LAUNCH_MOTOR_ID_B = 12;
-    public static double KP = 0.00072;
-    public static double KI = 0.0000009;
-    public static double KD = 0.0;
-    public static double KF = 0.0001;
+    public static double SLOT0_KP = 0.00072;
+    public static double SLOT0_KI = 0.0000009;
+    public static double SLOT0_KD = 0.0;
+    public static double SLOT1_KP = 0.00005;
+    public static double SLOT1_KI = 0.0;
+    public static double SLOT1_KD = 0.0;
+    public static double SLOT1_kV = 0.0016;
+    //public static double KF = 0.0001;
     public static double MAX_OUTPUT = 1;
     public static final double MAX_VELOCITY = 1.0;
     public static final double MAX_ACCELERATION = 0.5 ;

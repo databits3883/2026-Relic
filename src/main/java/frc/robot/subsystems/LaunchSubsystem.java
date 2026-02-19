@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -23,15 +24,19 @@ import frc.robot.RobotContainer;
 public class LaunchSubsystem extends SubsystemBase 
 {
   // PID Gains and Motion Profile Constraints
-  private static double kP = Constants.LaunchConstants.KP;
-  private static double kI = Constants.LaunchConstants.KI;
-  private static double kD = Constants.LaunchConstants.KD;
-  private static double kF = Constants.LaunchConstants.KF;
+  private static double SLOT0_kP = Constants.LaunchConstants.SLOT0_KP;
+  private static double SLOT0_kI = Constants.LaunchConstants.SLOT0_KI;
+  private static double SLOT0_kD = Constants.LaunchConstants.SLOT0_KD;
   private static double maxOutput = Constants.LaunchConstants.MAX_OUTPUT;
+  private static double SLOT1_kP = Constants.LaunchConstants.SLOT1_KP;
+  private static double SLOT1_kI = Constants.LaunchConstants.SLOT1_KI;
+  private static double SLOT1_kD = Constants.LaunchConstants.SLOT1_KD;
+  private static double SLOT1_kV = Constants.LaunchConstants.SLOT1_kV;
   private double currentSetPointRPM = 0;
   private double defaultSetPointRPM =  Constants.LaunchConstants.TARGET_VELOCITY_RPM;
   private boolean isRunning = false;
-  private long startTime = 0;
+  private boolean x_useTargetDistance = true;
+  private boolean x_useSlot0 = true;
   
   private SparkFlex m_motor_a = new SparkFlex(Constants.LaunchConstants.LAUNCH_MOTOR_ID_A, MotorType.kBrushless);
   private SparkFlex m_motor_b = new SparkFlex(Constants.LaunchConstants.LAUNCH_MOTOR_ID_B, MotorType.kBrushless);
@@ -48,12 +53,15 @@ public class LaunchSubsystem extends SubsystemBase
     launchEncoder_a = m_motor_a.getEncoder();      
       
     m_baseConfig_a.closedLoop
-                .p(kP)
-                .i(kI)
-                .d(kD)
+                .p(SLOT0_kP,ClosedLoopSlot.kSlot0)
+                .i(SLOT0_kI,ClosedLoopSlot.kSlot0)
+                .d(SLOT0_kD,ClosedLoopSlot.kSlot0)
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .outputRange((-1 * maxOutput),maxOutput)
-                //.feedForward.kV(12.0/917) // set PID 
+                .pid(SLOT1_kP, SLOT1_kI, SLOT1_kD,ClosedLoopSlot.kSlot1) // slot 1, feed forward
+                .feedForward
+                  .kS(0.0,ClosedLoopSlot.kSlot1) // slot 1
+                  .kV(SLOT1_kV, ClosedLoopSlot.kSlot1) // slot 1
                 ;                        
       m_baseConfig_a.idleMode(IdleMode.kCoast)
                   //.smartCurrentLimit(Constants.LaunchConstants.MAX_CURRENT)
@@ -65,16 +73,17 @@ public class LaunchSubsystem extends SubsystemBase
       m_motor_a.configure(m_baseConfig_a.inverted(true), ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
       //update config for follower
       m_baseConfig_b.closedLoop
-                .p(kP)
-                .i(kI)
-                .d(kD)
+                .p(SLOT0_kP,ClosedLoopSlot.kSlot0)
+                .i(SLOT0_kI,ClosedLoopSlot.kSlot0)
+                .d(SLOT0_kD,ClosedLoopSlot.kSlot0)
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .outputRange((-1 * maxOutput),maxOutput)
-                //.feedForward.kV(12.0/917) // set PID 
+                .pid(SLOT1_kP, SLOT1_kI, SLOT1_kD,ClosedLoopSlot.kSlot1) // slot 1, feed forward
+                .feedForward
+                  .kS(0.0,ClosedLoopSlot.kSlot1) // slot 1
+                  .kV(SLOT1_kV, ClosedLoopSlot.kSlot1) // slot 1
                 ;                        
       m_baseConfig_b.idleMode(IdleMode.kCoast)
-                  //.smartCurrentLimit(Constants.LaunchConstants.MAX_CURRENT)
-                  //.voltageCompensation(Constants.LaunchConstants.MAX_VOLTAGE)
                   ;
       m_baseConfig_b.follow(Constants.LaunchConstants.LAUNCH_MOTOR_ID_A,true);
       m_motor_b.configure(m_baseConfig_b, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
@@ -82,9 +91,11 @@ public class LaunchSubsystem extends SubsystemBase
       SmartDashboard.setDefaultNumber("Launch Target Velocity", defaultSetPointRPM);
       SmartDashboard.setDefaultBoolean("Launch Override Velocity", false);
       SmartDashboard.setDefaultBoolean("Launch Update PID", false);
-      SmartDashboard.putNumber("Launch P Gain", kP);
-      SmartDashboard.putNumber("Launch I Gain", kI);
-      SmartDashboard.putNumber("Launch D Gain", kD);
+      SmartDashboard.setDefaultBoolean("Launch PID Slot 0", true);
+      SmartDashboard.putNumber("Launch P Gain", SLOT0_kP);
+      SmartDashboard.putNumber("Launch I Gain", SLOT0_kI);
+      SmartDashboard.putNumber("Launch D Gain", SLOT0_kD);
+      SmartDashboard.putNumber("Launch V Gain", 0);
       SmartDashboard.putNumber("Launch IAccum", 0);
       SmartDashboard.putNumber("Launch Current Velocity",0);
   }
@@ -94,7 +105,8 @@ public class LaunchSubsystem extends SubsystemBase
     isRunning = false;
 
     //set the current
-    closedLoopController_a.setSetpoint(0, ControlType.kVelocity);
+    closedLoopController_a.setSetpoint(0, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
+    closedLoopController_a.setSetpoint(0, ControlType.kVelocity,ClosedLoopSlot.kSlot1);
     currentSetPointRPM = 0;
     //turn off motor
     m_motor_a.setVoltage(0);
@@ -110,13 +122,16 @@ public class LaunchSubsystem extends SubsystemBase
     if (!isRunning)
     {
       isRunning = true;
-      startTime = System.currentTimeMillis();
     }
     //Only update the launcher if the speed changes
     if (currentSetPointRPM != targetVelocityRPM)
     {
       currentSetPointRPM = targetVelocityRPM;
-      closedLoopController_a.setSetpoint(targetVelocityRPM, ControlType.kVelocity);
+      SmartDashboard.putNumber("Launch Target Velocity", targetVelocityRPM);
+      if (x_useSlot0)
+        closedLoopController_a.setSetpoint(targetVelocityRPM, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
+      else
+        closedLoopController_a.setSetpoint(targetVelocityRPM, ControlType.kVelocity,ClosedLoopSlot.kSlot1);
     }
   }
    
@@ -125,6 +140,7 @@ public class LaunchSubsystem extends SubsystemBase
    */
   public void runLauncher() 
   {
+    x_useTargetDistance = true;
     runLauncher(defaultSetPointRPM);
   }
 
@@ -134,7 +150,8 @@ public class LaunchSubsystem extends SubsystemBase
    */
   public void runLauncher(boolean useTargetDistance)
   {
-    if (useTargetDistance)
+    x_useTargetDistance = useTargetDistance;
+    if (x_useTargetDistance)
        runLauncher(estimateVelocityForTargetDistance(RobotContainer.turretSubsystem.getDistanceToTarget()));
     else runLauncher(SmartDashboard.getNumber("Launch Target Velocity", 0));
   }
@@ -197,24 +214,31 @@ public class LaunchSubsystem extends SubsystemBase
     // This method will be called once per scheduler run
     if (isRunning)    
     {
-      long delta = System.currentTimeMillis() - startTime;
-      //Estimate velocity based on distance
-      double newTargetVelocity = estimateVelocityForTargetDistance(RobotContainer.turretSubsystem.getDistanceToTarget());
-      //read if we are overriding launcher
-      if (SmartDashboard.getBoolean("Launch Override Velocity", false))
+      //run the launcher with either dashboard or calculated distance
+      runLauncher(x_useTargetDistance);
+    }
+    boolean useSlot0 = SmartDashboard.getBoolean("Launch PID Slot 0", true);
+    if (useSlot0 != x_useSlot0)
+    {
+      //Update dashboard values
+      if (useSlot0)
       {
-        //Read manual velocity
-        newTargetVelocity = SmartDashboard.getNumber("Launch Target Velocity", 0);
+        SmartDashboard.putNumber("Launch P Gain", SLOT0_kP);
+        SmartDashboard.putNumber("Launch I Gain", SLOT0_kI);
+        SmartDashboard.putNumber("Launch D Gain", SLOT0_kD);
+        SmartDashboard.putNumber("Launch V Gain", 0);
       }
       else
       {
-        //Update the launch velocity smartdashboard
-        //SmartDashboard.putNumber("Launch Target Velocity", newTargetVelocity);
+        SmartDashboard.putNumber("Launch P Gain", SLOT1_kP);
+        SmartDashboard.putNumber("Launch I Gain", SLOT1_kI);
+        SmartDashboard.putNumber("Launch D Gain", SLOT1_kD);
+        SmartDashboard.putNumber("Launch V Gain", SLOT1_kV);
       }
-      runLauncher(newTargetVelocity);
+      x_useSlot0 = useSlot0;
     }
 
-    if(SmartDashboard.getBoolean("Launch Update PID", false))
+    if (SmartDashboard.getBoolean("Launch Update PID", false))
     {
       SmartDashboard.putBoolean("Launch Update PID", false);
             
@@ -223,33 +247,49 @@ public class LaunchSubsystem extends SubsystemBase
       double p = SmartDashboard.getNumber("Launch P Gain", 0);
       double i = SmartDashboard.getNumber("Launch I Gain", 0);
       double d = SmartDashboard.getNumber("Launch D Gain", 0);
+      double v = SmartDashboard.getNumber("Launch V Gain", 0);
             
       // if PID coefficients on SmartDashboard have changed, write new values to controller
       boolean updatePID = false;
-      if((p != kP)) { updatePID = true;  kP = p; }
-      if((i != kI)) { updatePID = true;  kI = i; }
-      if((d != kD)) { updatePID = true; kD = d; }
+      if (x_useSlot0)
+      {
+        if((p != SLOT0_kP)) { updatePID = true;  SLOT0_kP = p; }
+        if((i != SLOT0_kI)) { updatePID = true;  SLOT0_kI = i; }
+        if((d != SLOT0_kD)) { updatePID = true; SLOT0_kD = d; }
+      }
+      else
+      {
+        if((p != SLOT1_kP)) { updatePID = true;  SLOT1_kP = p; }
+        if((i != SLOT1_kI)) { updatePID = true;  SLOT1_kI = i; }
+        if((d != SLOT1_kD)) { updatePID = true; SLOT1_kD = d; }
+        if((v != SLOT1_kV)) { updatePID = true; SLOT1_kV = v; }
+      }
 
       if (updatePID)
       {
         //Update the PID on close loopController
         m_baseConfig_a.closedLoop
-                    .p(kP)
-                    .i(kI)
-                    .d(kD)
+                    .p(SLOT0_kP,ClosedLoopSlot.kSlot0)
+                    .i(SLOT0_kI,ClosedLoopSlot.kSlot0)
+                    .d(SLOT0_kD,ClosedLoopSlot.kSlot0)
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                     .outputRange((-1 * maxOutput),maxOutput) // set PID 
-                    //.feedForward.kV(12.0/917)
+                    .pid(SLOT1_kP, SLOT1_kI, SLOT1_kD,ClosedLoopSlot.kSlot1) // slot 1, feed forward
+                    .feedForward
+                      .kS(0.0,ClosedLoopSlot.kSlot1) // slot 1
+                      .kV(SLOT1_kV, ClosedLoopSlot.kSlot1) // slot 1
                     ;
          m_baseConfig_b.closedLoop
-                    .p(kP)
-                    .i(kI)
-                    .d(kD)
+                    .p(SLOT0_kP,ClosedLoopSlot.kSlot0)
+                    .i(SLOT0_kI,ClosedLoopSlot.kSlot0)
+                    .d(SLOT0_kD,ClosedLoopSlot.kSlot0)
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                     .outputRange((-1 * maxOutput),maxOutput) // set PID 
-                    //.feedForward.kV(12.0/917)
+                    .pid(SLOT1_kP, SLOT1_kI, SLOT1_kD,ClosedLoopSlot.kSlot1) // slot 1, feed forward
+                    .feedForward
+                      .kS(0.0,ClosedLoopSlot.kSlot1) // slot 1
+                      .kV(SLOT1_kV, ClosedLoopSlot.kSlot1) // slot 1
                     ;
-
         //Update the motoro config to use PID
         m_motor_a.configure(m_baseConfig_a, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
         //m_baseConfig_b.follow(Constants.LaunchConstants.LAUNCH_MOTOR_ID_A,true);
@@ -259,7 +299,6 @@ public class LaunchSubsystem extends SubsystemBase
     
     SmartDashboard.putNumber("Launch IAccum", closedLoopController_a.getIAccum());
     SmartDashboard.putNumber("Launch Current Velocity",getVelocity());
-    //SmartDashboard.getNumber("Launch Target Velocity", currentSetPointRPM);
   }
 
   @Override
