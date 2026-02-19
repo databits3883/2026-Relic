@@ -16,6 +16,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -207,8 +208,9 @@ public class LaunchSubsystem extends SubsystemBase
     {
       //first rough equation, best fit from a few values - https://mycurvefit.com/
       //newTargetVelocity = 153.8462*targetDistanceMeters + 1930.769;
-      //new estimate
-      newTargetVelocity = 1835+0.125*targetDistanceMeters + 0.0132*newTargetVelocity*newTargetVelocity;
+      //new estimate, based on inches
+      double targetDistanceInches = Units.metersToInches(targetDistanceMeters);
+      newTargetVelocity = (1835+0.125*targetDistanceInches) + (0.0132*targetDistanceInches*targetDistanceInches);
 
       //Assume 200 rpm for every .3 Meters
       //newTargetVelocity = ((3.5 - targetDistanceMeters ) / 0.3) * 200;
