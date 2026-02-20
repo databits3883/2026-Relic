@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -22,6 +21,8 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
+
 import java.awt.Desktop;
 import java.util.ArrayList;
 import java.util.List;
@@ -152,7 +153,8 @@ public class Vision
                                          pose.timestampSeconds,
                                          camera.curStdDevs);
         //Update camera robot pose
-        field2d.getObject(camera.name()+" pose").setPose(pose2d);                                         
+        if (RobotContainer.DISPLAY_VISION_POSE)
+          field2d.getObject(camera.name()+" pose").setPose(pose2d);                                         
       }
     }
 
@@ -180,7 +182,8 @@ public class Vision
                   .getObject("VisionEstimation")
                   .setPose(est.estimatedPose.toPose2d()),
           () -> {
-            debugField.getObject("VisionEstimation").setPoses();
+            if (RobotContainer.DISPLAY_VISION_POSE)
+              debugField.getObject("VisionEstimation").setPoses();
           });
     }
     return poseEst;
@@ -330,8 +333,8 @@ public class Vision
         poses.add(targetPose);
       }
     }
-
-    field2d.getObject("tracked targets").setPoses(poses);
+    if (RobotContainer.DISPLAY_VISION_TAGS)
+      field2d.getObject("tracked targets").setPoses(poses);
   }
 
   /**

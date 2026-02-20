@@ -63,6 +63,11 @@ public class RobotContainer
   public static LaunchSubsystem launchSubsystem = new LaunchSubsystem();
   public static IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   public static ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+  
+  //debug/field/dashboard, etc
+  public static boolean DISPLAY_VISION_TAGS = true;
+  public static boolean DISPLAY_VISION_POSE = false;
+  public static boolean DISPLAY_TARGET = true;
 
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing selection of desired auto
   private final SendableChooser<Command> autoChooser;

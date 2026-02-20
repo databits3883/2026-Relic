@@ -455,7 +455,8 @@ public class TurretSubsystem extends SubsystemBase {
 
     double turretX = turretPose.getX();
     double turretY = turretPose.getY();
-     m_field.getObject("TurretPose").setPose(turretPose);
+    if (RobotContainer.DISPLAY_TARGET)
+      m_field.getObject("TurretPose").setPose(turretPose);
 
     if (isRedAlliance)
     {
