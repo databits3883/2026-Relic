@@ -66,6 +66,7 @@ public final class Constants {
     public static final double START_TURRET_ANGLE = 0; //The angle the turret starts in
     public static final double MAX_ANGLE_ERROR = 15; //If the turret is off by this or more when the switch is hit then update the angle
     public static final double ANGLE_DEADBAND = 3.0; //If we get within one degree when moving to set point that is close enough
+    public static final boolean USE_LIMIT_SWITCH = false;
 
     public static final double MID_FIELD_Y = Units.inchesToMeters(158.84);
     public static final double RED_X_PLAYER = Units.inchesToMeters(651.22 - 182.11 );

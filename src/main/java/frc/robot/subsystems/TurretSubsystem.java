@@ -316,6 +316,12 @@ public class TurretSubsystem extends SubsystemBase {
         double currentAngleRot2Degree = getTurretDegrees(currentMotorRotations);
         //Update alignment trigger data
         boolean alignmentTrigger = turretAlignmentSwitch.isPressed();
+        //Disable switch if configured to not use it.
+        if (!Constants.TurretConstants.USE_LIMIT_SWITCH) 
+        {
+          alignmentTrigger = false;
+          alignmentToggle = false;
+        }
         
         //if the alignment switch is triggered force the turret encoder to update its position
         if (alignmentTrigger == true && alignmentToggle == false) alignmentToggle = true; //Set the trigger to indicate we have seen the trigger
