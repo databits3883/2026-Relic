@@ -61,8 +61,8 @@ public final class Constants {
     public static final double MAX_VELOCITY = 1.0; // Max velocity in units/sec
     public static final double MAX_ACCELERATION = 0.5; // Max acceleration in units/sec^2
     public static final double TURRET_GEAR_RATIO = 1.00/14.00;// 15 dev of moter is one rev of turret
-    public static final double ALIGNMENT_SWITCH_ANGLE_CW = 360-40; // The angle that the alignment switch sets the turret at when moving CW
-    public static final double ALIGNMENT_SWITCH_ANGLE_CCW = 360-43; // When moving CCW
+    public static final double ALIGNMENT_SWITCH_ANGLE_CW = 316.8; // The angle that the alignment switch sets the turret at when moving CW
+    public static final double ALIGNMENT_SWITCH_ANGLE_CCW = 312.12; // When moving CCW
     public static final double START_TURRET_ANGLE = 0; //The angle the turret starts in
     public static final double MAX_ANGLE_ERROR = 15; //If the turret is off by this or more when the switch is hit then update the angle
     public static final double ANGLE_DEADBAND = 3.0; //If we get within one degree when moving to set point that is close enough
