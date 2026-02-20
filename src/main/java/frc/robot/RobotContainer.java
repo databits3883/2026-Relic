@@ -54,6 +54,7 @@ public class RobotContainer
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandJoystick driverJoystick = new CommandJoystick(0);
+  final         CommandJoystick copilotBoxController = new CommandJoystick(1);
 
   // The robot's subsystems and commands are defined here...
   public static final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/relic"));
@@ -205,9 +206,8 @@ public class RobotContainer
     } 
     else
     {
-      //driverJoystick.button(13).onTrue(Commands.runOnce(drivebase::zeroGyro));
-      //zero with the correct alliance
-      driverJoystick.button(13).onTrue(Commands.runOnce(drivebase::zeroGyroWithAlliance));
+      //zero with the correct alliance, disable for now
+      //driverJoystick.button(13).onTrue(Commands.runOnce(drivebase::zeroGyroWithAlliance));
       //Death Spin, todo update button location
       driverJoystick.button(11).whileTrue(new RunCommand(() -> drivebase.setChassisSpeeds(new ChassisSpeeds(0, 0, 12)), drivebase));
       
@@ -234,15 +234,21 @@ public class RobotContainer
       driverJoystick.button(4).onTrue(new Deploy(intakeSubsystem));
       driverJoystick.button(3).onTrue(new Retract(intakeSubsystem));
 
-      //Run intake while this button is off and stop when button is on, TODO, remap to copilot box
-      driverJoystick.button(5).whileTrue(Commands.runOnce(intakeSubsystem::overrideStopIntake, drivebase).repeatedly());
-      driverJoystick.button(5).whileFalse(Commands.runOnce(intakeSubsystem::overrideStartIntake, drivebase).repeatedly());
 
       //Climber
       driverJoystick.button(7).onTrue(new PrepareToClimb(climberSubsystem));
       driverJoystick.button(8).onTrue(new Climb(climberSubsystem));
       driverJoystick.button(9).onTrue(new StowClimber(climberSubsystem));
-      //TODO: Build new button to fully retract climber
+      
+      //CO-Pilot overrides
+      //Manually Aim when on
+      copilotBoxController.button(10).whileTrue(new TurretManualAim());
+      //intake black switch up.down
+      copilotBoxController.button(7).onTrue(new Deploy(intakeSubsystem));
+      copilotBoxController.button(8).onTrue(new Retract(intakeSubsystem));
+      //Run intake while this button is off and stop when button is on
+      copilotBoxController.button(6).whileTrue(Commands.runOnce(intakeSubsystem::overrideStopIntake, drivebase).repeatedly());
+      copilotBoxController.button(6).whileFalse(Commands.runOnce(intakeSubsystem::overrideStartIntake, drivebase).repeatedly());
 
     }
 
