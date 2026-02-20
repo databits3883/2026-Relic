@@ -281,13 +281,17 @@ public class TurretSubsystem extends SubsystemBase {
     private boolean updateTurrentAngleBySwitch(double currentMotorRotations, double currentAngleRot2Degree)
     {
       boolean updated = false;
+      //If the velocity is positive we are moving ccw, determine which reset angle to use
+      boolean movingCCW = (turretEncoder.getVelocity() >= 0);
+      double resetAngle = Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE_CW;
+      if (movingCCW) resetAngle = Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE_CCW;
+
       if (currentAngleRot2Degree < 0) currentAngleRot2Degree += 360;
-      double deltaAngleError = Math.abs(currentAngleRot2Degree - Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE);
+      double deltaAngleError = Math.abs(currentAngleRot2Degree - resetAngle);
       if (CALIBRATION_MODE) System.out.println("Switch: delta Angle: "+deltaAngleError + " cur: " + currentAngleRot2Degree);
       if (deltaAngleError >= Constants.TurretConstants.MAX_ANGLE_ERROR)
       {
-        double switchAngle = Constants.TurretConstants.ALIGNMENT_SWITCH_ANGLE;
-        double newRotations = getTurretRotations(switchAngle);  
+        double newRotations = getTurretRotations(resetAngle);  
         double previousSetPoint = closedLoopController.getSetpoint();
         double previousSetAngle = getTurretDegrees(previousSetPoint);
         if (CALIBRATION_MODE) System.out.println("Switch: previous position: "+ currentMotorRotations + " target.pos: " + previousSetPoint);                      
