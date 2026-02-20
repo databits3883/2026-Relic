@@ -20,7 +20,7 @@ public class TurretAutoAim  extends Command
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("Togglet Auto Aim Command init()");
+    System.out.println("Toggled Auto Aim Command init()");
     RobotContainer.turretSubsystem.toggleAutoAim();
   }
 
@@ -28,14 +28,14 @@ public class TurretAutoAim  extends Command
   @Override
   public void execute() 
   {
-      //System.out.println("Togglet Auto Aim Command execute()");
+      //System.out.println("Toggled Auto Aim Command execute()");
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) 
   {
-    //System.out.println("Togglet Auto Aim Command end()");
+    //System.out.println("Toggled Auto Aim Command end()");
   }
 
   
@@ -43,7 +43,7 @@ public class TurretAutoAim  extends Command
   @Override
   public boolean isFinished() 
   {
-    //System.out.println("Togglet Auto Aim Command isFinished()");
+    //System.out.println("Toggled Auto Aim Command isFinished()");
     return true;
   } 
 }

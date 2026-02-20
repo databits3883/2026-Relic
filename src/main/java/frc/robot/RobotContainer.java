@@ -142,11 +142,24 @@ public class RobotContainer
     autoChooser.addOption("Drive Forward 3sec", drivebase.driveForward().withTimeout(3));
 
     //Add a simple auto option to have the robot drive forward for 1 second then stop
-    autoChooser.addOption("Drive Right 3sec", drivebase.driveRight().withTimeout(3));
+    autoChooser.addOption("Shoot 4sec", new Shoot( launchSubsystem, stageSubsystem).withTimeout(4));
     
     //Put the autoChooser on the SmartDashboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
+  }
+
+  private void straightenRobot()
+  {
+    if (Robot.isRedAlliance)
+    {
+      //Set the pose 180 degrees
+      drivebase.resetOdometry(new Pose2d(drivebase.getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+    } 
+    else
+    {
+      drivebase.resetOdometry(new Pose2d(drivebase.getPose().getTranslation(), new Rotation2d()));
+    }
   }
 
   /**
@@ -158,13 +171,13 @@ public class RobotContainer
    */
   private void configureBindings()
   {
-    Command driveFieldOrientedDirectAngle      = drivebase.driveFieldOriented(driveDirectAngle);
+    //Command driveFieldOrientedDirectAngle      = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-    Command driveRobotOrientedAngularVelocity  = drivebase.driveFieldOriented(driveRobotOriented);
-    Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
+    //Command driveRobotOrientedAngularVelocity  = drivebase.driveFieldOriented(driveRobotOriented);
+    //Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
     Command driveFieldOrientedDirectAngleKeyboard      = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
-    Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
-    Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
+    //Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
+    //Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
 
     if (RobotBase.isSimulation())
     {
@@ -206,8 +219,8 @@ public class RobotContainer
     } 
     else
     {
-      //zero with the correct alliance, disable for now
-      //driverJoystick.button(13).onTrue(Commands.runOnce(drivebase::zeroGyroWithAlliance));
+      //straighten robot with the correct alliance
+      driverJoystick.button(13).onTrue(Commands.runOnce(this::straightenRobot));
       //Death Spin, todo update button location
       driverJoystick.button(11).whileTrue(new RunCommand(() -> drivebase.setChassisSpeeds(new ChassisSpeeds(0, 0, 12)), drivebase));
       
@@ -222,10 +235,8 @@ public class RobotContainer
       driverJoystick.povLeft().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(90);}));
       driverJoystick.povRight().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(270);}));
 
-      //Shoot while button is held
+      //Shoot while button is held, manual distance, TODO, when set to false, ensure calc is working as expected
       driverJoystick.button(1).whileTrue(new Shoot(launchSubsystem, stageSubsystem, true));
-      //Shoot with manual enabled
-      //driverJoystick.button(6).whileTrue(new Shoot(launchSubsystem, stageSubsystem, true));
       
       //Outake while button is held
       driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem));
@@ -233,7 +244,6 @@ public class RobotContainer
       //Intake deploy/retract
       driverJoystick.button(4).onTrue(new Deploy(intakeSubsystem));
       driverJoystick.button(3).onTrue(new Retract(intakeSubsystem));
-
 
       //Climber
       driverJoystick.button(7).onTrue(new PrepareToClimb(climberSubsystem));
@@ -244,14 +254,12 @@ public class RobotContainer
       //Manually Aim when on
       copilotBoxController.button(10).whileTrue(new TurretManualAim());
       //intake black switch up.down
-      copilotBoxController.button(7).onTrue(new Deploy(intakeSubsystem));
-      copilotBoxController.button(8).onTrue(new Retract(intakeSubsystem));
+      copilotBoxController.button(8).onTrue(new Deploy(intakeSubsystem));
+      copilotBoxController.button(7).onTrue(new Retract(intakeSubsystem));
       //Run intake while this button is off and stop when button is on
-      copilotBoxController.button(6).whileTrue(Commands.runOnce(intakeSubsystem::overrideStopIntake, drivebase).repeatedly());
-      copilotBoxController.button(6).whileFalse(Commands.runOnce(intakeSubsystem::overrideStartIntake, drivebase).repeatedly());
-
+      copilotBoxController.button(6).whileFalse(Commands.runOnce(intakeSubsystem::overrideStopIntake).repeatedly());
+      copilotBoxController.button(6).whileTrue(Commands.runOnce(intakeSubsystem::overrideStartIntake).repeatedly());
     }
-
   }
 
   /**

@@ -14,7 +14,14 @@ public class Shoot extends Command {
         this(launchSubsystem, stageSubsystem, false);
     }
 
-    public Shoot(LaunchSubsystem launchSubsystem, StageSubsystem stageSubsystem, boolean manual)
+    /**
+     * Enable or disable auto launch speed calculations
+     * 
+     * @param launchSubsystem
+     * @param stageSubsystem
+     * @param manual
+     */
+     public Shoot(LaunchSubsystem launchSubsystem, StageSubsystem stageSubsystem, boolean manual)
     {
         manualLaunch = manual;
         this.launcher = launchSubsystem;
