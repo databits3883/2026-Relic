@@ -241,7 +241,7 @@ public class RobotContainer
       driverJoystick.povRight().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(270);}));
 
       //Shoot while button is held, manual distance, TODO, when set to false, ensure calc is working as expected
-      driverJoystick.button(1).whileTrue(new Shoot(launchSubsystem, stageSubsystem, true));
+      driverJoystick.button(1).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
       
       //Outake while button is held
       driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem));
@@ -262,8 +262,8 @@ public class RobotContainer
       copilotBoxController.button(8).onTrue(new Deploy(intakeSubsystem));
       copilotBoxController.button(7).onTrue(new Retract(intakeSubsystem));
       //Run intake while this button is off and stop when button is on
-      copilotBoxController.button(6).whileFalse(Commands.runOnce(intakeSubsystem::overrideStopIntake).repeatedly());
-      copilotBoxController.button(6).whileTrue(Commands.runOnce(intakeSubsystem::overrideStartIntake).repeatedly());
+      //copilotBoxController.button(6).whileFalse(Commands.runOnce(intakeSubsystem::overrideStopIntake).repeatedly());
+      //copilotBoxController.button(6).whileTrue(Commands.runOnce(intakeSubsystem::overrideStartIntake).repeatedly());
     }
   }
 
