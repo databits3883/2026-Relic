@@ -606,6 +606,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void zeroGyroWithAlliance()
   {
+    System.out.println("In zeroWtihAlliance");
     if (isRedAlliance())
     {
       zeroGyro();
