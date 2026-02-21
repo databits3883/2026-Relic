@@ -209,10 +209,11 @@ public class LaunchSubsystem extends SubsystemBase
       //first rough equation, best fit from a few values - https://mycurvefit.com/
       //newTargetVelocity = 153.8462*targetDistanceMeters + 1930.769;
       //new estimate, based on inches
-      double targetDistanceInches = Units.metersToInches(targetDistanceMeters) + 10; //add 10 inches
-      newTargetVelocity = (1835+0.125*targetDistanceInches) + (0.0132*targetDistanceInches*targetDistanceInches);
+      //double targetDistanceInches = Units.metersToInches(targetDistanceMeters); 
+      //need to adjust 0.9, camera offset is slightly off from measured
+      double targetDistanceCameraOffset = targetDistanceMeters - 0.09;
+      newTargetVelocity = 1687+(97.8*targetDistanceCameraOffset) + (20.7*targetDistanceCameraOffset*targetDistanceCameraOffset);
       
-
       //Assume 200 rpm for every .3 Meters
       //newTargetVelocity = ((3.5 - targetDistanceMeters ) / 0.3) * 200;
     }

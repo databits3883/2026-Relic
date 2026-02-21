@@ -241,7 +241,7 @@ public class RobotContainer
       driverJoystick.povRight().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(270);}));
 
       //Shoot while button is held, manual distance, TODO, when set to false, ensure calc is working as expected
-      driverJoystick.button(1).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
+      driverJoystick.button(1).whileTrue(new Shoot(launchSubsystem, stageSubsystem, true));
       
       //Outake while button is held
       driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem));
