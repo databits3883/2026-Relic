@@ -260,9 +260,9 @@ public class RobotContainer
       //CO-Pilot overrides
       //Manually Aim when on
       copilotBoxController.button(10).whileTrue(new TurretManualAim());
-      //intake black switch up.down
-      copilotBoxController.button(8).onTrue(new Deploy(intakeSubsystem));
-      copilotBoxController.button(7).onTrue(new Retract(intakeSubsystem));
+      //climber stow/prepare
+      copilotBoxController.button(7).onTrue(new StowClimber(climberSubsystem));
+      copilotBoxController.button(8).onTrue(new PrepareToClimb(climberSubsystem));
       //Run intake while this button is off and stop when button is on
       //copilotBoxController.button(6).whileFalse(Commands.runOnce(intakeSubsystem::overrideStopIntake).repeatedly());
       //copilotBoxController.button(6).whileTrue(Commands.runOnce(intakeSubsystem::overrideStartIntake).repeatedly());
