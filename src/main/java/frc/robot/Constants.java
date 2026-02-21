@@ -86,6 +86,10 @@ public final class Constants {
     //public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(6.125),Units.inchesToMeters(3.25),new Rotation2d(0));
     public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(-3.25),Units.inchesToMeters(6.125),new Rotation2d(0));
     public static final double TURRET_ANGLE_OFFSET = 0; //Offset all targets by 30 degrees clockwise
+
+    //Future pose calculation
+    public static final double LATENCY_SEC = 0.15;    
+    public static final boolean USE_FUTURE_POSE = true;
   }
   
   public static class Intake 
@@ -164,8 +168,8 @@ public final class Constants {
 
     public static final double MAX_SHOOTING_DISTANCE = 4.5; //Max distance we can shoot at max velocity in meters
     public static final double MIN_SHOOTING_MIN_VELOCITY_RPM = 1100;
-
-    //30% +/- speed
+    
+    //15% +/- speed
     public static final double DISTANCE_TWEAK_MAX_PERCENTABE = .15;
   }
 

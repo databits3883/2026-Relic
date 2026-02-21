@@ -17,6 +17,9 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.LimitSwitchConfig.Behavior;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -255,6 +258,14 @@ public class TurretSubsystem extends SubsystemBase {
 
         //Transform robot pose
         Pose2d turretPose = robotPose.plus(Constants.TurretConstants.BACK_LEFT_TURRET_FROM_CENTER_BOT);
+
+        //If we want to use a future pose based on current velocity
+        /**
+        var robotSpeed = RobotContainer.drivebase.getRobotVelocity();
+        //Based on current robot speed find the future position of the turret by X seconds
+        Translation2d futurePose = turretPose.plus(new Transform2d(new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond), new Rotation2d(robotSpeed.omegaRadiansPerSecond)).times(Constants.TurretConstants.LATENCY_SEC));        
+        if (Constants.TurretConstants.USE_FUTURE_POSE) turretPose = futurePose.getPose();
+        *//
 
         //Find new target based on robot positon
         targetPose = findTargetToAim(turretPose);    
