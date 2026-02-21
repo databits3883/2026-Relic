@@ -151,7 +151,7 @@ public class LaunchSubsystem extends SubsystemBase
     if (currentSetPointRPM != targetVelocityRPM)
     {
       //Tweak distance amount 30% max in either way
-      targetVelocityRPM = (1 + (this.tweakDistance * .30)) * targetVelocityRPM;
+      targetVelocityRPM = (1 + (this.tweakDistance * Constants.LaunchConstants.DISTANCE_TWEAK_MAX_PERCENTABE)) * targetVelocityRPM;
       currentSetPointRPM = targetVelocityRPM;
 
       SmartDashboard.putNumber("Launch Target Velocity", targetVelocityRPM);
