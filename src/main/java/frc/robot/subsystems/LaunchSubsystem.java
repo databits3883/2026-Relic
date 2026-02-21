@@ -154,15 +154,14 @@ public class LaunchSubsystem extends SubsystemBase
     {
       isRunning = true;
     }
-    
+
     //Tweak distance amount 30% max in either way
     targetVelocityRPM = (1 + (this.tweakDistance * Constants.LaunchConstants.DISTANCE_TWEAK_MAX_PERCENTABE)) * targetVelocityRPM;
-    currentSetPointRPM = targetVelocityRPM;
 
     //Only update the launcher if the speed changes
     if (currentSetPointRPM != targetVelocityRPM)
     {
-
+      currentSetPointRPM = targetVelocityRPM;
       SmartDashboard.putNumber("Launch Target Velocity", targetVelocityRPM);
       if (x_useSlot0)
         closedLoopController_a.setSetpoint(targetVelocityRPM, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
