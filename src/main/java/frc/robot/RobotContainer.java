@@ -150,6 +150,7 @@ public class RobotContainer
 
     //Add a simple auto option to have the robot drive forward for 1 second then stop
     autoChooser.addOption("Deploy/Shoot 20sec", new ParallelCommandGroup(new Deploy(intakeSubsystem),new WaitCommand(1).andThen(new Shoot(launchSubsystem, stageSubsystem).withTimeout(20))));
+    autoChooser.addOption("Shoot 20sec", new WaitCommand(1).andThen(new Shoot(launchSubsystem, stageSubsystem).withTimeout(20)));
     
     //Put the autoChooser on the SmartDashboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -259,12 +260,14 @@ public class RobotContainer
       
       //CO-Pilot overrides
       //Manually Aim when on
-      copilotBoxController.button(10).whileTrue(new TurretManualAim());
+      //copilotBoxController.button(10).whileTrue(new TurretManualAim());
       //climber stow/prepare
       copilotBoxController.button(7).onTrue(new StowClimber(climberSubsystem));
       copilotBoxController.button(8).onTrue(new PrepareToClimb(climberSubsystem));
       //Run intake while this button is off and stop when button is on
       //copilotBoxController.button(6).whileFalse(Commands.runOnce(intakeSubsystem::overrideStopIntake).repeatedly());
+      //Stow the climber when on every X seconds
+      copilotBoxController.button(10).whileTrue(new StowClimber(climberSubsystem,3));
       //copilotBoxController.button(6).whileTrue(Commands.runOnce(intakeSubsystem::overrideStartIntake).repeatedly());
     }
   }
