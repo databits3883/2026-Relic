@@ -267,7 +267,7 @@ public class RobotContainer
       //Run intake while this button is off and stop when button is on
       //copilotBoxController.button(6).whileFalse(Commands.runOnce(intakeSubsystem::overrideStopIntake).repeatedly());
       //Stow the climber when on every X seconds
-      copilotBoxController.button(10).whileTrue(new StowClimber(climberSubsystem,3));
+      //copilotBoxController.button(10).whileTrue(new StowClimber(climberSubsystem,3));
       //copilotBoxController.button(6).whileTrue(Commands.runOnce(intakeSubsystem::overrideStartIntake).repeatedly());
     }
   }
