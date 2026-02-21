@@ -260,7 +260,7 @@ public class RobotContainer
       
       //CO-Pilot overrides
       //Manually Aim when on
-      //copilotBoxController.button(10).whileTrue(new TurretManualAim());
+      copilotBoxController.button(10).whileTrue(new TurretManualAim());
       //climber stow/prepare
       copilotBoxController.button(7).onTrue(new StowClimber(climberSubsystem));
       copilotBoxController.button(8).onTrue(new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
