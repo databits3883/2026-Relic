@@ -115,16 +115,23 @@ public class LaunchSubsystem extends SubsystemBase
       SmartDashboard.putNumber("Launch Current Velocity",0);
   }
 
+  /**
+   * Allow the calculated distance to be adjusted by the drivers slider +/- the constant (30%)
+   * 
+   * @param distanceTweakAmount
+   */
   public void updateTweakDistance(double distanceTweakAmount)
   {
     if (distanceTweakAmount != this.tweakDistance)
     {
-      System.out.println("Updating tweak distance: " + distanceTweakAmount);
       this.tweakDistance = distanceTweakAmount;
     }
   }
   
- public void stop()
+ /**
+  * Stops the launcher
+  */
+  public void stop()
   {
     isRunning = false;
 
@@ -147,12 +154,14 @@ public class LaunchSubsystem extends SubsystemBase
     {
       isRunning = true;
     }
+    
+    //Tweak distance amount 30% max in either way
+    targetVelocityRPM = (1 + (this.tweakDistance * Constants.LaunchConstants.DISTANCE_TWEAK_MAX_PERCENTABE)) * targetVelocityRPM;
+    currentSetPointRPM = targetVelocityRPM;
+
     //Only update the launcher if the speed changes
     if (currentSetPointRPM != targetVelocityRPM)
     {
-      //Tweak distance amount 30% max in either way
-      targetVelocityRPM = (1 + (this.tweakDistance * Constants.LaunchConstants.DISTANCE_TWEAK_MAX_PERCENTABE)) * targetVelocityRPM;
-      currentSetPointRPM = targetVelocityRPM;
 
       SmartDashboard.putNumber("Launch Target Velocity", targetVelocityRPM);
       if (x_useSlot0)
