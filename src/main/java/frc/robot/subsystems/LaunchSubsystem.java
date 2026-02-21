@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.w3c.dom.traversal.TreeWalker;
+
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
@@ -48,6 +50,8 @@ public class LaunchSubsystem extends SubsystemBase
   private SparkClosedLoopController closedLoopController_a = m_motor_a.getClosedLoopController();
   //private SparkClosedLoopController closedLoopController_b = m_motor_b.getClosedLoopController();
   private RelativeEncoder launchEncoder_a=null;
+
+  private double tweakDistance = 0;
 
   public LaunchSubsystem() 
   {   
@@ -111,6 +115,15 @@ public class LaunchSubsystem extends SubsystemBase
       SmartDashboard.putNumber("Launch Current Velocity",0);
   }
 
+  public void updateTweakDistance(double distanceTweakAmount)
+  {
+    if (distanceTweakAmount != this.tweakDistance)
+    {
+      System.out.println("Updating tweak distance: " + distanceTweakAmount);
+      this.tweakDistance = distanceTweakAmount;
+    }
+  }
+  
  public void stop()
   {
     isRunning = false;
@@ -137,7 +150,10 @@ public class LaunchSubsystem extends SubsystemBase
     //Only update the launcher if the speed changes
     if (currentSetPointRPM != targetVelocityRPM)
     {
+      //Tweak distance amount 30% max in either way
+      targetVelocityRPM = (1 + (this.tweakDistance * .30)) * targetVelocityRPM;
       currentSetPointRPM = targetVelocityRPM;
+
       SmartDashboard.putNumber("Launch Target Velocity", targetVelocityRPM);
       if (x_useSlot0)
         closedLoopController_a.setSetpoint(targetVelocityRPM, ControlType.kVelocity,ClosedLoopSlot.kSlot0);

@@ -6,6 +6,7 @@ import frc.robot.subsystems.ClimberSubsystem;
 
 public class PrepareToClimb extends Command {
     private final ClimberSubsystem climberSub;
+
     private final long ABORT_TIME = Constants.Climber.CLIMBER_TIMEOUT_SEC * 1000; /* in millis */
     private long startTime = 0;
 

@@ -214,7 +214,10 @@ public class Robot extends TimedRobot
   @Override
   public void teleopPeriodic()
   {
+      //adjust tweaked distance with joystick slider
+      RobotContainer.launchSubsystem.updateTweakDistance(RobotContainer.driverJoystick.getRawAxis(3));
   }
+
 
   @Override
   public void testInit()

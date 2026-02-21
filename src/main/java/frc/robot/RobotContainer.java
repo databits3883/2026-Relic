@@ -55,7 +55,7 @@ public class RobotContainer
 {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  final         CommandJoystick driverJoystick = new CommandJoystick(0);
+  public static final         CommandJoystick driverJoystick = new CommandJoystick(0);
   final         CommandJoystick copilotBoxController = new CommandJoystick(1);
 
   // The robot's subsystems and commands are defined here...
@@ -243,9 +243,9 @@ public class RobotContainer
       driverJoystick.povLeft().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(90);}));
       driverJoystick.povRight().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(270);}));
 
-      //Shoot while button is held, manual distance, TODO, when set to false, ensure calc is working as expected
+      //Shoot while button is held, auto distance
       driverJoystick.button(1).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
-      
+
       //Outake while button is held
       driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem));
 
@@ -263,7 +263,7 @@ public class RobotContainer
       //copilotBoxController.button(10).whileTrue(new TurretManualAim());
       //climber stow/prepare
       copilotBoxController.button(7).onTrue(new StowClimber(climberSubsystem));
-      copilotBoxController.button(8).onTrue(new PrepareToClimb(climberSubsystem));
+      copilotBoxController.button(8).onTrue(new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
       //Run intake while this button is off and stop when button is on
       //copilotBoxController.button(6).whileFalse(Commands.runOnce(intakeSubsystem::overrideStopIntake).repeatedly());
       //Stow the climber when on every X seconds
