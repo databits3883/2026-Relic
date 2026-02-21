@@ -166,7 +166,7 @@ public final class Constants {
     public static final double MIN_SHOOTING_MIN_VELOCITY_RPM = 1100;
 
     //30% +/- speed
-    public static final double DISTANCE_TWEAK_MAX_PERCENTABE = .30;
+    public static final double DISTANCE_TWEAK_MAX_PERCENTABE = .15;
   }
 
 }
