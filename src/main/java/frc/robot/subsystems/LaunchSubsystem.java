@@ -18,7 +18,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -156,7 +155,8 @@ public class LaunchSubsystem extends SubsystemBase
     }
 
     //Tweak distance amount 30% max in either way
-    targetVelocityRPM = (1 + (this.tweakDistance * Constants.LaunchConstants.DISTANCE_TWEAK_MAX_PERCENTABE)) * targetVelocityRPM;
+    if (tweakDistance != 0)
+      targetVelocityRPM = (1 + (this.tweakDistance * Constants.LaunchConstants.DISTANCE_TWEAK_MAX_PERCENTABE)) * targetVelocityRPM;
 
     //Only update the launcher if the speed changes
     if (currentSetPointRPM != targetVelocityRPM)
