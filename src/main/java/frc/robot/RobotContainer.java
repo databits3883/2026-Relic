@@ -20,7 +20,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -147,7 +149,7 @@ public class RobotContainer
     autoChooser.addOption("Drive Forward 3sec", drivebase.driveForward().withTimeout(3));
 
     //Add a simple auto option to have the robot drive forward for 1 second then stop
-    autoChooser.addOption("Shoot 4sec", new Shoot( launchSubsystem, stageSubsystem).withTimeout(4));
+    autoChooser.addOption("Deploy/Shoot 20sec", new ParallelCommandGroup(new Deploy(intakeSubsystem),new WaitCommand(1).andThen(new Shoot(launchSubsystem, stageSubsystem).withTimeout(20))));
     
     //Put the autoChooser on the SmartDashboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -241,7 +243,7 @@ public class RobotContainer
       driverJoystick.povRight().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(270);}));
 
       //Shoot while button is held, manual distance, TODO, when set to false, ensure calc is working as expected
-      driverJoystick.button(1).whileTrue(new Shoot(launchSubsystem, stageSubsystem, true));
+      driverJoystick.button(1).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
       
       //Outake while button is held
       driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem));
