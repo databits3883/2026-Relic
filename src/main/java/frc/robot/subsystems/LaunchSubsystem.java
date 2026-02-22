@@ -47,14 +47,16 @@ public class LaunchSubsystem extends SubsystemBase
   private SparkFlexConfig m_baseConfig_a = new SparkFlexConfig();
   private SparkFlexConfig m_baseConfig_b = new SparkFlexConfig();
   private SparkClosedLoopController closedLoopController_a = m_motor_a.getClosedLoopController();
-  //private SparkClosedLoopController closedLoopController_b = m_motor_b.getClosedLoopController();
+
   private RelativeEncoder launchEncoder_a=null;
+  private RelativeEncoder launchEncoder_b=null;
 
   private double tweakDistance = 0;
 
   public LaunchSubsystem() 
   {   
     launchEncoder_a = m_motor_a.getEncoder();      
+    launchEncoder_b = m_motor_b.getEncoder();      
       
     m_baseConfig_a.closedLoop
                 .p(SLOT0_kP,ClosedLoopSlot.kSlot0)
@@ -112,6 +114,7 @@ public class LaunchSubsystem extends SubsystemBase
       }
       SmartDashboard.putNumber("Launch IAccum", 0);
       SmartDashboard.putNumber("Launch Current Velocity",0);
+      SmartDashboard.putNumber("Launch Current VelocityB",0);
   }
 
   /**
@@ -195,9 +198,13 @@ public class LaunchSubsystem extends SubsystemBase
    * Get the current velocity of the motor
    * @return
    */
-  public double getVelocity() 
+  public double getVelocityPrimary() 
   {
     return launchEncoder_a.getVelocity();
+  }
+  public double getVelocitySecondary() 
+  {
+    return launchEncoder_b.getVelocity();
   }
 
   /**
@@ -207,7 +214,7 @@ public class LaunchSubsystem extends SubsystemBase
   public boolean atTargetVelocity() 
   {
     double tolerance = Constants.LaunchConstants.TOLERANCE; // RPM tolerance
-    return Math.abs(currentSetPointRPM - getVelocity()) < tolerance;
+    return Math.abs(currentSetPointRPM - getVelocityPrimary()) < tolerance;
   }
 
   /** 
@@ -339,7 +346,8 @@ public class LaunchSubsystem extends SubsystemBase
     } //end update PID
     
     SmartDashboard.putNumber("Launch IAccum", closedLoopController_a.getIAccum());
-    SmartDashboard.putNumber("Launch Current Velocity",getVelocity());
+    SmartDashboard.putNumber("Launch Current Velocity",getVelocityPrimary());
+    SmartDashboard.putNumber("Launch Current VelocityB",getVelocitySecondary());
   }
 
   @Override

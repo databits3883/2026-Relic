@@ -245,6 +245,8 @@ public class RobotContainer
 
       //Shoot while button is held, auto distance
       driverJoystick.button(1).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
+      //Shoot with manual velocity control
+      driverJoystick.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, true));
 
       //Outake while button is held
       driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem));

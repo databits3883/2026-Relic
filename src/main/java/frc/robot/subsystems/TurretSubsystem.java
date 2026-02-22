@@ -266,7 +266,7 @@ public class TurretSubsystem extends SubsystemBase {
         var robotSpeed = RobotContainer.drivebase.getRobotVelocity();
         //Based on current robot speed find the future position of the turret by X seconds
         Translation2d futureTranslation = turretPose.getTranslation().plus(new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond).times(Constants.TurretConstants.LATENCY_SEC));
-        Pose2d futurePose = new Pose2d(futureTranslation, turretPose.getRotation().plus(new Rotation2d( + robotSpeed.omegaRadiansPerSecond * Constants.TurretConstants.LATENCY_SEC));
+        Pose2d futurePose = new Pose2d(futureTranslation, turretPose.getRotation().plus(new Rotation2d( + robotSpeed.omegaRadiansPerSecond * Constants.TurretConstants.LATENCY_SEC)));
         //plot future pose on field no idea where this is..
         m_field.getObject("FuturePose").setPose(futurePose);
         //TODO: Until we verify the future pose is anything remotely reasonable do not use it
