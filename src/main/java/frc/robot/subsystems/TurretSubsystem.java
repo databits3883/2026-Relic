@@ -259,13 +259,18 @@ public class TurretSubsystem extends SubsystemBase {
         //Transform robot pose
         Pose2d turretPose = robotPose.plus(Constants.TurretConstants.BACK_LEFT_TURRET_FROM_CENTER_BOT);
 
+        if (RobotContainer.DISPLAY_TARGET)
+          m_field.getObject("TurretPose").setPose(turretPose);
+
         //If we want to use a future pose based on current velocity
-        /**
         var robotSpeed = RobotContainer.drivebase.getRobotVelocity();
         //Based on current robot speed find the future position of the turret by X seconds
-        Translation2d futurePose = turretPose.plus(new Transform2d(new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond), new Rotation2d(robotSpeed.omegaRadiansPerSecond)).times(Constants.TurretConstants.LATENCY_SEC));        
-        if (Constants.TurretConstants.USE_FUTURE_POSE) turretPose = futurePose.getPose();
-        *//
+        Translation2d futureTranslation = turretPose.getTranslation().plus(new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond).times(Constants.TurretConstants.LATENCY_SEC));
+        Pose2d futurePose = new Pose2d(futureTranslation, turretPose.getRotation().plus(new Rotation2d( + robotSpeed.omegaRadiansPerSecond * Constants.TurretConstants.LATENCY_SEC));
+        //plot future pose on field no idea where this is..
+        m_field.getObject("FuturePose").setPose(futurePose);
+        //TODO: Until we verify the future pose is anything remotely reasonable do not use it
+        //if (Constants.TurretConstants.USE_FUTURE_POSE) turretPose = futurePose;
 
         //Find new target based on robot positon
         targetPose = findTargetToAim(turretPose);    
@@ -472,8 +477,6 @@ public class TurretSubsystem extends SubsystemBase {
 
     double turretX = turretPose.getX();
     double turretY = turretPose.getY();
-    if (RobotContainer.DISPLAY_TARGET)
-      m_field.getObject("TurretPose").setPose(turretPose);
 
     if (isRedAlliance)
     {
