@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import org.w3c.dom.traversal.TreeWalker;
-
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;

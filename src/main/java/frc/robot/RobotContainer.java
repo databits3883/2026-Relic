@@ -70,6 +70,8 @@ public class RobotContainer
   public static boolean DISPLAY_VISION_TAGS = true;
   public static boolean DISPLAY_VISION_POSE = false;
   public static boolean DISPLAY_TARGET = true;
+  public static boolean CAN_SHOOT = false;
+  public static boolean ABOUT_TO_BE_ABLE_TO_SHOOT = false;
 
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing selection of desired auto
   private final SendableChooser<Command> autoChooser;
@@ -154,7 +156,6 @@ public class RobotContainer
     
     //Put the autoChooser on the SmartDashboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
-
   }
 
   /**
