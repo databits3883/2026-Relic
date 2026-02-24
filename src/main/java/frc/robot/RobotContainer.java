@@ -157,6 +157,9 @@ public class RobotContainer
 
   }
 
+  /**
+   * Straightens the robot on the field with intake forward depending on red/blue alliance , use if no vision targets
+   **/
   private void straightenRobot()
   {
     if (Robot.isRedAlliance)

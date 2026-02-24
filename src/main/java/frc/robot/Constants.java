@@ -23,8 +23,10 @@ import swervelib.math.Matter;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-
-  public static final double ROBOT_MASS = Units.lbsToKilograms(105);
+  public static final double ROBOT_BATTARY_MASS = Units.lbsToKilograms(12.89);
+  public static final double ROBOT_BUMPER_MASS = Units.lbsToKilograms(9);
+  public static final double ROBOT_CHASSIS_MASS = Units.lbsToKilograms(106);
+  public static final double ROBOT_MASS = ROBOT_BATTARY_MASS + ROBOT_BUMPER_MASS + ROBOT_CHASSIS_MASS;
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
   public static final double MAX_SPEED  = Units.feetToMeters(14.5);
