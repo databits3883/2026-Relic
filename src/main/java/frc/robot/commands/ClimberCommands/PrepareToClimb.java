@@ -19,6 +19,9 @@ public class PrepareToClimb extends Command {
 
     @Override
     public void initialize() {
+        //Tell climber we are not stowed
+        climberSub.turnOffStow();
+
         climberSub.runClimber(Constants.Climber.SLOW_FORWARD_SPEED);
         //start a timer, We can stop after X seconds if it does not reach limit
         startTime = System.currentTimeMillis();

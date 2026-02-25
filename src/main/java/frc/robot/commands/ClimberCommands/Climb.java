@@ -17,6 +17,9 @@ public class Climb extends Command {
 
     @Override
     public void initialize() {
+        //Tell climber we are not stowed
+        climberSubsystem.turnOffStow();
+
         climberSubsystem.reverseClimber();
         //start a timer, We can stop after X seconds if it does not reach limit
         startTime = System.currentTimeMillis();

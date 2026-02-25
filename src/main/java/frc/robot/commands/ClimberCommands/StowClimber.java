@@ -25,6 +25,9 @@ public class StowClimber extends Command {
 
     @Override
     public void initialize() {
+        //Tell climber we are not stowed yet
+        climberSub.turnOffStow();
+        
         if (deltaRunAgain <= 0)
             climberSub.runClimber(Constants.Climber.SLOW_REVERSE_SPEED);
         //start a timer, We can stop after X seconds if it does not reach limit

@@ -34,7 +34,7 @@ public final class Constants {
   public static class OperatorConstants 
   {
     public static final int kDriverControllerPort = 0;
-    public static final double DEADBAND        = 0.1;
+    public static final double DEADBAND        = 0.1; /* Duncan wants to change this */
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
@@ -125,6 +125,7 @@ public final class Constants {
     public static double ROTATIONS_FULLY_EXTENDED = 23.5; //Rotation count when fully extended, determine actual number
     public static double ROTATIONS_AT_CLIMB = 3.4; //Rotation count when fully at climb, fallback to if we drive past limit
     public static double MAX_ROTATIONS_IN_FRAME = 1; //Max motor rotations and still keep climber in frame
+    public static double MAX_ROTATIONS_UNDER_BAR = 0.5; //Max motor rotations and still keep climber under bar for travel
   }
 
   public static class StageConstants {

@@ -14,8 +14,10 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.commands.ClimberCommands.StowClimber;
 
 public class ClimberSubsystem extends SubsystemBase 
 {
@@ -33,6 +35,7 @@ public class ClimberSubsystem extends SubsystemBase
 
   private double lastPositionRead = 100;
   private long lastStallReading = 0;
+  private boolean m_isStowed = true;
     
   /**
    * Initialize the motor and other components
@@ -54,10 +57,11 @@ public class ClimberSubsystem extends SubsystemBase
     m_climberEncoder = m_primary_motor.getEncoder();
     //Track the last time we read the encoder
     lastPositionRead = m_climberEncoder.getPosition();
+    //Define current state as being stowed, used in periodic
+    m_isStowed = true;
 
     //For debugging, climber position
     SmartDashboard.putNumber("Climber Current Position",0);
-
   }
 
   //This will determine if the motor is stalled
@@ -96,7 +100,11 @@ public class ClimberSubsystem extends SubsystemBase
     {
       //Zero position
       m_climberEncoder.setPosition(0);
+    
+      //Set that we are stowed
+      m_isStowed = true;
     }
+
     return isReverseLimit;
   }
   /**
@@ -108,6 +116,15 @@ public class ClimberSubsystem extends SubsystemBase
     double currentRotations = getCurrentClimberPosition();
     //Return true is we are at or past the number of rotations we determined to be extended
     return (currentRotations >= Constants.Climber.ROTATIONS_FULLY_EXTENDED);
+  }
+
+  /**
+   * Called for prepare to climb and climb modes, 
+   * This will stop the robot from perioically stowing climber
+   */
+  public void turnOffStow()
+  {
+    m_isStowed = false;
   }
 
   /**
@@ -143,7 +160,7 @@ public class ClimberSubsystem extends SubsystemBase
     m_primary_motor.setVoltage(0);
     m_secondary_motor.setVoltage(0);
     m_isClimberRunning = false;
-     m_currentPowerLevel = 0;
+    m_currentPowerLevel = 0;
   }
 
   /**
@@ -192,6 +209,13 @@ public class ClimberSubsystem extends SubsystemBase
     //Update the last position reading
     lastPositionRead = getCurrentClimberPosition();
     SmartDashboard.putNumber("Climber Current Position",lastPositionRead);
+
+    //If we are "stowed" and not currently running the climber ensure our position does not drift too far up
+    if ((m_isStowed) && (lastPositionRead >= Constants.Climber.MAX_ROTATIONS_UNDER_BAR) && !isClimberRunning()) 
+    {
+      //Run the stow command
+      CommandScheduler.getInstance().schedule(new StowClimber(this));
+    }
 
     //Stop the climber if we are running in reverse and at limit
     if (isClimberReverseLimit() && isClimberRunning() && m_currentPowerLevel < 0)
