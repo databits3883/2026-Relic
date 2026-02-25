@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New Path"
+            "pathName": "Depot - Depot Collect"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot - Climb"
           }
         }
       ]
