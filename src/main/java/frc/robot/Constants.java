@@ -11,6 +11,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
 
@@ -126,6 +128,13 @@ public final class Constants {
     public static double ROTATIONS_AT_CLIMB = 3.4; //Rotation count when fully at climb, fallback to if we drive past limit
     public static double MAX_ROTATIONS_IN_FRAME = 1; //Max motor rotations and still keep climber in frame
     public static double MAX_ROTATIONS_UNDER_BAR = 0.5; //Max motor rotations and still keep climber under bar for travel
+
+    //Climber Poses for Blue/Red/Right/Left
+    //TODO: Define these poses
+    public static final Pose2d RED_LEFT_POSE = new Pose2d(new Translation2d(Meter.of(16), Meter.of(4)), Rotation2d.fromDegrees(0));
+    public static final Pose2d RED_RIGHT_POSE = new Pose2d(new Translation2d(Meter.of(16), Meter.of(4)), Rotation2d.fromDegrees(0));
+    public static final Pose2d BLUE_LEFT_POSE = new Pose2d(Units.inchesToMeters(18.5),Units.inchesToMeters(251.84), Rotation2d.fromDegrees(180));
+    public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(Units.inchesToMeters(18.5),Units.inchesToMeters(251.84), Rotation2d.fromDegrees(180));
   }
 
   public static class StageConstants {
@@ -178,4 +187,20 @@ public final class Constants {
     public static final double DISTANCE_TWEAK_MAX_PERCENTABE = .15;
   }
 
+  /**
+   * Used by drive to pose
+   */
+  public static final class AutonConstants
+  {
+    public static final double positionKP = 3.0;
+    public static final double positionKI = 0.001;
+    public static final double positionKD = 0.00;
+
+    public static final TrapezoidProfile.Constraints positionPIDConstraints = new Constraints(MAX_SPEED/*meters per second */, 12 /*meters per second per second*/);
+    public static final TrapezoidProfile.Constraints rotationPIDConstraints = new Constraints(2/*radians per second */, 2 /*radians per second per second*/);
+
+    public static final double rotationKP = 4.0;
+    public static final double rotationKI = 0.00;
+    public static final double rotationKD = 0.00;
+  }
 }

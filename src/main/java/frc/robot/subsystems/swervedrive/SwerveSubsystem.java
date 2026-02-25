@@ -12,6 +12,8 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
@@ -20,6 +22,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -30,6 +33,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
@@ -69,6 +73,9 @@ public class SwerveSubsystem extends SubsystemBase
    * PhotonVision class to keep an accurate odometry.
    */
   private       Vision      vision;
+
+  //3883 addon for drive to pose functions
+  public Pose2d goalPose2d;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -110,7 +117,64 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive.stopOdometryThread();
     }
     setupPathPlanner();
+    //Set current pose, 3883
+    goalPose2d = getPose();
   }
+
+  /**
+   * 3883: get current error in pose to goal pose
+   * @return
+   */
+  public double[] getPoseError()
+  {
+    Transform2d poseError = goalPose2d.minus(getPose());
+    double[] errorList = {poseError.getX(),poseError.getY()};
+    return errorList;
+  }
+
+  /**
+   * 3883: create an auto path to a given goal pose
+   * @param endPose
+   * @return
+   */
+  public Command createTrajectoryToPose(Pose2d endPose){
+
+    // Transform2d halfPoseOffset = new Transform2d(getPose(), endPose);
+    // Pose2d halfPose = endPose.plus(halfPoseOffset.times(-0.5));
+    Pose2d robotPose = getPose();
+
+    if(robotPose.getTranslation().getDistance(endPose.getTranslation()) < 0.05) return new PrintCommand("Too close to the endpoint, canceling");
+
+    if(robotPose == null) return new PrintCommand("For some reason you don't have a position, createTrajectoryToPose failed");
+    
+    
+    PathPlannerPath path = new PathPlannerPath(
+      PathPlannerPath.waypointsFromPoses(robotPose, endPose),
+     
+    // return AutoBuilder.followPath(
+    //   endPose, 
+     new PathConstraints(
+        swerveDrive.getMaximumChassisVelocity(), swerveDrive.getMaximumChassisVelocity()/2.5,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720)),
+        new IdealStartingState(getSpeedMagnitudeMpS(), getHeading()),
+        new GoalEndState(0, endPose.getRotation())); 
+       
+    goalPose2d = endPose;
+    
+    path.preventFlipping = true;
+    return AutoBuilder.followPath(path);    
+  }
+
+  /**
+   * 3883: return speed in mps
+   * @return
+   */
+  public double getSpeedMagnitudeMpS()
+  {
+    ChassisSpeeds velocity = getRobotVelocity();
+    return Math.sqrt(Math.pow(velocity.vxMetersPerSecond,2) + Math.pow(velocity.vyMetersPerSecond,2));
+  }
+
 
   /**
    * Construct the swerve drive.
