@@ -70,8 +70,6 @@ public class Robot extends TimedRobot
 
     SmartDashboard.putBoolean("Match:Shoot Now", false);
     SmartDashboard.putBoolean("Match:About to shoot", false);
-    SmartDashboard.putString("Match:Winner", "U");
-    SmartDashboard.putNumber("Match:Match Time Left", 0);
   }
 
   /**
@@ -108,12 +106,10 @@ public class Robot extends TimedRobot
           case 'B' : 
             //Blue case code
             AUTO_WINNER_CODE = 'B';
-            SmartDashboard.putString("Match:Winner", "B");
             break;
           case 'R' :
             //Red case code
             AUTO_WINNER_CODE = 'R';
-            SmartDashboard.putString("Match:Winner", "R");
             break;
           default :
             //This is corrupt data
@@ -125,80 +121,68 @@ public class Robot extends TimedRobot
     }
 
     double timeLeftInTeleop = DriverStation.getMatchTime();
-    SmartDashboard.putNumber("Match:Match Time Left", timeLeftInTeleop);
     if (timeLeftInTeleop >= 130) /*2:10 */
     {
-      System.out.println("In A");
       //In this timeperiod both sides can shoot
       RobotContainer.ABOUT_TO_BE_ABLE_TO_SHOOT = false;
       RobotContainer.CAN_SHOOT = true;
     }
     else if ((timeLeftInTeleop < 130 && timeLeftInTeleop >= 105) /*1:45 */ && ((AUTO_WINNER_CODE == 'B' && isRedAlliance) || (AUTO_WINNER_CODE == 'R' && !isRedAlliance)))
     {
-      System.out.println("In B");
       //The losers of auto shots right away
       RobotContainer.ABOUT_TO_BE_ABLE_TO_SHOOT = false;
       RobotContainer.CAN_SHOOT = true;
     }
     else if ((timeLeftInTeleop <= 110 /*1:50 */ && timeLeftInTeleop >= 105 /*1:05 */))
     {
-      System.out.println("In C");
       //winners of auto and there is five seconds left before we can shoot
       RobotContainer.ABOUT_TO_BE_ABLE_TO_SHOOT = true;
       RobotContainer.CAN_SHOOT = false;
     }
     else if ((timeLeftInTeleop < 105 && timeLeftInTeleop >= 80)/*1:20*/ && ((AUTO_WINNER_CODE == 'R' && isRedAlliance) || (AUTO_WINNER_CODE == 'B' && !isRedAlliance)))
     {
-      System.out.println("In D");
       //The winner of auto gets to shoot next
       RobotContainer.ABOUT_TO_BE_ABLE_TO_SHOOT = false;
       RobotContainer.CAN_SHOOT = true;
     }
     else if ((timeLeftInTeleop <= 85 /* 1:25 */ && timeLeftInTeleop >= 80 /* 1:20 */))
     {
-      System.out.println("In E");
       //Losers of auto now can be told about to be able shoot
       RobotContainer.ABOUT_TO_BE_ABLE_TO_SHOOT = true;
       RobotContainer.CAN_SHOOT = false;
     }
     else if ((timeLeftInTeleop < 80 && timeLeftInTeleop >= 55) && ((AUTO_WINNER_CODE == 'B' && isRedAlliance) || (AUTO_WINNER_CODE == 'R' && !isRedAlliance)))
     {
-      System.out.println("In F");
       //The loser of auto gets to shoot next
       RobotContainer.ABOUT_TO_BE_ABLE_TO_SHOOT = false;
       RobotContainer.CAN_SHOOT = true;
     }
     else if ((timeLeftInTeleop <= 60 /* 1:00 */ && timeLeftInTeleop >= 55 ))
     {
-      System.out.println("In G");
       //Winners of auto now can be told about to be able shoot
       RobotContainer.ABOUT_TO_BE_ABLE_TO_SHOOT = true;
       RobotContainer.CAN_SHOOT = false;
     }
     else if ((timeLeftInTeleop < 55 && timeLeftInTeleop >= 30) && ((AUTO_WINNER_CODE == 'R' && isRedAlliance) || (AUTO_WINNER_CODE == 'B' && !isRedAlliance)))
     {
-      System.out.println("In H");
       //The winners of auto gets to shoot next
       RobotContainer.ABOUT_TO_BE_ABLE_TO_SHOOT = false;
       RobotContainer.CAN_SHOOT = true;
     }
     else if ((timeLeftInTeleop <= 35 && timeLeftInTeleop >= 30 ))
     {
-      System.out.println("In I");
       //losers of auto now can be told about to be able shoot
       RobotContainer.ABOUT_TO_BE_ABLE_TO_SHOOT = true;
       RobotContainer.CAN_SHOOT = false;
     }
     else if ((timeLeftInTeleop < 30))
     {
-      System.out.println("In J");
       //everyone can shoot
       RobotContainer.ABOUT_TO_BE_ABLE_TO_SHOOT = false;
       RobotContainer.CAN_SHOOT = true;
     }
     else
     {
-      System.out.println("ELSE");
       //Default condition not able to shoot and no warning needed
       RobotContainer.CAN_SHOOT = false;      
       RobotContainer.ABOUT_TO_BE_ABLE_TO_SHOOT = false;      
