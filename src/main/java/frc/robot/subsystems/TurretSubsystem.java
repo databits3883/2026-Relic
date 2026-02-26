@@ -82,6 +82,7 @@ public class TurretSubsystem extends SubsystemBase {
 
     private long lastOuput = System.currentTimeMillis();
     private int lastTaget = 0;
+    private double x_latencySec = 0;
 
     //Track the distance to the current target
     private double distanceToTarget = 0;
@@ -121,6 +122,7 @@ public class TurretSubsystem extends SubsystemBase {
         midFieldY = redHubPose.getY();
         redXPlayer = redHubPose.getX();
         blueXPlayer = blueHubPose.getX();
+        x_latencySec = Constants.TurretConstants.LATENCY_SEC;
 
         //find target to aim based on the robot position
         targetPose = findTargetToAim(swerveSubsystem.getPose());
@@ -138,6 +140,7 @@ public class TurretSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Turret Target Position",angleSetpoint);
         SmartDashboard.putNumber("Turret Distance To Target",distanceToTarget);
         SmartDashboard.putNumber("Turret Motor Current",0);
+        SmartDashboard.putNumber("Turret Latency (sec)",x_latencySec);
     }
     
     /**
@@ -258,18 +261,17 @@ public class TurretSubsystem extends SubsystemBase {
         //Transform robot pose
         Pose2d turretPose = robotPose.plus(Constants.TurretConstants.BACK_LEFT_TURRET_FROM_CENTER_BOT);
 
-        if (RobotContainer.DISPLAY_TARGET)
-          m_field.getObject("TurretPose").setPose(turretPose);
-
         //If we want to use a future pose based on current velocity
         var robotSpeed = RobotContainer.drivebase.getRobotVelocity();
         //Based on current robot speed find the future position of the turret by X seconds
-        Translation2d futureTranslation = turretPose.getTranslation().plus(new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond).times(Constants.TurretConstants.LATENCY_SEC));
-        Pose2d futurePose = new Pose2d(futureTranslation, turretPose.getRotation().plus(new Rotation2d( + robotSpeed.omegaRadiansPerSecond * Constants.TurretConstants.LATENCY_SEC)));
-        //plot future pose on field no idea where this is..
-        m_field.getObject("FuturePose").setPose(futurePose);
+        Translation2d futureTranslation = turretPose.getTranslation().plus(new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond).times(x_latencySec));
+        Pose2d futurePose = new Pose2d(futureTranslation, turretPose.getRotation().plus(new Rotation2d( + robotSpeed.omegaRadiansPerSecond * x_latencySec)));
+
         //Use the future pose to aim and target distance
         if (Constants.TurretConstants.USE_FUTURE_POSE) turretPose = futurePose;
+        //Plot the turret on the field
+        if (RobotContainer.DISPLAY_TARGET)
+          m_field.getObject("TurretPose").setPose(turretPose);
 
         //Find new target based on robot positon
         targetPose = findTargetToAim(turretPose);    
@@ -366,6 +368,7 @@ public class TurretSubsystem extends SubsystemBase {
           SmartDashboard.putNumber("Turret SetPoint rots", closedLoopController.getSetpoint());
           SmartDashboard.putNumber("Turret Distance To Target",getDistanceToTarget());
           SmartDashboard.putNumber("Turret Motor Current",m_motor.getAppliedOutput());
+          x_latencySec = SmartDashboard.getNumber("Turret Latency (sec)");
         }
 
         if (SmartDashboard.getBoolean("Turret Stop", false)) 
