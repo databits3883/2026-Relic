@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.commands.ClimberCommands.StowClimber;
 
 public class ClimberSubsystem extends SubsystemBase 
@@ -214,13 +215,9 @@ public class ClimberSubsystem extends SubsystemBase
     if ((m_isStowed) && (lastPositionRead >= Constants.Climber.MAX_ROTATIONS_UNDER_BAR) && !isClimberRunning()) 
     {
       //Run the stow command
-      CommandScheduler.getInstance().schedule(new StowClimber(this));
-    }
-
-    //Stop the climber if we are running in reverse and at limit
-    if (isClimberReverseLimit() && isClimberRunning() && m_currentPowerLevel < 0)
-    {
-      stopClimber();
+      System.out.println("Stowing climber again!");
+      m_isStowed = false;
+      CommandScheduler.getInstance().schedule(new StowClimber(RobotContainer.climberSubsystem));
     }
   }
 

@@ -2,7 +2,6 @@ package frc.robot.commands.ClimberCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.Constants.Climber;
 import frc.robot.subsystems.ClimberSubsystem;
 
 public class StowClimber extends Command {
@@ -27,7 +26,7 @@ public class StowClimber extends Command {
     public void initialize() {
         //Tell climber we are not stowed yet
         climberSub.turnOffStow();
-        
+
         if (deltaRunAgain <= 0)
             climberSub.runClimber(Constants.Climber.SLOW_REVERSE_SPEED);
         //start a timer, We can stop after X seconds if it does not reach limit
