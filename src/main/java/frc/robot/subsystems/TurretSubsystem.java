@@ -368,7 +368,7 @@ public class TurretSubsystem extends SubsystemBase {
           SmartDashboard.putNumber("Turret SetPoint rots", closedLoopController.getSetpoint());
           SmartDashboard.putNumber("Turret Distance To Target",getDistanceToTarget());
           SmartDashboard.putNumber("Turret Motor Current",m_motor.getAppliedOutput());
-          x_latencySec = SmartDashboard.getNumber("Turret Latency (sec)");
+          x_latencySec = SmartDashboard.getNumber("Turret Latency (sec)",Constants.TurretConstants.LATENCY_SEC);
         }
 
         if (SmartDashboard.getBoolean("Turret Stop", false)) 
