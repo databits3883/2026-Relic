@@ -345,22 +345,13 @@ public class Vision
     /**
      * Left Camera
      */
+    /** Disable until we get power to the pi **
     LEFT_CAM("CameraA",
                new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(90)),
                new Translation3d(Units.inchesToMeters(-9.32),  
                                  Units.inchesToMeters(11.3),
                                  Units.inchesToMeters(12.25)),
                VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
-    /**
-     * Right Camera
-     */
-    /**
-    RIGHT_CAM("right",
-              new Rotation3d(0, Math.toRadians(-24.094), Math.toRadians(-30)),
-              new Translation3d(Units.inchesToMeters(12.056),   //Front positive
-                                Units.inchesToMeters(-10.981),  //Left Positive
-                                Units.inchesToMeters(8.44)),
-              VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
      */
     /**
      * Right Camera
