@@ -263,7 +263,7 @@ public class RobotContainer
       driverJoystick.button(3).onTrue(new Retract(intakeSubsystem));
 
       //Climber
-      driverJoystick.button(7).onTrue(new PrepareToClimb(climberSubsystem));
+      driverJoystick.button(7).onTrue(new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
       driverJoystick.button(8).onTrue(new Climb(climberSubsystem));
       driverJoystick.button(9).onTrue(new StowClimber(climberSubsystem));
       
@@ -280,7 +280,6 @@ public class RobotContainer
       //copilotBoxController.button(6).whileTrue(Commands.runOnce(intakeSubsystem::overrideStartIntake).repeatedly());
       //Test later
       //driverJoystick.button(4).whileTrue(new SequentialCommandGroup(new ActiveDriveToPose(drivebase, true, GoalType.Climber_Right),new Climb(climberSubsystem)));
-
     }
   }
 
