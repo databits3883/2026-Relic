@@ -127,7 +127,7 @@ public final class Constants {
     public static double ROTATIONS_FULLY_EXTENDED = 23.5; //Rotation count when fully extended, determine actual number
     public static double ROTATIONS_AT_CLIMB = 3.4; //Rotation count when fully at climb, fallback to if we drive past limit
     public static double MAX_ROTATIONS_IN_FRAME = 1; //Max motor rotations and still keep climber in frame
-    public static double MAX_ROTATIONS_UNDER_BAR = 0.5; //Max motor rotations and still keep climber under bar for travel
+    public static double MAX_ROTATIONS_UNDER_BAR = 0.3; //Max motor rotations and still keep climber under bar for travel
 
     //Climber Poses for Blue/Red/Right/Left
     //TODO: Define these poses
