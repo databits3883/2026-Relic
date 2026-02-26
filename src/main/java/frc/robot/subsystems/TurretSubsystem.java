@@ -268,8 +268,8 @@ public class TurretSubsystem extends SubsystemBase {
         Pose2d futurePose = new Pose2d(futureTranslation, turretPose.getRotation().plus(new Rotation2d( + robotSpeed.omegaRadiansPerSecond * Constants.TurretConstants.LATENCY_SEC)));
         //plot future pose on field no idea where this is..
         m_field.getObject("FuturePose").setPose(futurePose);
-        //TODO: Until we verify the future pose is anything remotely reasonable do not use it
-        //if (Constants.TurretConstants.USE_FUTURE_POSE) turretPose = futurePose;
+        //Use the future pose to aim and target distance
+        if (Constants.TurretConstants.USE_FUTURE_POSE) turretPose = futurePose;
 
         //Find new target based on robot positon
         targetPose = findTargetToAim(turretPose);    
