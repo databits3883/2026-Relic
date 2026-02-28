@@ -59,7 +59,7 @@ public class RobotContainer
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   public static final CommandJoystick driverJoystick = new CommandJoystick(0);
-  private final       CommandJoystick copilotSNESController = new CommandJoystick(2);
+  private final       CommandJoystick copilotSNESController = new CommandJoystick(1);
 
   // The robot's subsystems and commands are defined here...
   public static final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/relic"));
@@ -266,16 +266,15 @@ public class RobotContainer
       driverJoystick.button(3).onTrue(new Retract(intakeSubsystem));
       copilotSNESController.axisGreaterThan(0,0.5).onTrue(new Retract(intakeSubsystem));
       //Run intake while this button is off and stop when button is on
-      copilotSNESController.button(3).whileTrue(Commands.runOnce(intakeSubsystem::overrideStopIntake).repeatedly());
-      copilotSNESController.button(3).whileFalse(Commands.runOnce(intakeSubsystem::overrideStartIntake).repeatedly());
+      copilotSNESController.button(3).onTrue(Commands.runOnce(intakeSubsystem::toggleIntake));
 
       //Climber
       //climber stow/prepare
       driverJoystick.button(7).onTrue(new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
       copilotSNESController.button(9).onTrue(new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
       //climb
-      driverJoystick.button(8).onTrue(new Climb(climberSubsystem,1));
-      copilotSNESController.button(10).onTrue(new Climb(climberSubsystem,1));
+      driverJoystick.button(8).onTrue(new Climb(climberSubsystem));
+      copilotSNESController.button(10).onTrue(new Climb(climberSubsystem));
       //Stow
       driverJoystick.button(9).onTrue(new StowClimber(climberSubsystem));
       copilotSNESController.button(4).onTrue(new StowClimber(climberSubsystem));

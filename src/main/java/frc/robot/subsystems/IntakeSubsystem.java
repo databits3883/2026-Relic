@@ -257,6 +257,12 @@ public class IntakeSubsystem extends SubsystemBase
     m_isIntakeRunning = false;
   }
 
+  public void toggleIntake()
+  {
+    if (isIntakeRunning()) stopIntake();
+    else runIntake();
+  }
+
   /**
    * Run the intake motor to the default configured velocity
    */

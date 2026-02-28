@@ -37,6 +37,8 @@ public class LaunchSubsystem extends SubsystemBase
   private boolean isRunning = false;
   private boolean x_useTargetDistance = true;
   private boolean x_useSlot0 = false;
+
+  private double velocityTweak = 1.1; 
   
   private SparkFlex m_motor_a = new SparkFlex(Constants.LaunchConstants.LAUNCH_MOTOR_ID_A, MotorType.kBrushless);
   private SparkFlex m_motor_b = new SparkFlex(Constants.LaunchConstants.LAUNCH_MOTOR_ID_B, MotorType.kBrushless);
@@ -167,7 +169,7 @@ public class LaunchSubsystem extends SubsystemBase
       if (x_useSlot0)
         closedLoopController_a.setSetpoint(targetVelocityRPM, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
       else
-        closedLoopController_a.setSetpoint(targetVelocityRPM*1.1, ControlType.kVelocity,ClosedLoopSlot.kSlot1);
+        closedLoopController_a.setSetpoint(targetVelocityRPM*velocityTweak, ControlType.kVelocity,ClosedLoopSlot.kSlot1);
     }
   }
    
