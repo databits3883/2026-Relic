@@ -7,11 +7,18 @@ public class Climb extends Command {
     private final ClimberSubsystem climberSubsystem;
     private final long ABORT_TIME = Constants.Climber.CLIMBER_TIMEOUT_SEC * 1000; /* in millis */
     private long startTime = 0;
+    private double m_climberPower = Constants.Climber.MAX_POWER;
 
     public Climb(ClimberSubsystem climerSub) 
     {
         this.climberSubsystem = climerSub;
-
+        m_climberPower = Constants.Climber.MAX_POWER;
+        addRequirements(climerSub);
+    }
+    public Climb(ClimberSubsystem climerSub, double powerLevel) 
+    {
+        this.climberSubsystem = climerSub;
+        m_climberPower = powerLevel;
         addRequirements(climerSub);
     }
 
@@ -20,7 +27,7 @@ public class Climb extends Command {
         //Tell climber we are not stowed
         climberSubsystem.turnOffStow();
 
-        climberSubsystem.reverseClimber();
+        climberSubsystem.reverseClimber(m_climberPower);
         //start a timer, We can stop after X seconds if it does not reach limit
         startTime = System.currentTimeMillis();
     }
@@ -45,9 +52,13 @@ public class Climb extends Command {
         long delta = System.currentTimeMillis() - startTime;
         
         boolean atLimit = climberSubsystem.isAtClimbLimit();
+        boolean isStalled = climberSubsystem.isStalled();
+        boolean isNoLongerRunning = !climberSubsystem.isClimberRunning();
         boolean overTime = (delta > ABORT_TIME);
         boolean finished = false;
         if (atLimit) finished = true;
+        if (isStalled) finished = true;
+        if (isNoLongerRunning) finished = true;
         if (overTime) finished = true;
         
         //Stop if at limit or if we ran too long

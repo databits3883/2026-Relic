@@ -265,7 +265,7 @@ public class RobotContainer
 
       //Climber
       driverJoystick.button(7).onTrue(new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
-      driverJoystick.button(8).onTrue(new Climb(climberSubsystem));
+      driverJoystick.button(8).onTrue(new Climb(climberSubsystem,1));
       driverJoystick.button(9).onTrue(new StowClimber(climberSubsystem));
       
       //CO-Pilot overrides

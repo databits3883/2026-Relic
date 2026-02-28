@@ -107,12 +107,20 @@ public final class Constants {
     public static int FOUR_BAR_BACKWARD_TIMEOUT_SEC = 4; /* Max run time in case we do not hit limit */
 
     public static final int INTAKE_MOTOR_ID = 14;
-    public static double INTAKE_MOTOR_POWER = 14.0;
+    public static double INTAKE_MOTOR_POWER = 6.0;
     public static boolean INTAKE_MOTOR_INVERSE = true;
 
     //For stall checks
     public static double INTAKE_MIN_POSITION_MOVEMENT = 0.02; /* Minimum movement in check_ms interval for stalled */
-    public static int INTAKE_STALL_CHECK_MS = 50; /* MS between stall checks */
+    public static int INTAKE_STALL_CHECK_MS = 100; /* MS between stall checks */
+
+    //PID velocity control
+    public static double SLOT1_KP = 0.00005;
+    public static double SLOT1_KI = 0.0;
+    public static double SLOT1_KD = 0.0;
+    public static double SLOT1_kV = 0.0016;
+    public static double MAX_OUTPUT = 1;
+    public static final double TARGET_VELOCITY_RPM = 500; 
   }
 
   public static class Climber
@@ -141,8 +149,8 @@ public final class Constants {
     public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(Units.inchesToMeters(18.5),Units.inchesToMeters(251.84), Rotation2d.fromDegrees(180));
 
     //For stall checks
-    public static double MIN_POSITION_MOVEMENT = 0.02; /* Minimum movement in check_ms interval for stalled */
-    public static int STALL_CHECK_MS = 50; /* MS between stall checks */
+    public static double MIN_POSITION_MOVEMENT = 0.01; /* Minimum movement in check_ms interval for stalled */
+    public static int STALL_CHECK_MS = 100; /* MS between stall checks */
   }
 
   public static class StageConstants {

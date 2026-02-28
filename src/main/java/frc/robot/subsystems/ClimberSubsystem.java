@@ -37,6 +37,7 @@ public class ClimberSubsystem extends SubsystemBase
   private double lastPositionRead = 100;
   private long lastStallReading = 0;
   private boolean m_isStowed = true;
+  private boolean m_isRunningReverse = false;
     
   /**
    * Initialize the motor and other components
@@ -60,6 +61,7 @@ public class ClimberSubsystem extends SubsystemBase
     lastPositionRead = m_climberEncoder.getPosition();
     //Define current state as being stowed, used in periodic
     m_isStowed = true;
+    m_isRunningReverse = false;
 
     //For debugging, climber position
     SmartDashboard.putNumber("Climber Current Position",0);
@@ -80,10 +82,15 @@ public class ClimberSubsystem extends SubsystemBase
       //check position every 50 ms
       double currentPosition = getCurrentClimberPosition();
       double deltaPosition = currentPosition - lastPositionRead;
-      if (deltaPosition < Constants.Climber.MIN_POSITION_MOVEMENT) isMotorStalled = true;      
+      if (Math.abs(deltaPosition) < Constants.Climber.MIN_POSITION_MOVEMENT) isMotorStalled = true;      
+    System.out.println("Stall debug: delta: " + deltaTime);
+    System.out.println("Stall debug: currentPosition: " + currentPosition);
+    System.out.println("Stall debug: deltaPosition: " + deltaPosition);
       //update last readings
       lastStallReading = currentTime;
       lastPositionRead = currentPosition;
+      if (isMotorStalled)
+        System.out.print("Climber Stalled!!");
     }
 
     //If the motor is supposed to be running, check the current draw
@@ -140,7 +147,7 @@ public class ClimberSubsystem extends SubsystemBase
     boolean isClimbed = false;
     double currentRotations = getCurrentClimberPosition();
     boolean isForwardLimit =  m_climberClimbingLimit.isPressed();
-    
+
     //Return true is we are at or past the number of rotations we determined to be at climb or limit is reached
     if (isForwardLimit) isClimbed = true;
     if (currentRotations <= Constants.Climber.ROTATIONS_AT_CLIMB) isClimbed=true; //If we are at or less than the configured climb rots
@@ -156,6 +163,11 @@ public class ClimberSubsystem extends SubsystemBase
     return m_isClimberRunning;
   }
 
+  public boolean isRunningReverse()
+  {
+    return m_isRunningReverse;
+  }
+
   /**
    * Stop the intake from spinning
    */
@@ -165,6 +177,7 @@ public class ClimberSubsystem extends SubsystemBase
     m_primary_motor.setVoltage(0);
     m_secondary_motor.setVoltage(0);
     m_isClimberRunning = false;
+    m_isRunningReverse = false;
     m_currentPowerLevel = 0;
   }
 
@@ -182,6 +195,7 @@ public class ClimberSubsystem extends SubsystemBase
     m_primary_motor.setVoltage(targetVoltage);
     m_secondary_motor.setVoltage(targetVoltage);
     if (targetVoltage != 0) m_isClimberRunning = true; 
+    if (targetVoltage < 0) m_isRunningReverse = true;
     else m_isClimberRunning = false;
 
     //Update the current power level
@@ -215,8 +229,8 @@ public class ClimberSubsystem extends SubsystemBase
     lastPositionRead = getCurrentClimberPosition();
     SmartDashboard.putNumber("Climber Current Position",lastPositionRead);
 
-    //TODO: check if this will work
-    if (isClimberRunning() && isStalled())
+    //TODO: check if this will work, check if running in reverse
+    if (isClimberRunning() && isRunningReverse() && isStalled())
     {
       stopClimber();
     }
