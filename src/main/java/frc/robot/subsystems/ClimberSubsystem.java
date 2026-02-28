@@ -62,6 +62,7 @@ public class ClimberSubsystem extends SubsystemBase
     //Define current state as being stowed, used in periodic
     m_isStowed = true;
     m_isRunningReverse = false;
+    lastStallReading = System.currentTimeMillis();
 
     //For debugging, climber position
     SmartDashboard.putNumber("Climber Current Position",0);
@@ -198,6 +199,10 @@ public class ClimberSubsystem extends SubsystemBase
     if (targetVoltage < 0) m_isRunningReverse = true;
     else m_isClimberRunning = false;
 
+    //Update stall readings since we "restarted"
+    lastStallReading = System.currentTimeMillis();
+    lastPositionRead = m_climberEncoder.getPosition();
+
     //Update the current power level
      m_currentPowerLevel = targetVoltage;
   }
@@ -226,7 +231,7 @@ public class ClimberSubsystem extends SubsystemBase
   public void periodic() 
   {
     //Update the last position reading
-    lastPositionRead = getCurrentClimberPosition();
+    double xlastPositionRead = getCurrentClimberPosition();
     SmartDashboard.putNumber("Climber Current Position",lastPositionRead);
 
     //TODO: check if this will work, check if running in reverse
@@ -236,7 +241,7 @@ public class ClimberSubsystem extends SubsystemBase
     }
 
     //If we are "stowed" and not currently running the climber ensure our position does not drift too far up
-    if ((m_isStowed) && (lastPositionRead >= Constants.Climber.MAX_ROTATIONS_UNDER_BAR) && !isClimberRunning()) 
+    if ((m_isStowed) && (xlastPositionRead >= Constants.Climber.MAX_ROTATIONS_UNDER_BAR) && !isClimberRunning()) 
     {
       //Run the stow command
       System.out.println("Stowing climber again!");

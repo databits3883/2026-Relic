@@ -7,17 +7,12 @@ package frc.robot.subsystems;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.FeedbackSensor;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -40,6 +35,7 @@ public class IntakeSubsystem extends SubsystemBase
   private boolean m_isIntakeDeployed = false;
 
   //Velocity Control
+  /* 
   private SparkClosedLoopController closedLoopController = m_intake_motor.getClosedLoopController();
   private static double maxOutput = Constants.Intake.MAX_OUTPUT;
   private static double SLOT1_kP = Constants.Intake.SLOT1_KP;
@@ -48,8 +44,7 @@ public class IntakeSubsystem extends SubsystemBase
   private static double SLOT1_kV = Constants.Intake.SLOT1_kV;
   private double currentSetPointRPM = 0;
   private double defaultSetPointRPM =  Constants.Intake.TARGET_VELOCITY_RPM;
-
-
+  */
 
   //For isStalled method
   private long intakeLastStallReading = 0;
@@ -62,6 +57,7 @@ public class IntakeSubsystem extends SubsystemBase
       m_intakeConfig.idleMode(IdleMode.kCoast).inverted(Constants.Intake.INTAKE_MOTOR_INVERSE);
 
       //Set up PID for velocity control
+      /*
        m_intakeConfig.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 .outputRange((-1 * maxOutput),maxOutput)
@@ -70,6 +66,7 @@ public class IntakeSubsystem extends SubsystemBase
                   .kS(0.0,ClosedLoopSlot.kSlot1) // slot 1
                   .kV(SLOT1_kV, ClosedLoopSlot.kSlot1) // slot 1
                 ;                        
+     */
 
       //Update the motor config
       m_intake_motor.configure(m_intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
@@ -77,7 +74,7 @@ public class IntakeSubsystem extends SubsystemBase
       intakeLastStallReading = System.currentTimeMillis();
       m_intakeEncoder = m_intake_motor.getEncoder();
       intakeStalledLastPositionRead = getIntakePosition();
-
+      /*
       SmartDashboard.setDefaultNumber("Intake Target Velocity", defaultSetPointRPM);
       SmartDashboard.setDefaultBoolean("Intake Update PID", false);
       SmartDashboard.putNumber("Intake P Gain", SLOT1_kP);
@@ -85,6 +82,7 @@ public class IntakeSubsystem extends SubsystemBase
       SmartDashboard.putNumber("Intake D Gain", SLOT1_kD);
       SmartDashboard.putNumber("Intake V Gain", SLOT1_kV);
       SmartDashboard.putNumber("Intake Current Velocity",0);
+      */
   }
 
   /**
@@ -253,8 +251,8 @@ public class IntakeSubsystem extends SubsystemBase
     //turn off motor
     m_intake_motor.setVoltage(0);
 
-    closedLoopController.setSetpoint(0, ControlType.kVelocity,ClosedLoopSlot.kSlot1);
-    currentSetPointRPM = 0;
+    //closedLoopController.setSetpoint(0, ControlType.kVelocity,ClosedLoopSlot.kSlot1);
+    //currentSetPointRPM = 0;
 
     m_isIntakeRunning = false;
   }
@@ -265,8 +263,10 @@ public class IntakeSubsystem extends SubsystemBase
   public void runIntake()
   {
     //Run to the default target power
-    runIntake(defaultSetPointRPM);
+    runPowerIntake(this.m_intakeSpinningPower);
   }
+
+  /* 
   public void runIntake(double targetVelocityRPM)
   {
     //Only update the launcher if the speed changes
@@ -274,12 +274,13 @@ public class IntakeSubsystem extends SubsystemBase
     {
       currentSetPointRPM = targetVelocityRPM;
       SmartDashboard.putNumber("Intake Target Velocity", targetVelocityRPM);
-      closedLoopController.setSetpoint(targetVelocityRPM*1.1, ControlType.kVelocity,ClosedLoopSlot.kSlot1);
+      closedLoopController.setSetpoint(targetVelocityRPM, ControlType.kVelocity,ClosedLoopSlot.kSlot1);
     }
   }
+  */
 
   /** Run the motor to a given power */
-/*   public void runPowerIntake(double targetVoltage)
+  public void runPowerIntake(double targetVoltage)
   {
     //Only allow the intake to run if deployed
     if (isIntakeDeployed())
@@ -288,13 +289,13 @@ public class IntakeSubsystem extends SubsystemBase
       if (targetVoltage != 0) m_isIntakeRunning = true; 
       else m_isIntakeRunning = false;
     }
-  }*/
+  }
   /**
    * Run the intake reverse speed
    */
   public void reverseIntake()
   {
-    runIntake(-1*defaultSetPointRPM);
+    runPowerIntake(-1*m_intakeSpinningPower);
   }
 
   /**
@@ -316,6 +317,7 @@ public class IntakeSubsystem extends SubsystemBase
       stopIntake();
     }
 
+    /* 
     if (SmartDashboard.getBoolean("Intake Update PID", false))
     {
       SmartDashboard.putBoolean("Intake Update PID", false);
@@ -334,7 +336,7 @@ public class IntakeSubsystem extends SubsystemBase
       if((i != SLOT1_kI)) { updatePID = true;  SLOT1_kI = i; }
       if((d != SLOT1_kD)) { updatePID = true; SLOT1_kD = d; }
       if((v != SLOT1_kV)) { updatePID = true; SLOT1_kV = v; }
-      if (defaultSetPointRPM != velocity) defaultSetPointRPM = velocity;
+      if (defaultSetPointRPM != velocity) { updatePID = true; defaultSetPointRPM = velocity; }
 
       if (updatePID)
       {
@@ -350,12 +352,15 @@ public class IntakeSubsystem extends SubsystemBase
 
         //Update the motoro config to use PID
         m_intake_motor.configure(m_intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        if (isIntakeRunning())  closedLoopController.setSetpoint(velocity, ControlType.kVelocity,ClosedLoopSlot.kSlot1);
+
+        System.out.println("UPDATED PID");
       } //end if updatePID
-      if (isIntakeRunning()) runIntake(defaultSetPointRPM);
 
     } //end update PID
     
     SmartDashboard.putNumber("Intake Current Velocity",getVelocityPrimary());
+    */
   }
 
   @Override

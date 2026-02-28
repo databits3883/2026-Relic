@@ -213,6 +213,8 @@ public class Robot extends TimedRobot
     }
     //Disable auto aim
     RobotContainer.turretSubsystem.disableAutoAim();
+    RobotContainer.intakeSubsystem.stopIntake();
+    RobotContainer.launchSubsystem.stop();
   }
 
   /**
