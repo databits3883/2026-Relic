@@ -109,6 +109,10 @@ public final class Constants {
     public static final int INTAKE_MOTOR_ID = 14;
     public static double INTAKE_MOTOR_POWER = 14.0;
     public static boolean INTAKE_MOTOR_INVERSE = true;
+
+    //For stall checks
+    public static double INTAKE_MIN_POSITION_MOVEMENT = 0.02; /* Minimum movement in check_ms interval for stalled */
+    public static int INTAKE_STALL_CHECK_MS = 50; /* MS between stall checks */
   }
 
   public static class Climber
@@ -135,6 +139,10 @@ public final class Constants {
     public static final Pose2d RED_RIGHT_POSE = new Pose2d(new Translation2d(Meter.of(16), Meter.of(4)), Rotation2d.fromDegrees(0));
     public static final Pose2d BLUE_LEFT_POSE = new Pose2d(Units.inchesToMeters(18.5),Units.inchesToMeters(251.84), Rotation2d.fromDegrees(180));
     public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(Units.inchesToMeters(18.5),Units.inchesToMeters(251.84), Rotation2d.fromDegrees(180));
+
+    //For stall checks
+    public static double MIN_POSITION_MOVEMENT = 0.02; /* Minimum movement in check_ms interval for stalled */
+    public static int STALL_CHECK_MS = 50; /* MS between stall checks */
   }
 
   public static class StageConstants {

@@ -75,13 +75,15 @@ public class ClimberSubsystem extends SubsystemBase
     if (!isClimberRunning()) return false;  
 
     //Check if we are moving at all
-    if (deltaTime > 50)
+    if (deltaTime > Constants.Climber.STALL_CHECK_MS)
     {
       //check position every 50 ms
       double currentPosition = getCurrentClimberPosition();
       double deltaPosition = currentPosition - lastPositionRead;
-      if (deltaPosition < 0.02) isMotorStalled = true;      
+      if (deltaPosition < Constants.Climber.MIN_POSITION_MOVEMENT) isMotorStalled = true;      
+      //update last readings
       lastStallReading = currentTime;
+      lastPositionRead = currentPosition;
     }
 
     //If the motor is supposed to be running, check the current draw
@@ -90,6 +92,7 @@ public class ClimberSubsystem extends SubsystemBase
 
     return isMotorStalled;
   }
+
   /**
    * returns true if the intake 4 bar is at reverse limit
    * @return
@@ -137,6 +140,7 @@ public class ClimberSubsystem extends SubsystemBase
     boolean isClimbed = false;
     double currentRotations = getCurrentClimberPosition();
     boolean isForwardLimit =  m_climberClimbingLimit.isPressed();
+    
     //Return true is we are at or past the number of rotations we determined to be at climb or limit is reached
     if (isForwardLimit) isClimbed = true;
     if (currentRotations <= Constants.Climber.ROTATIONS_AT_CLIMB) isClimbed=true; //If we are at or less than the configured climb rots
@@ -210,6 +214,12 @@ public class ClimberSubsystem extends SubsystemBase
     //Update the last position reading
     lastPositionRead = getCurrentClimberPosition();
     SmartDashboard.putNumber("Climber Current Position",lastPositionRead);
+
+    //TODO: check if this will work
+    if (isClimberRunning() && isStalled())
+    {
+      stopClimber();
+    }
 
     //If we are "stowed" and not currently running the climber ensure our position does not drift too far up
     if ((m_isStowed) && (lastPositionRead >= Constants.Climber.MAX_ROTATIONS_UNDER_BAR) && !isClimberRunning()) 

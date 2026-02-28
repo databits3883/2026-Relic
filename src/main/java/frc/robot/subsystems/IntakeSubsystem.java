@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -23,6 +24,7 @@ public class IntakeSubsystem extends SubsystemBase
   private SparkLimitSwitch m_fouSparkLimitSwitch_forward = null;
   private SparkLimitSwitch m_fouSparkLimitSwitch_reverse = null;
   private SparkMax m_intake_motor = new SparkMax(Constants.Intake.INTAKE_MOTOR_ID, MotorType.kBrushless);
+  private RelativeEncoder m_intakeEncoder = null;
 
   private double m_intakeSpinningPower = Constants.Intake.INTAKE_MOTOR_POWER;
   private double m_fourBarForwardPower = Constants.Intake.FOUR_BAR_FORWARD_POWER;
@@ -31,6 +33,10 @@ public class IntakeSubsystem extends SubsystemBase
   private boolean m_isIntakeRunning = false;
   private boolean m_isFourBarRunning = false;
   private boolean m_isIntakeDeployed = false;
+
+  //For isStalled method
+  private long intakeLastStallReading = 0;
+  private double intakeStalledLastPositionRead = 0;
     
   public IntakeSubsystem() 
   { 
@@ -40,7 +46,48 @@ public class IntakeSubsystem extends SubsystemBase
 
       //Update the motor config
       m_intake_motor.configure(m_intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+
+      intakeLastStallReading = System.currentTimeMillis();
+      m_intakeEncoder = m_intake_motor.getEncoder();
+      intakeStalledLastPositionRead = getIntakePosition();
   }
+
+  /**
+   * This will check if the intake is stalled, it checks every 50ms if it has moved 
+   * @return boolean
+   */
+  public boolean isIntakeStalled() 
+  {
+    long currentTime = System.currentTimeMillis();
+    long deltaTime = currentTime - intakeLastStallReading;
+    boolean isMotorStalled = false;
+    //Only check if we are running
+    if (!isIntakeRunning()) return false;  
+
+    //Check if we are moving at all
+    if (deltaTime > Constants.Intake.INTAKE_STALL_CHECK_MS)
+    {
+      //check position every 50 ms
+      double currentPosition = getIntakePosition();
+      double deltaPosition = currentPosition - intakeStalledLastPositionRead;
+      if (deltaPosition < Constants.Intake.INTAKE_MIN_POSITION_MOVEMENT) isMotorStalled = true;  
+      //Update last readings    
+      intakeLastStallReading = currentTime;
+      intakeStalledLastPositionRead = currentPosition;      
+    }
+
+    return isMotorStalled;
+  }
+
+  /**
+   * Returns the position of the encoder
+   * @return
+   */
+  private double getIntakePosition()
+  {
+    return m_intakeEncoder.getPosition();
+  }
+
 
   /**
    * Used to stop the intake by a button
@@ -200,7 +247,11 @@ public class IntakeSubsystem extends SubsystemBase
   @Override
   public void periodic() 
   {
-    //Nothing to do here at the moment
+    //Add stall check, need to verify this works as expected
+    if (isIntakeRunning() && isIntakeStalled())
+    {
+      stopIntake();
+    }
   }
 
   @Override
