@@ -210,11 +210,9 @@ public class Robot extends TimedRobot
       m_robotContainer.setMotorBrake(false);
       disabledTimer.stop();
       disabledTimer.reset();
+      //Disable auto aim
+      RobotContainer.turretSubsystem.disableAutoAim();
     }
-    //Disable auto aim
-    RobotContainer.turretSubsystem.disableAutoAim();
-    //RobotContainer.intakeSubsystem.stopIntake();
-    //RobotContainer.launchSubsystem.stop();
   }
 
   /**

@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -83,6 +84,7 @@ public class IntakeSubsystem extends SubsystemBase
       SmartDashboard.putNumber("Intake V Gain", SLOT1_kV);
       SmartDashboard.putNumber("Intake Current Velocity",0);
       */
+      SmartDashboard.putBoolean("Intake Stalled", false);
   }
 
   /**
@@ -109,7 +111,10 @@ public class IntakeSubsystem extends SubsystemBase
       intakeStalledLastPositionRead = currentPosition;      
 
       if (isMotorStalled)
+      {
         System.out.print("Intake Stalled!!");
+        SmartDashboard.putBoolean("Intake Stalled", true);
+      }
     }
 
     return isMotorStalled;
@@ -291,9 +296,12 @@ public class IntakeSubsystem extends SubsystemBase
     //Only allow the intake to run if deployed
     if (isIntakeDeployed())
     {
+      SmartDashboard.putBoolean("Intake Stalled", false);
       m_intake_motor.setVoltage(targetVoltage);
       if (targetVoltage != 0) m_isIntakeRunning = true; 
       else m_isIntakeRunning = false;
+      intakeLastStallReading = System.currentTimeMillis();
+      intakeStalledLastPositionRead = getIntakePosition();
     }
   }
   /**
