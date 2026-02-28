@@ -303,8 +303,8 @@ public class Robot extends TimedRobot
     SmartDashboard.putBoolean("Match:Shoot Now", RobotContainer.CAN_SHOOT);
     SmartDashboard.putBoolean("Match:About to shoot", RobotContainer.ABOUT_TO_BE_ABLE_TO_SHOOT);
 
-    //adjust tweaked distance with joystick slider
-    RobotContainer.launchSubsystem.updateTweakDistance(RobotContainer.driverJoystick.getRawAxis(3));
+    //adjust tweaked distance with joystick slider, disble for now
+    //RobotContainer.launchSubsystem.updateTweakDistance(RobotContainer.driverJoystick.getRawAxis(3));
   }
 
 

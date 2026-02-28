@@ -58,8 +58,8 @@ public class RobotContainer
 {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  public static final         CommandJoystick driverJoystick = new CommandJoystick(0);
-  final         CommandJoystick copilotBoxController = new CommandJoystick(1);
+  public static final CommandJoystick driverJoystick = new CommandJoystick(0);
+  private final       CommandJoystick copilotSNESController = new CommandJoystick(2);
 
   // The robot's subsystems and commands are defined here...
   public static final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/relic"));
@@ -253,6 +253,7 @@ public class RobotContainer
 
       //Shoot while button is held, auto distance
       driverJoystick.button(1).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
+      copilotSNESController.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
       //Shoot with manual velocity control
       driverJoystick.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, true));
 
@@ -261,24 +262,27 @@ public class RobotContainer
 
       //Intake deploy/retract
       driverJoystick.button(4).onTrue(new Deploy(intakeSubsystem));
+      copilotSNESController.axisLessThan(0,-0.5).onTrue(new Deploy(intakeSubsystem));
       driverJoystick.button(3).onTrue(new Retract(intakeSubsystem));
+      copilotSNESController.axisGreaterThan(0,0.5).onTrue(new Retract(intakeSubsystem));
+      //Run intake while this button is off and stop when button is on
+      copilotSNESController.button(3).whileTrue(Commands.runOnce(intakeSubsystem::overrideStopIntake).repeatedly());
+      copilotSNESController.button(3).whileFalse(Commands.runOnce(intakeSubsystem::overrideStartIntake).repeatedly());
 
       //Climber
-      driverJoystick.button(7).onTrue(new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
-      driverJoystick.button(8).onTrue(new Climb(climberSubsystem,1));
-      driverJoystick.button(9).onTrue(new StowClimber(climberSubsystem));
-      
-      //CO-Pilot overrides
-      //Manually Aim when on
-      copilotBoxController.button(10).whileTrue(new TurretManualAim());
       //climber stow/prepare
-      copilotBoxController.button(7).onTrue(new StowClimber(climberSubsystem));
-      copilotBoxController.button(8).onTrue(new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
-      //Run intake while this button is off and stop when button is on
-      //copilotBoxController.button(6).whileFalse(Commands.runOnce(intakeSubsystem::overrideStopIntake).repeatedly());
-      //Stow the climber when on every X seconds
-      //copilotBoxController.button(10).whileTrue(new StowClimber(climberSubsystem,3));
-      //copilotBoxController.button(6).whileTrue(Commands.runOnce(intakeSubsystem::overrideStartIntake).repeatedly());
+      driverJoystick.button(7).onTrue(new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
+      copilotSNESController.button(9).onTrue(new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
+      //climb
+      driverJoystick.button(8).onTrue(new Climb(climberSubsystem,1));
+      copilotSNESController.button(10).onTrue(new Climb(climberSubsystem,1));
+      //Stow
+      driverJoystick.button(9).onTrue(new StowClimber(climberSubsystem));
+      copilotSNESController.button(4).onTrue(new StowClimber(climberSubsystem));
+      
+      //Manually Aim when on
+      //copilotBoxController.button(10).whileTrue(new TurretManualAim());
+
       //Test later
       driverJoystick.button(6).whileTrue(new SequentialCommandGroup(new ActiveDriveToPose(drivebase, true, GoalType.Climber_Right),new Climb(climberSubsystem)));
     }
