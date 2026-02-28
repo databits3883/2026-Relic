@@ -244,7 +244,8 @@ public class LaunchSubsystem extends SubsystemBase
       //need to adjust 0.9, camera offset is slightly off from measured
       double targetDistanceCameraOffset = targetDistanceMeters - 0.09;
       newTargetVelocity = 1687+(97.8*targetDistanceCameraOffset) + (20.7*targetDistanceCameraOffset*targetDistanceCameraOffset);
-      
+      //Take 10% off
+      newTargetVelocity = newTargetVelocity*0.95;
       //Assume 200 rpm for every .3 Meters
       //newTargetVelocity = ((3.5 - targetDistanceMeters ) / 0.3) * 200;
     }
