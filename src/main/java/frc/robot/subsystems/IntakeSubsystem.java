@@ -300,7 +300,7 @@ public class IntakeSubsystem extends SubsystemBase
       m_intake_motor.setVoltage(targetVoltage);
       if (targetVoltage != 0) m_isIntakeRunning = true; 
       else m_isIntakeRunning = false;
-      intakeLastStallReading = System.currentTimeMillis();
+      intakeLastStallReading = System.currentTimeMillis()+1000; //allow 1 second to spin up
       intakeStalledLastPositionRead = getIntakePosition();
     }
   }

@@ -33,6 +33,9 @@ public final class Constants {
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
   public static final double MAX_SPEED  = Units.feetToMeters(14.5);
 
+  public static final boolean CALIBRATION_MODE = true;
+  public static final boolean CALIBRATION_MODE_EXTREME = false;
+
   public static class OperatorConstants 
   {
     public static final int kDriverControllerPort = 0;
@@ -107,7 +110,7 @@ public final class Constants {
     public static int FOUR_BAR_BACKWARD_TIMEOUT_SEC = 4; /* Max run time in case we do not hit limit */
 
     public static final int INTAKE_MOTOR_ID = 14;
-    public static double INTAKE_MOTOR_POWER = 8.0;
+    public static double INTAKE_MOTOR_POWER = 7.0;
     public static boolean INTAKE_MOTOR_INVERSE = true;
 
     //For stall checks
@@ -145,9 +148,9 @@ public final class Constants {
     //TODO: Define these poses
     public static final Pose2d RED_LEFT_POSE = new Pose2d(new Translation2d(Meter.of(16), Meter.of(4)), Rotation2d.fromDegrees(0));
     public static final Pose2d RED_RIGHT_POSE = new Pose2d(new Translation2d(Meter.of(16), Meter.of(4)), Rotation2d.fromDegrees(0));
-    public static final Pose2d BLUE_LEFT_POSE = new Pose2d(Units.inchesToMeters(18.5),Units.inchesToMeters(251.84), Rotation2d.fromDegrees(180));
-    public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(Units.inchesToMeters(18.5),Units.inchesToMeters(251.84), Rotation2d.fromDegrees(180));
-
+    public static final Pose2d BLUE_LEFT_POSE = new Pose2d(Units.inchesToMeters(43.5 + 9.32)+1,4.18, Rotation2d.fromDegrees(90));
+    public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(Units.inchesToMeters(43.5 + 9.32)+1,3.75, Rotation2d.fromDegrees(90));
+    
     //For stall checks
     public static double MIN_POSITION_MOVEMENT = 0.02; /* Minimum movement in check_ms interval for stalled */
     public static int STALL_CHECK_MS = 100; /* MS between stall checks */

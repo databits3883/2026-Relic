@@ -30,8 +30,8 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class TurretSubsystem extends SubsystemBase {
      
-    private static boolean CALIBRATION_MODE = true;
-    private static boolean CALIBRATION_MODE_EXTREME = false;
+    private static boolean CALIBRATION_MODE = Constants.CALIBRATION_MODE;
+    private static boolean CALIBRATION_MODE_EXTREME = Constants.CALIBRATION_MODE_EXTREME;
 
     // PID Gains and Motion Profile Constraints
     private static double kP = Constants.TurretConstants.KP;
