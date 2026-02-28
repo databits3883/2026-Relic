@@ -97,7 +97,7 @@ public final class Constants {
     public static final double TURRET_ANGLE_OFFSET = 0; //Offset all targets by 30 degrees clockwise
 
     //Future pose calculation
-    public static final double LATENCY_SEC = 0.25;    
+    public static final double LATENCY_SEC = 0.4;    
     public static final boolean USE_FUTURE_POSE = true;
   }
   

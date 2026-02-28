@@ -243,11 +243,14 @@ public class LaunchSubsystem extends SubsystemBase
       //double targetDistanceInches = Units.metersToInches(targetDistanceMeters); 
       //need to adjust 0.9, camera offset is slightly off from measured
       double targetDistanceCameraOffset = targetDistanceMeters - 0.09;
-      newTargetVelocity = 1687+(97.8*targetDistanceCameraOffset) + (20.7*targetDistanceCameraOffset*targetDistanceCameraOffset);
+
+      //old
+      //newTargetVelocity = 1687+(97.8*targetDistanceCameraOffset) + (20.7*targetDistanceCameraOffset*targetDistanceCameraOffset);
       //Take 10% off
-      newTargetVelocity = newTargetVelocity*0.95;
-      //Assume 200 rpm for every .3 Meters
-      //newTargetVelocity = ((3.5 - targetDistanceMeters ) / 0.3) * 200;
+      //newTargetVelocity = newTargetVelocity*0.95;
+      newTargetVelocity = 824+(888*targetDistanceCameraOffset) + (239*targetDistanceCameraOffset*targetDistanceCameraOffset) + (24.6*targetDistanceCameraOffset*targetDistanceCameraOffset*targetDistanceCameraOffset);
+      
+      
     }
 
     //If we are below a min velocity just use the min velocity
