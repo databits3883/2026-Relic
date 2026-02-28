@@ -293,9 +293,9 @@ public class Robot extends TimedRobot
   @Override
   public void teleopPeriodic()
   {
-    //Get the winner of auto
-    //TODO need to build a timer check to see when "we" can score
-    updateAbleToShoot();    
+    //Get the winner of auto and check
+    //a timer check to see when "we" can score
+    updateAbleToShoot(); 
 
     //Update Shuffleboard, TODO - Have LED routine light /flash leds
     SmartDashboard.putBoolean("Match:Shoot Now", RobotContainer.CAN_SHOOT);
