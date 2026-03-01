@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -20,7 +19,6 @@ import frc.robot.Robot;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ActiveDriveToPose extends Command {
 
   public enum GoalType {
@@ -117,11 +115,8 @@ public class ActiveDriveToPose extends Command {
 
     ChassisSpeeds currentSpeeds = drivetrain.getRobotVelocity();
 
-
     TrapezoidProfile.State currentPositionXState = new State(translationError.getX(), -currentSpeeds.vxMetersPerSecond);
-    
     TrapezoidProfile.State currentPositionYState = new State(translationError.getY(), -currentSpeeds.vyMetersPerSecond);
-
 
     previousPositionXState = positionXTrapezoidProfile.calculate(loopTimer.get(), currentPositionXState, new State(0,0));
     double positionXPIDOutput = positionXController.calculate(previousPositionXState.position, 0);
@@ -129,10 +124,12 @@ public class ActiveDriveToPose extends Command {
     previousPositionYState = positionYTrapezoidProfile.calculate(loopTimer.get(), currentPositionYState, new State(0,0));
     double positionYPIDOutput = positionYController.calculate(previousPositionYState.position, 0);
 
-    double rotationPIDOutput = rotationController.calculate(poseError.getRotation().getRadians(), 0);    
+    double rotationPIDOutput = rotationController.calculate(poseError.getRotation().getRadians(), 0);
+    
+    //For testing, output the PID results:
+    System.out.println("adtp x/y/r: " + positionXPIDOutput + "/" + positionYPIDOutput + "/" + rotationPIDOutput);
+
     ChassisSpeeds rrSpeeds = new ChassisSpeeds(positionXPIDOutput,positionYPIDOutput, rotationPIDOutput);
-
-
     drivetrain.setChassisSpeeds(rrSpeeds);
 
     loopTimer.restart();
@@ -146,14 +143,25 @@ public class ActiveDriveToPose extends Command {
   }
 
 
+  /**
+   * Check if we are close enough
+   * @return
+   */
   public boolean atToleranceFromGoal()
   {
     double angleError = poseError.getRotation().getDegrees();
+    //TODO: test the angleError
+    System.out.println("attoleranceFromGoal: angleError: " + angleError);
+    
     double positionErrorMagnitude = poseError.getTranslation().getDistance(Translation2d.kZero);
     
     return (Math.abs(angleError) < 1.0) && positionErrorMagnitude < 0.035;    
   }
 
+  /**
+   * Are we at goal and in position to climb
+   * @return
+   */
   public boolean readyToClimb()
   {
     boolean nowAtTolerance = atToleranceFromGoal();

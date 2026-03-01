@@ -146,8 +146,7 @@ public class SwerveSubsystem extends SubsystemBase
     if(robotPose.getTranslation().getDistance(endPose.getTranslation()) < 0.05) return new PrintCommand("Too close to the endpoint, canceling");
 
     if(robotPose == null) return new PrintCommand("For some reason you don't have a position, createTrajectoryToPose failed");
-    
-    
+        
     PathPlannerPath path = new PathPlannerPath(
       PathPlannerPath.waypointsFromPoses(robotPose, endPose),
      
@@ -454,7 +453,7 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   /**
-   * Drive right 1m./s until it ends
+   * 3883: Drive right 1m./s until it ends
    * @return
    */
   public Command driveRight()

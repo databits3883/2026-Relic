@@ -276,6 +276,8 @@ public class TurretSubsystem extends SubsystemBase {
         //Find new target based on robot positon
         targetPose = findTargetToAim(turretPose);    
         targetAngle = getAngle(turretPose, targetPose);
+
+        //TODO: need to adjust angle, shoots left of aim when forward and right when backwards
         //Use PhotonVision helper method to get distance
         distanceToTarget = PhotonUtils.getDistanceToPose(turretPose, targetPose);
         //update the turret setpoint
