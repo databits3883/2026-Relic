@@ -280,6 +280,11 @@ public class TurretSubsystem extends SubsystemBase {
         //TODO: need to adjust angle, shoots left of aim when forward and right when backwards
         //Use PhotonVision helper method to get distance
         distanceToTarget = PhotonUtils.getDistanceToPose(turretPose, targetPose);
+
+        //Adjust Angle by offset, We found the angle is off when facing forward by left, and  right when facing backward
+        if ((targetAngle >(90+45)) && ((targetAngle < 180+45))) targetAngle += Constants.TurretConstants.TURRET_BKWD_ANGLE_OFFSET;
+        else if ((targetAngle > (360-45)) || (targetAngle < 45)) targetAngle += Constants.TurretConstants.TURRET_FRWD_ANGLE_OFFSET;
+
         //update the turret setpoint
         setTurretSetPoint(targetAngle);
     }
@@ -587,8 +592,6 @@ public class TurretSubsystem extends SubsystemBase {
         System.out.println(output.toString());
         lastOuput = currentTime;
     }
-    //Adjust Angle by offset , We found the angle is off for some reason, fix with offset
-    relativeRotationDeg += Constants.TurretConstants.TURRET_ANGLE_OFFSET;
     //Right now set target to just the angle to tag
     return relativeRotationDeg;
   }

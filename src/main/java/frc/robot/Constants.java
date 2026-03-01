@@ -72,7 +72,7 @@ public final class Constants {
     public static final double ALIGNMENT_SWITCH_ANGLE_CCW = 312.12; // When moving CCW
     public static final double START_TURRET_ANGLE = 0; //The angle the turret starts in
     public static final double MAX_ANGLE_ERROR = 15; //If the turret is off by this or more when the switch is hit then update the angle
-    public static final double ANGLE_DEADBAND = 3.0; //If we get within one degree when moving to set point that is close enough
+    public static final double ANGLE_DEADBAND = 1.0; //If we get within one degree when moving to set point that is close enough
     public static final boolean USE_LIMIT_SWITCH = false;
 
     public static final double MID_FIELD_Y = Units.inchesToMeters(158.84);
@@ -94,7 +94,8 @@ public final class Constants {
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_RIGHT = new Transform2d(0,Units.inchesToMeters(-7),new Rotation2d(0));
     //public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(6.125),Units.inchesToMeters(3.25),new Rotation2d(0));
     public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(-3.25),Units.inchesToMeters(6.125),new Rotation2d(0));
-    public static final double TURRET_ANGLE_OFFSET = 0; //Offset all targets by 30 degrees clockwise
+    public static final double TURRET_FRWD_ANGLE_OFFSET = 0; //Offset all targets when facing forward 90 cone from front -45 - 45
+    public static final double TURRET_BKWD_ANGLE_OFFSET = 0; //Offset all targets when facing backward  135 - 225
 
     //Future pose calculation
     public static final double LATENCY_SEC = 0.4;    
@@ -218,7 +219,7 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints positionPIDConstraints = new Constraints(MAX_SPEED/*meters per second */, 12 /*meters per second per second*/);
     public static final TrapezoidProfile.Constraints rotationPIDConstraints = new Constraints(2/*radians per second */, 2 /*radians per second per second*/);
 
-    public static final double rotationKP = 3.0; /* was 4 */ 
+    public static final double rotationKP = 1.0;
     public static final double rotationKI = 0.00;
     public static final double rotationKD = 0.00;
   }

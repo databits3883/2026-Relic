@@ -252,7 +252,7 @@ public class RobotContainer
       driverJoystick.povRight().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(270);}));
 
       //Shoot while button is held, auto distance
-      driverJoystick.button(1).whileTrue(new Shoot(launchSubsystem, stageSubsystem, true));
+      driverJoystick.button(1).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
       copilotSNESController.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
       //Shoot with manual velocity control
       driverJoystick.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, true));

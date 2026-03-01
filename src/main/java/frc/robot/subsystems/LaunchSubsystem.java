@@ -248,7 +248,7 @@ public class LaunchSubsystem extends SubsystemBase
       //newTargetVelocity = 1687+(97.8*targetDistanceCameraOffset) + (20.7*targetDistanceCameraOffset*targetDistanceCameraOffset);
       //Take 10% off
       //newTargetVelocity = newTargetVelocity*0.95;
-      newTargetVelocity = 824+(888*targetDistanceCameraOffset) + (239*targetDistanceCameraOffset*targetDistanceCameraOffset) + (24.6*targetDistanceCameraOffset*targetDistanceCameraOffset*targetDistanceCameraOffset);
+      newTargetVelocity = 1975+(-183*targetDistanceCameraOffset) + (81.2*targetDistanceCameraOffset*targetDistanceCameraOffset) + (-6.05*targetDistanceCameraOffset*targetDistanceCameraOffset*targetDistanceCameraOffset);
       
       
     }
