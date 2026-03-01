@@ -52,13 +52,13 @@ public class Climb extends Command {
         long delta = System.currentTimeMillis() - startTime;
         
         boolean atLimit = climberSubsystem.isAtClimbLimit();
-        boolean isStalled = climberSubsystem.isStalled();
-        boolean isNoLongerRunning = !climberSubsystem.isClimberRunning();
+        //boolean isStalled = climberSubsystem.isStalled();
+        //boolean isNoLongerRunning = !climberSubsystem.isClimberRunning();
         boolean overTime = (delta > ABORT_TIME);
         boolean finished = false;
         if (atLimit) finished = true;
-        if (isStalled) finished = true;
-        if (isNoLongerRunning) finished = true;
+        //if (isStalled) finished = true;
+        //if (isNoLongerRunning) finished = true;
         if (overTime) finished = true;
         
         //Stop if at limit or if we ran too long
