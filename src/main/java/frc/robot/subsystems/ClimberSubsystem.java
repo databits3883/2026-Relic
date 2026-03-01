@@ -235,10 +235,11 @@ public class ClimberSubsystem extends SubsystemBase
     SmartDashboard.putNumber("Climber Current Position",lastPositionRead);
 
     //TODO: check if this will work, check if running in reverse
+    /* 
     if (isClimberRunning() && isRunningReverse() && isStalled())
     {
       stopClimber();
-    }
+    }*/
 
     //If we are "stowed" and not currently running the climber ensure our position does not drift too far up
     if ((m_isStowed) && (xlastPositionRead >= Constants.Climber.MAX_ROTATIONS_UNDER_BAR) && !isClimberRunning()) 
