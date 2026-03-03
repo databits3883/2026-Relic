@@ -145,7 +145,8 @@ public class IntakeSubsystem extends SubsystemBase
    */
   public void overrideStartIntake()
   {
-    if (!isIntakeRunning())
+    //Only run this if intake is down
+    if (isIntakeDeployed() && !isIntakeRunning())
     {
       runIntake();
     }

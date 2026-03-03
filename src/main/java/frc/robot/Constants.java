@@ -146,13 +146,12 @@ public final class Constants {
     public static double MAX_ROTATIONS_UNDER_BAR = 0.3; //Max motor rotations and still keep climber under bar for travel
 
     //Climber Poses for Blue/Red/Right/Left
-    //TODO: Define these poses
-    public static final Pose2d RED_LEFT_POSE = new Pose2d(new Translation2d(Meter.of(16), Meter.of(4)), Rotation2d.fromDegrees(0));
-    public static final Pose2d RED_RIGHT_POSE = new Pose2d(new Translation2d(Meter.of(16), Meter.of(4)), Rotation2d.fromDegrees(0));
-    public static final Pose2d BLUE_LEFT_POSE = new Pose2d(Units.inchesToMeters(43.5 + 9.32)+1,4.18, Rotation2d.fromDegrees(90));
-    public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(Units.inchesToMeters(43.5 + 9.32)+1,3.75, Rotation2d.fromDegrees(90));
-    public static final double BLUE_MID_CLIMBER_BAR = 3.75;  //Meters, middle of climb bar
-    public static final double RED_MID_CLIMBER_BAR = (TurretConstants.MID_FIELD_Y*2)-3.75;  //Meters, middle of climb bar 
+    public static final Pose2d RED_LEFT_POSE = new Pose2d(15, 3.85,Rotation2d.fromDegrees(-90));
+    public static final Pose2d RED_RIGHT_POSE = new Pose2d(15,4.79, Rotation2d.fromDegrees(-90));
+    public static final Pose2d BLUE_LEFT_POSE = new Pose2d(1.51,4.17, Rotation2d.fromDegrees(90));
+    public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(1.51,3.35, Rotation2d.fromDegrees(90));
+    public static final double BLUE_MID_CLIMBER_BAR = BLUE_RIGHT_POSE.getY() + (BLUE_LEFT_POSE.getY()-BLUE_RIGHT_POSE.getY());  //Meters, middle of climb bar
+    public static final double RED_MID_CLIMBER_BAR = RED_LEFT_POSE.getY() + (RED_RIGHT_POSE.getY()-RED_LEFT_POSE.getY());  //Meters, middle of climb bar
 
     //For stall checks
     public static double MIN_POSITION_MOVEMENT = 0.02; /* Minimum movement in check_ms interval for stalled */

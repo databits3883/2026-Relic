@@ -35,7 +35,7 @@ public class Deploy extends Command {
         //Stop running if told to stop
         intake.stopFourBar();
 
-        //Start the intake
+        //Start the intake, even if we did not reach limit and timed out
         intake.runIntake();
     }
 
