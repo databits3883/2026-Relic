@@ -94,7 +94,7 @@ public final class Constants {
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_RIGHT = new Transform2d(0,Units.inchesToMeters(-7),new Rotation2d(0));
     //public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(6.125),Units.inchesToMeters(3.25),new Rotation2d(0));
     public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(-3.25),Units.inchesToMeters(6.125),new Rotation2d(0));
-    public static final double TURRET_LAUNCHER_CORRECTION = 5; //Will be used with the sin of the angle to create an offset
+    public static final double TURRET_LAUNCHER_CORRECTION = 10; //Will be used with the sin of the angle to create an offset
     //public static final double TURRET_BKWD_ANGLE_OFFSET = -7; //Offset all targets when facing backward  135 - 225
 
     //Future pose calculation
