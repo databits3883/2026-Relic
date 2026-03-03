@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -72,6 +71,8 @@ public class RobotContainer
   //debug/field/dashboard, etc
   public static boolean DISPLAY_VISION_TAGS = true;
   public static boolean DISPLAY_VISION_POSE = false;
+  public static boolean DISPLAY_CLIMB_TARGET_POSE = true;
+  public static boolean DISPLAY_TURET_POSE = true;
   public static boolean DISPLAY_TARGET = true;
   public static boolean CAN_SHOOT = false;
   public static boolean ABOUT_TO_BE_ABLE_TO_SHOOT = false;
@@ -283,8 +284,9 @@ public class RobotContainer
       //copilotBoxController.button(10).whileTrue(new TurretManualAim());
 
       //Test later
-      //driverJoystick.button(6).whileTrue(new SequentialCommandGroup(new ActiveDriveToPose(drivebase, true, GoalType.Climber_Right),new Climb(climberSubsystem)));
-      driverJoystick.button(6).whileTrue(drivebase.driveToPose(Constants.Climber.BLUE_RIGHT_POSE));
+      //driverJoystick.button(6).whileTrue(drivebase.driveToPose(Constants.Climber.BLUE_RIGHT_POSE));
+      //Picks the right or left of the climb bar to climb on based on robot's Y
+      driverJoystick.button(6).whileTrue(drivebase.driveToClimb());
     }
   }
 

@@ -37,6 +37,8 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
+import frc.robot.commands.ActiveDriveToPose.GoalType;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
 import java.io.IOException;
@@ -343,6 +345,34 @@ public class SwerveSubsystem extends SubsystemBase
         constraints,
         edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
                                      );
+  }
+
+  /**
+   * 3883: Pick the right of left of climber based on where robot is in the Y direction
+   * @return
+   */
+  public Command driveToClimb()
+  {
+    //Set goal initially to current pose
+    Pose2d goalPose = getPose();
+    //Get the current Y.  Middle of bar is ~ 3.75 on blue
+    double currentY = goalPose.getY();
+    if (isRedAlliance())
+    {
+      if (currentY > Constants.Climber.RED_MID_CLIMBER_BAR) goalPose = Constants.Climber.RED_LEFT_POSE; else  goalPose = Constants.Climber.RED_LEFT_POSE;
+    }
+    else
+    {
+      //Blue alliance
+      if (currentY > Constants.Climber.BLUE_MID_CLIMBER_BAR) goalPose = Constants.Climber.BLUE_RIGHT_POSE; else  goalPose = Constants.Climber.BLUE_LEFT_POSE;
+    }
+
+    //Draw goal on field
+    if (RobotContainer.DISPLAY_CLIMB_TARGET_POSE)
+      swerveDrive.field.getObject("Climber Target Pose").setPose(goalPose);                                         
+
+    return driveToPose(goalPose);
+
   }
 
   /**

@@ -151,7 +151,9 @@ public final class Constants {
     public static final Pose2d RED_RIGHT_POSE = new Pose2d(new Translation2d(Meter.of(16), Meter.of(4)), Rotation2d.fromDegrees(0));
     public static final Pose2d BLUE_LEFT_POSE = new Pose2d(Units.inchesToMeters(43.5 + 9.32)+1,4.18, Rotation2d.fromDegrees(90));
     public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(Units.inchesToMeters(43.5 + 9.32)+1,3.75, Rotation2d.fromDegrees(90));
-    
+    public static final double BLUE_MID_CLIMBER_BAR = 3.75;  //Meters, middle of climb bar
+    public static final double RED_MID_CLIMBER_BAR = 3.75;  //Meters, middle of climb bar  //TODO: NEED TO MEASURE
+
     //For stall checks
     public static double MIN_POSITION_MOVEMENT = 0.02; /* Minimum movement in check_ms interval for stalled */
     public static int STALL_CHECK_MS = 100; /* MS between stall checks */
