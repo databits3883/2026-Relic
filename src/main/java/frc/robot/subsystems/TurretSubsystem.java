@@ -282,14 +282,7 @@ public class TurretSubsystem extends SubsystemBase {
         distanceToTarget = PhotonUtils.getDistanceToPose(turretPose, targetPose);
 
         //Adjust Angle by offset, We found the angle is off when facing forward by left, and  right when facing backward
-        if ((targetAngle >(90+45)) && ((targetAngle < 180+45)))
-        {
-          targetAngle += Constants.TurretConstants.TURRET_BKWD_ANGLE_OFFSET;
-        } 
-        else if ((targetAngle > (360-45)) || (targetAngle < 45)) 
-        {
-          targetAngle += Constants.TurretConstants.TURRET_FRWD_ANGLE_OFFSET;
-        }
+        targetAngle += (Math.cos(targetAngle) * Constants.TurretConstants.TURRET_LAUNCHER_CORRECTION);
 
         //update the turret setpoint
         setTurretSetPoint(targetAngle);
