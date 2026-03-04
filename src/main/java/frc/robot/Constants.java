@@ -94,11 +94,12 @@ public final class Constants {
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_RIGHT = new Transform2d(0,Units.inchesToMeters(-7),new Rotation2d(0));
     //public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(6.125),Units.inchesToMeters(3.25),new Rotation2d(0));
     public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(-3.25),Units.inchesToMeters(6.125),new Rotation2d(0));
-    public static final double TURRET_LAUNCHER_CORRECTION = 10; //Will be used with the sin of the angle to create an offset
-    //public static final double TURRET_BKWD_ANGLE_OFFSET = -7; //Offset all targets when facing backward  135 - 225
+    public static final double TURRET_LAUNCHER_CORRECTION_FRWD = 0; //Will be used with the sin of the angle to create an offset
+    public static final double TURRET_LAUNCHER_CORRECTION_BWD = 10; //Will be used with the sin of the angle to create an offset
+    public static final double CORRECTION_DEADBAND = 0.2;
 
     //Future pose calculation
-    public static final double LATENCY_SEC = 0.4;    
+    public static final double LATENCY_SEC = 0.2;    
     public static final boolean USE_FUTURE_POSE = true;
   }
   
@@ -146,8 +147,8 @@ public final class Constants {
     public static double MAX_ROTATIONS_UNDER_BAR = 0.3; //Max motor rotations and still keep climber under bar for travel
 
     //Climber Poses for Blue/Red/Right/Left
-    public static final Pose2d RED_LEFT_POSE = new Pose2d(15, 3.85,Rotation2d.fromDegrees(-90));
-    public static final Pose2d RED_RIGHT_POSE = new Pose2d(15,4.79, Rotation2d.fromDegrees(-90));
+    public static final Pose2d RED_LEFT_POSE = new Pose2d(14.7, 3.85,Rotation2d.fromDegrees(-90));
+    public static final Pose2d RED_RIGHT_POSE = new Pose2d(14.7,4.79, Rotation2d.fromDegrees(-90));
     public static final Pose2d BLUE_LEFT_POSE = new Pose2d(1.51,4.17, Rotation2d.fromDegrees(90));
     public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(1.51,3.35, Rotation2d.fromDegrees(90));
     public static final double BLUE_MID_CLIMBER_BAR = BLUE_RIGHT_POSE.getY() + (BLUE_LEFT_POSE.getY()-BLUE_RIGHT_POSE.getY());  //Meters, middle of climb bar

@@ -143,8 +143,8 @@ public class RobotContainer
     DriverStation.silenceJoystickConnectionWarning(true);
     
     //Create the NamedCommands that will be used in PathPlanner
-    NamedCommands.registerCommand("AutoAlign R", new ActiveDriveToPose(drivebase, true,GoalType.Climber_Right));    
-    NamedCommands.registerCommand("AutoAlign L", new ActiveDriveToPose(drivebase, true,GoalType.Climber_Left));    
+    //NamedCommands.registerCommand("AutoAlign R", new ActiveDriveToPose(drivebase, true,GoalType.Climber_Right));    
+    //NamedCommands.registerCommand("AutoAlign L", new ActiveDriveToPose(drivebase, true,GoalType.Climber_Left));    
 
     //Have the autoChooser pull in all PathPlanner autos as options
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -284,9 +284,9 @@ public class RobotContainer
       //copilotBoxController.button(10).whileTrue(new TurretManualAim());
 
       //Test later
-      //driverJoystick.button(6).whileTrue(drivebase.driveToPose(Constants.Climber.BLUE_RIGHT_POSE));
+      driverJoystick.button(6).whileTrue(new ActiveDriveToPose(drivebase,false)); // in auto = false
       //Picks the right or left of the climb bar to climb on based on robot's Y
-      driverJoystick.button(6).whileTrue(drivebase.driveToClimb());
+      //driverJoystick.button(6).whileTrue(drivebase.driveToClimb(true)); // true = use active drive, false use pathplanner
     }
   }
 

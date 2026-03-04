@@ -30,6 +30,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -38,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.commands.ActiveDriveToPose;
 import frc.robot.commands.ActiveDriveToPose.GoalType;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
@@ -351,30 +353,65 @@ public class SwerveSubsystem extends SubsystemBase
    * 3883: Pick the right of left of climber based on where robot is in the Y direction
    * @return
    */
-  public Command driveToClimb()
+  public Command driveToClimb(boolean useActionDrive)
   {
     //Set goal initially to current pose
     Pose2d goalPose = getPose();
+    ActiveDriveToPose.GoalType goalType;
+    
     //Get the current Y.  Middle of bar is ~ 3.75 on blue
     double currentY = goalPose.getY();
     if (isRedAlliance())
     {
-      if (currentY > Constants.Climber.RED_MID_CLIMBER_BAR) goalPose = Constants.Climber.RED_LEFT_POSE; else  goalPose = Constants.Climber.RED_LEFT_POSE;
+      if (currentY > Constants.Climber.RED_MID_CLIMBER_BAR)
+      {
+         goalPose = Constants.Climber.RED_RIGHT_POSE; 
+         goalType = ActiveDriveToPose.GoalType.Climber_Red_Right;
+      } 
+      else
+      {
+         goalPose = Constants.Climber.RED_LEFT_POSE;
+         goalType = ActiveDriveToPose.GoalType.Climber_Red_Left;
+      } 
     }
     else
     {
       //Blue alliance
-      if (currentY > Constants.Climber.BLUE_MID_CLIMBER_BAR) goalPose = Constants.Climber.BLUE_RIGHT_POSE; else  goalPose = Constants.Climber.BLUE_LEFT_POSE;
+      if (currentY > Constants.Climber.BLUE_MID_CLIMBER_BAR) 
+      {
+        goalPose = Constants.Climber.BLUE_LEFT_POSE; 
+        goalType = ActiveDriveToPose.GoalType.Climber_Blue_Left;
+      }
+      else
+      {
+        goalPose = Constants.Climber.BLUE_RIGHT_POSE;
+        goalType = ActiveDriveToPose.GoalType.Climber_Blue_Right;
+      } 
     }
 
     //Draw goal on field
     if (RobotContainer.DISPLAY_CLIMB_TARGET_POSE)
       swerveDrive.field.getObject("Climber Target Pose").setPose(goalPose);                                         
 
-    return driveToPose(goalPose);
+    if (useActionDrive)
+    {
+      return new ActiveDriveToPose(RobotContainer.drivebase,false,goalType);
+    }
+    else
+    {
+      return driveToPose(goalPose);
+    }
 
   }
 
+  /**
+   * 3883: return the field dashboard object
+   * @return
+   */
+  public Field2d getField()
+  {
+    return swerveDrive.field;
+  }
   /**
    * Drive with {@link SwerveSetpointGenerator} from 254, implemented by PathPlanner.
    *

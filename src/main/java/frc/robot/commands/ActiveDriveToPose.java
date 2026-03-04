@@ -16,17 +16,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class ActiveDriveToPose extends Command {
 
   public enum GoalType {
+    Climber_Red_Right,
+    Climber_Red_Left,
+    Climber_Blue_Right,
+    Climber_Blue_Left,
     Climber_Right,
     Climber_Left
   }
 
-  private GoalType goalType = GoalType.Climber_Right;
+  private GoalType goalType = GoalType.Climber_Red_Right;
 
   private SwerveSubsystem drivetrain;
   private Pose2d goalPose2d = Pose2d.kZero;
@@ -62,6 +67,8 @@ public class ActiveDriveToPose extends Command {
     goalType = goal;
 
     isRed = Robot.isRedAlliance;
+    if (goalType == GoalType.Climber_Right) { if (isRed) goalType = GoalType.Climber_Red_Right; else goalType = GoalType.Climber_Blue_Right;}
+    if (goalType == GoalType.Climber_Left) { if (isRed) goalType = GoalType.Climber_Red_Left; else goalType = GoalType.Climber_Blue_Left;}
     inAuto = inAutonomous;    
 
     rotationController.enableContinuousInput(-Math.PI, Math.PI);
@@ -74,20 +81,54 @@ public class ActiveDriveToPose extends Command {
     SmartDashboard.putData(positionController);
   }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    if(goalType == GoalType.Climber_Left)
+  //Find best climb based on Y and alliance
+  public ActiveDriveToPose(SwerveSubsystem swerveSubsystem, boolean inAutonomous)
+  {
+    Pose2d currentPose = drivetrain.getPose();
+    double currentY = currentPose.getY();
+    isRed = Robot.isRedAlliance;
+    if (isRed) 
     {
-      goalPose2d = (isRed ? Constants.Climber.RED_LEFT_POSE: Constants.Climber.BLUE_LEFT_POSE);
-    }
-    else if (goalType == GoalType.Climber_Right){
-      goalPose2d = (isRed ? Constants.Climber.RED_RIGHT_POSE: Constants.Climber.BLUE_RIGHT_POSE);
+      if (currentY > Constants.Climber.RED_MID_CLIMBER_BAR) 
+        goalType = ActiveDriveToPose.GoalType.Climber_Red_Right;
+      else
+        goalType = ActiveDriveToPose.GoalType.Climber_Red_Left;
     }
     else
     {
-      goalPose2d = drivetrain.getPose();
+      if (currentY > Constants.Climber.BLUE_MID_CLIMBER_BAR) 
+        goalType = ActiveDriveToPose.GoalType.Climber_Blue_Left;
+      else
+        goalType = ActiveDriveToPose.GoalType.Climber_Blue_Right;
     }
+    inAuto = inAutonomous;    
+
+    rotationController.enableContinuousInput(-Math.PI, Math.PI);
+    
+    if(!(inAutonomous))
+    {
+      addRequirements(swerveSubsystem);
+    }
+    
+    SmartDashboard.putData(positionController);
+  }
+
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    switch (goalType)
+    {
+        case Climber_Blue_Left: goalPose2d =Constants.Climber.BLUE_LEFT_POSE; break;
+        case Climber_Blue_Right: goalPose2d =Constants.Climber.BLUE_RIGHT_POSE; break;
+        case Climber_Red_Left: goalPose2d =Constants.Climber.RED_LEFT_POSE; break;
+        case Climber_Red_Right: goalPose2d =Constants.Climber.RED_RIGHT_POSE; break;
+        default: goalPose2d = drivetrain.getPose();
+    }
+
+    //Draw goal on field
+    if (RobotContainer.DISPLAY_CLIMB_TARGET_POSE)
+        RobotContainer.drivebase.getField().getObject("Climber Target Pose").setPose(goalPose2d);                                         
 
     atTolerance = false;
     
@@ -152,7 +193,7 @@ public class ActiveDriveToPose extends Command {
     double angleError = poseError.getRotation().getDegrees();
     //TODO: test the angleError
     System.out.println("attoleranceFromGoal: angleError: " + angleError);
-    
+
     double positionErrorMagnitude = poseError.getTranslation().getDistance(Translation2d.kZero);
     
     return (Math.abs(angleError) < 1.0) && positionErrorMagnitude < 0.035;    
