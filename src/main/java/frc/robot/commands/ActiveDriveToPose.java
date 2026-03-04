@@ -84,9 +84,14 @@ public class ActiveDriveToPose extends Command {
   //Find best climb based on Y and alliance
   public ActiveDriveToPose(SwerveSubsystem swerveSubsystem, boolean inAutonomous)
   {
-    Pose2d currentPose = drivetrain.getPose();
-    double currentY = currentPose.getY();
     isRed = Robot.isRedAlliance;
+    Pose2d currentPose = null;
+    if (isRed) currentPose = Constants.DrivebaseConstants.INITITAL_RED_POSE; else currentPose = Constants.DrivebaseConstants.INITITAL_BLUE_POSE;
+    if (swerveSubsystem != null)
+    {
+      currentPose = swerveSubsystem.getPose();
+    }
+    double currentY = currentPose.getY();
     if (isRed) 
     {
       if (currentY > Constants.Climber.RED_MID_CLIMBER_BAR) 
