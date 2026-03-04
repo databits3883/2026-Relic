@@ -86,6 +86,7 @@ public class ActiveDriveToPose extends Command {
   {
     isRed = Robot.isRedAlliance;
     Pose2d currentPose = null;
+    drivetrain = swerveSubsystem;
     if (isRed) currentPose = Constants.DrivebaseConstants.INITITAL_RED_POSE; else currentPose = Constants.DrivebaseConstants.INITITAL_BLUE_POSE;
     if (swerveSubsystem != null)
     {
