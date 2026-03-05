@@ -12,7 +12,7 @@ public class Climb extends Command {
     public Climb(ClimberSubsystem climerSub) 
     {
         this.climberSubsystem = climerSub;
-        m_climberPower = Constants.Climber.MAX_POWER;
+        m_climberPower = Constants.Climber.MAX_REVERSE_POWER;
         addRequirements(climerSub);
     }
     public Climb(ClimberSubsystem climerSub, double powerLevel) 
