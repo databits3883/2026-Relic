@@ -26,8 +26,8 @@ import swervelib.math.Matter;
  */
 public final class Constants {
   public static final double ROBOT_BATTARY_MASS = Units.lbsToKilograms(12.89);
-  public static final double ROBOT_BUMPER_MASS = Units.lbsToKilograms(9);
-  public static final double ROBOT_CHASSIS_MASS = Units.lbsToKilograms(106);
+  public static final double ROBOT_BUMPER_MASS = Units.lbsToKilograms(9.5);
+  public static final double ROBOT_CHASSIS_MASS = Units.lbsToKilograms(109.4);
   public static final double ROBOT_MASS = ROBOT_BATTARY_MASS + ROBOT_BUMPER_MASS + ROBOT_CHASSIS_MASS;
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
@@ -147,9 +147,13 @@ public final class Constants {
     public static double MAX_ROTATIONS_UNDER_BAR = 0.3; //Max motor rotations and still keep climber under bar for travel
 
     //Climber Poses for Blue/Red/Right/Left
-    public static final Pose2d RED_LEFT_POSE = new Pose2d(14.9, 3.85,Rotation2d.fromDegrees(-90));
+    //climb suppoorts 45.25 inches from tag approx, right side is centered on tags 16,32 
+    //16 pose = 16.5329616,3.8917626
+    //32 pose = 0.008, 4.1775126
+    //45.25 inch = 1.14935 meters
+    public static final Pose2d RED_LEFT_POSE = new Pose2d(14.9, 3.8917,Rotation2d.fromDegrees(-90));
     public static final Pose2d RED_RIGHT_POSE = new Pose2d(14.9,4.79, Rotation2d.fromDegrees(-90));
-    public static final Pose2d BLUE_LEFT_POSE = new Pose2d(1.51,4.17, Rotation2d.fromDegrees(90));
+    public static final Pose2d BLUE_LEFT_POSE = new Pose2d(1.51,4.1775, Rotation2d.fromDegrees(90));
     public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(1.51,3.35, Rotation2d.fromDegrees(90));
     public static final double BLUE_MID_CLIMBER_BAR = BLUE_RIGHT_POSE.getY() + (BLUE_LEFT_POSE.getY()-BLUE_RIGHT_POSE.getY());  //Meters, middle of climb bar
     public static final double RED_MID_CLIMBER_BAR = RED_LEFT_POSE.getY() + (RED_RIGHT_POSE.getY()-RED_LEFT_POSE.getY());  //Meters, middle of climb bar
