@@ -148,8 +148,9 @@ public final class Constants {
 
     //Climber Poses for Blue/Red/Right/Left
     //climb suppoorts 45.25 inches from tag approx, left side is centered on tags 16,32 
-    //16 pose = 16.5329616,3.8917626
-    //32 pose = 0.008, 4.1775126
+    //16 pose = 16.5329616,3.8917626, AprilTag16 X + 45 inches?, Y== = Left
+    //32 pose = 0.008, 4.1775126, AprilTag32 X - 45 inches?, Y== = Left
+    //Right pose = Left pose, Red Y + 0.86 meter?, Blue Y - 0.86 meter?
     //45.25 inch = 1.14935 meters
     // TODO: Will probably need to move X position back from climber +red -blue for X
     public static final Pose2d RED_LEFT_POSE = new Pose2d(14.9, 3.8917,Rotation2d.fromDegrees(-90));

@@ -59,6 +59,9 @@ public class Robot extends TimedRobot
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
+    //populate Climber poses
+    populateClimberPoses();Qasz
+
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
@@ -70,6 +73,12 @@ public class Robot extends TimedRobot
 
     SmartDashboard.putBoolean("Match:Shoot Now", false);
     SmartDashboard.putBoolean("Match:About to shoot", false);
+  }
+
+  public void populateClimberPoses()
+  {
+    //TODO: use 16/32 april tags to build out red/blue right/left poses
+    //aprilTagFieldLayout_AllTags.getTagPose(16).get().getX()
   }
 
   /**
