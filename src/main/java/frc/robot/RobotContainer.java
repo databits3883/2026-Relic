@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.signals.AnimationDirectionValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -143,8 +144,15 @@ public class RobotContainer
     DriverStation.silenceJoystickConnectionWarning(true);
     
     //Create the NamedCommands that will be used in PathPlanner
-    //NamedCommands.registerCommand("AutoAlign R", new ActiveDriveToPose(drivebase, true,GoalType.Climber_Right));    
-    //NamedCommands.registerCommand("AutoAlign L", new ActiveDriveToPose(drivebase, true,GoalType.Climber_Left));    
+    NamedCommands.registerCommand("Shoot 5sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(5));    
+    NamedCommands.registerCommand("wait 1/2 second", new WaitCommand(0.5));
+    NamedCommands.registerCommand("Deploy Intake", new Deploy(intakeSubsystem));    
+    //Raise intake and then prepare climber to climb
+    NamedCommands.registerCommand("Prepare to Climb", new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
+    //Once close to Left Climber, drives to the left climb and run climber until stopped
+    NamedCommands.registerCommand("Drive to and Climb L",
+                                     new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left)
+                                     .andThen(new Climb(climberSubsystem).repeatedly()));    
 
     //Have the autoChooser pull in all PathPlanner autos as options
     autoChooser = AutoBuilder.buildAutoChooser();

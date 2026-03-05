@@ -174,7 +174,7 @@ public class ActiveDriveToPose extends Command {
     double rotationPIDOutput = rotationController.calculate(poseError.getRotation().getRadians(), 0);
     
     //For testing, output the PID results:
-    System.out.println("adtp x/y/r: " + positionXPIDOutput + "/" + positionYPIDOutput + "/" + rotationPIDOutput);
+    //System.out.println("adtp x/y/r: " + positionXPIDOutput + "/" + positionYPIDOutput + "/" + rotationPIDOutput);
 
     ChassisSpeeds rrSpeeds = new ChassisSpeeds(positionXPIDOutput,positionYPIDOutput, rotationPIDOutput);
     drivetrain.setChassisSpeeds(rrSpeeds);
