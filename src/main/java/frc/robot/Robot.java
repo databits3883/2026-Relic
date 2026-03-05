@@ -290,6 +290,7 @@ public class Robot extends TimedRobot
       else
         RobotContainer.drivebase.resetOdometry(Constants.DrivebaseConstants.INITITAL_BLUE_POSE);
       RobotContainer.turretSubsystem.zeroEncoder();
+      hasRunAuto = false;
     }
 
     //Enable auto aim
