@@ -32,8 +32,10 @@ public class IntakeSubsystem extends SubsystemBase
   private double m_fourBarBackwardPower = Constants.Intake.FOUR_BAR_BACKWARD_POWER;
   
   private boolean m_isIntakeRunning = false;
+  private boolean m_isIntakeRunningRev = false;
   private boolean m_isFourBarRunning = false;
   private boolean m_isIntakeDeployed = false;
+  private double m_intakePower = 0;
 
   //Velocity Control
   /* 
@@ -112,7 +114,6 @@ public class IntakeSubsystem extends SubsystemBase
 
       if (isMotorStalled)
       {
-        System.out.print("Intake Stalled!!");
         SmartDashboard.putBoolean("Intake Stalled", true);
       }
     }
@@ -250,6 +251,25 @@ public class IntakeSubsystem extends SubsystemBase
   }
 
   /**
+   * Force intake to run at max speed
+   * @param runMaxSpeed
+   */
+  public void setIntakeMax(boolean runMaxSpeed)
+  {
+    //If true, run the intake motor to max
+    //else run the intake back to "normal"
+    if (isIntakeRunning() && !m_isIntakeRunningRev)
+    {
+      double currentIntakePower = m_intakePower;
+      if (runMaxSpeed)
+       m_intakePower = Constants.Intake.INTAKE_MOTOR_MAX_POWER;
+      else m_intakePower = Constants.Intake.INTAKE_MOTOR_POWER;
+      //Update the speed
+      if (currentIntakePower != m_intakePower) runPowerIntake(m_intakePower);
+    }
+  }
+
+  /**
    * Stop the intake from spinning
    */
   public void stopIntake()
@@ -261,6 +281,8 @@ public class IntakeSubsystem extends SubsystemBase
     //currentSetPointRPM = 0;
 
     m_isIntakeRunning = false;
+    m_isIntakeRunningRev = false;
+    m_intakePower = 0;
   }
 
   public void toggleIntake()
@@ -299,8 +321,17 @@ public class IntakeSubsystem extends SubsystemBase
     {
       SmartDashboard.putBoolean("Intake Stalled", false);
       m_intake_motor.setVoltage(targetVoltage);
-      if (targetVoltage != 0) m_isIntakeRunning = true; 
-      else m_isIntakeRunning = false;
+      m_intakePower = targetVoltage;
+      if (targetVoltage != 0)
+      {
+        m_isIntakeRunning = true; 
+        if (targetVoltage < 0) m_isIntakeRunningRev = true;
+      } 
+      else {
+        m_isIntakeRunning = false;
+        m_isIntakeRunningRev = false;
+      }
+      
       intakeLastStallReading = System.currentTimeMillis()+1000; //allow 1 second to spin up
       intakeStalledLastPositionRead = getIntakePosition();
     }

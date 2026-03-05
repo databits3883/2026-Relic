@@ -279,6 +279,9 @@ public class RobotContainer
       copilotSNESController.axisGreaterThan(0,0.5).onTrue(new Retract(intakeSubsystem));
       //Run intake while this button is off and stop when button is on
       copilotSNESController.button(3).onTrue(Commands.runOnce(intakeSubsystem::toggleIntake));
+      //Run intake max speed while held
+      copilotSNESController.button(6).onTrue(Commands.runOnce(() -> { intakeSubsystem.setIntakeMax(true);;}));
+      copilotSNESController.button(6).onFalse(Commands.runOnce(() -> { intakeSubsystem.setIntakeMax(false);;}));
 
       //Climber
       //climber stow/prepare

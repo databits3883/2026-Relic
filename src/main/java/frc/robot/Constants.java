@@ -113,11 +113,12 @@ public final class Constants {
 
     public static final int INTAKE_MOTOR_ID = 14;
     public static double INTAKE_MOTOR_POWER = 8.0;
+    public static double INTAKE_MOTOR_MAX_POWER = 14; //volts
     public static boolean INTAKE_MOTOR_INVERSE = true;
 
     //For stall checks
     public static double INTAKE_MIN_POSITION_MOVEMENT = 1; /* Minimum movement in check_ms interval for stalled */
-    public static int INTAKE_STALL_CHECK_MS = 1000; /* MS between stall checks */
+    public static int INTAKE_STALL_CHECK_MS = 500; /* MS between stall checks */
 
     //PID velocity control
     public static double SLOT1_KP = 0.00005;
