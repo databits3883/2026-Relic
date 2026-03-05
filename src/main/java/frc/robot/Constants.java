@@ -147,14 +147,15 @@ public final class Constants {
     public static double MAX_ROTATIONS_UNDER_BAR = 0.3; //Max motor rotations and still keep climber under bar for travel
 
     //Climber Poses for Blue/Red/Right/Left
-    //climb suppoorts 45.25 inches from tag approx, right side is centered on tags 16,32 
+    //climb suppoorts 45.25 inches from tag approx, left side is centered on tags 16,32 
     //16 pose = 16.5329616,3.8917626
     //32 pose = 0.008, 4.1775126
     //45.25 inch = 1.14935 meters
+    // TODO: Will probably need to move X position back from climber +red -blue for X
     public static final Pose2d RED_LEFT_POSE = new Pose2d(14.9, 3.8917,Rotation2d.fromDegrees(-90));
-    public static final Pose2d RED_RIGHT_POSE = new Pose2d(14.9,4.79, Rotation2d.fromDegrees(-90));
+    public static final Pose2d RED_RIGHT_POSE = new Pose2d(14.9,4.755, Rotation2d.fromDegrees(-90));
     public static final Pose2d BLUE_LEFT_POSE = new Pose2d(1.51,4.1775, Rotation2d.fromDegrees(90));
-    public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(1.51,3.35, Rotation2d.fromDegrees(90));
+    public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(1.51,3.313, Rotation2d.fromDegrees(90));
     public static final double BLUE_MID_CLIMBER_BAR = BLUE_RIGHT_POSE.getY() + (BLUE_LEFT_POSE.getY()-BLUE_RIGHT_POSE.getY());  //Meters, middle of climb bar
     public static final double RED_MID_CLIMBER_BAR = RED_LEFT_POSE.getY() + (RED_RIGHT_POSE.getY()-RED_LEFT_POSE.getY());  //Meters, middle of climb bar
 
