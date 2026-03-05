@@ -135,6 +135,7 @@ public final class Constants {
     public static final int SECONDARY_MOTOR_ID = 17; 
     
     public static double MAX_POWER = 14.0;
+    public static double MAX_REVERSE_POWER = -1 * MAX_POWER;
     public static double SLOW_REVERSE_SPEED = -0.3 * MAX_POWER;
     public static double SLOW_FORWARD_SPEED = 0.3 * MAX_POWER;
 
