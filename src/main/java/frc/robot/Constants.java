@@ -143,7 +143,7 @@ public final class Constants {
     public static int CLIMBER_TIMEOUT_SEC = 4;
     public static double STOW_TIMEOUT_SEC = 1.5;
     public static boolean INVERT = true;
-    public static double ROTATIONS_FULLY_EXTENDED = 23.5; //Rotation count when fully extended, determine actual number
+    public static double ROTATIONS_FULLY_EXTENDED = 27.0; //Rotation count when fully extended, determine actual number
     public static double ROTATIONS_AT_CLIMB = 3.4; //Rotation count when fully at climb, fallback to if we drive past limit
     public static double MAX_ROTATIONS_IN_FRAME = 1; //Max motor rotations and still keep climber in frame
     public static double MAX_ROTATIONS_UNDER_BAR = 0.3; //Max motor rotations and still keep climber under bar for travel
