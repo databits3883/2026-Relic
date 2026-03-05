@@ -146,6 +146,7 @@ public class RobotContainer
     
     //Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("Shoot 5sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(5));    
+    NamedCommands.registerCommand("Shoot 3sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(3));  
     NamedCommands.registerCommand("wait 1/2 second", new WaitCommand(0.5));
     NamedCommands.registerCommand("Deploy Intake", new Deploy(intakeSubsystem));    
     //Raise intake and then prepare climber to climb
