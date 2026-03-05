@@ -6,11 +6,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,12 +37,14 @@ public class ActiveDriveToPose extends Command {
 
   private SwerveSubsystem drivetrain;
   private Pose2d goalPose2d = Pose2d.kZero;
+  private Pose2d firstGoalPose2d = Pose2d.kZero;
   private boolean isRed = true;
   private Transform2d poseError = Transform2d.kZero;
 
   private Timer loopTimer = new Timer();
   private boolean inAuto = true;
   private boolean atTolerance = false;
+  private boolean finishedFirstStage = false;
   private Timer timeAtTolerance = new Timer();
 
   private PIDController positionController = new PIDController(AutonConstants.positionKP, AutonConstants.positionKI, AutonConstants.positionKD);
@@ -131,15 +135,19 @@ public class ActiveDriveToPose extends Command {
         case Climber_Red_Right: goalPose2d =Constants.Climber.RED_RIGHT_POSE; break;
         default: goalPose2d = drivetrain.getPose();
     }
+    //Set first goal pose to be 4 inches behind bar, after there then drive forward
+    if (isRed) firstGoalPose2d = goalPose2d.transformBy(new Transform2d(Units.inchesToMeters(-4),0,new Rotation2d(0)));
+    else  firstGoalPose2d = goalPose2d.transformBy(new Transform2d(Units.inchesToMeters(4),0,new Rotation2d(0)));
 
     //Draw goal on field
     if (RobotContainer.DISPLAY_CLIMB_TARGET_POSE)
         RobotContainer.drivebase.getField().getObject("Climber Target Pose").setPose(goalPose2d);                                         
 
     atTolerance = false;
-    
-    poseError = drivetrain.getPose().minus(goalPose2d);
-    drivetrain.goalPose2d = goalPose2d;
+    finishedFirstStage = false;
+
+    poseError = drivetrain.getPose().minus(firstGoalPose2d);
+    drivetrain.goalPose2d = firstGoalPose2d;
     
     ChassisSpeeds currentSpeeds = drivetrain.getRobotVelocity();
 
@@ -157,7 +165,11 @@ public class ActiveDriveToPose extends Command {
   public void execute() 
   {
     Pose2d currentPose = drivetrain.getPose();
-    poseError = currentPose.minus(goalPose2d);
+    if (finishedFirstStage)
+        poseError = currentPose.minus(goalPose2d);
+    else    
+        poseError = currentPose.minus(firstGoalPose2d);
+
     Translation2d translationError = poseError.getTranslation();
 
     ChassisSpeeds currentSpeeds = drivetrain.getRobotVelocity();
@@ -197,8 +209,6 @@ public class ActiveDriveToPose extends Command {
   public boolean atToleranceFromGoal()
   {
     double angleError = poseError.getRotation().getDegrees();
-    //TODO: test the angleError
-    System.out.println("attoleranceFromGoal: angleError: " + angleError);
 
     double positionErrorMagnitude = poseError.getTranslation().getDistance(Translation2d.kZero);
     
@@ -229,6 +239,14 @@ public class ActiveDriveToPose extends Command {
   public boolean isFinished() 
   {  
     boolean aligned = readyToClimb();
+    if (!finishedFirstStage && aligned)
+    {
+        //Mark that we reached the first goal, move on to the second
+        finishedFirstStage = true;
+        aligned = false;
+        //update the goal on the drivetrain
+        drivetrain.goalPose2d = goalPose2d;
+    }
 
     //Use the aligned method only when in auto, otherwise joystick button keeps running this
     if (inAuto) 
