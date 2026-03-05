@@ -136,8 +136,8 @@ public class ActiveDriveToPose extends Command {
         default: goalPose2d = drivetrain.getPose();
     }
     //Set first goal pose to be 4 inches behind bar, after there then drive forward
-    if (isRed) firstGoalPose2d = goalPose2d.transformBy(new Transform2d(Units.inchesToMeters(-4),0,new Rotation2d(0)));
-    else  firstGoalPose2d = goalPose2d.transformBy(new Transform2d(Units.inchesToMeters(4),0,new Rotation2d(0)));
+    if (isRed) firstGoalPose2d = goalPose2d.transformBy(new Transform2d(Units.inchesToMeters(-1 * Constants.AutonConstants.WAY_POINT_BEHIND_BAR),0,new Rotation2d(0)));
+    else  firstGoalPose2d = goalPose2d.transformBy(new Transform2d(Units.inchesToMeters(Constants.AutonConstants.WAY_POINT_BEHIND_BAR),0,new Rotation2d(0)));
 
     //Draw goal on field
     if (RobotContainer.DISPLAY_CLIMB_TARGET_POSE)

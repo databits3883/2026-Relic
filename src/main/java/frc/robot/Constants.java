@@ -231,5 +231,7 @@ public final class Constants {
     public static final double rotationKP = 1.0;
     public static final double rotationKI = 0.00;
     public static final double rotationKD = 0.00;
+
+    public static final double WAY_POINT_BEHIND_BAR = 6; // Inches
   }
 }
