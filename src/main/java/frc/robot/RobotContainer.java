@@ -47,6 +47,7 @@ import frc.robot.subsystems.StageSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
+import java.util.function.DoubleSupplier;
 
 import swervelib.SwerveInputStream;
 
@@ -143,6 +144,9 @@ public class RobotContainer
     // Configure the trigger bindings
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
+
+    DoubleSupplier doubleSupplierSuperSlow = ()-> -0.1;
+    DoubleSupplier doubleSupplierZero = () -> 0.0;
     
     //Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("Shoot 5sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(5));    
@@ -154,6 +158,7 @@ public class RobotContainer
     //Once close to Left Climber, drives to the left climb and run climber until stopped
     NamedCommands.registerCommand("Drive to and Climb L",
                                      new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left)
+                                     .andThen(drivebase.driveCommand(doubleSupplierSuperSlow, doubleSupplierZero, doubleSupplierZero).withTimeout(0.1))
                                      .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
                                      
 

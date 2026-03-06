@@ -154,11 +154,12 @@ public final class Constants {
     //32 pose = 0.008, 4.1775126, AprilTag32 X - 45 inches?, Y== = Left
     //Right pose = Left pose, Red Y + 0.86 meter?, Blue Y - 0.86 meter?
     //45.25 inch = 1.14935 meters
-    // TODO: Will probably need to move X position back from climber +red -blue for X
-    public static final Pose2d RED_LEFT_POSE = new Pose2d(15.10, 3.91,Rotation2d.fromDegrees(-90));
-    public static final Pose2d RED_RIGHT_POSE = new Pose2d(15.10,4.76, Rotation2d.fromDegrees(-90));
-    public static final Pose2d BLUE_LEFT_POSE = new Pose2d(1.50,4.17, Rotation2d.fromDegrees(90));
-    public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(1.50,3.31, Rotation2d.fromDegrees(90));
+    // TODO: Will probably need to move X position back from climber -red +blue for X
+    public static final double CLIMBER_BUFFER_SPACE = Units.inchesToMeters(6);
+    public static final Pose2d RED_LEFT_POSE = new Pose2d(15.10-CLIMBER_BUFFER_SPACE, 3.91,Rotation2d.fromDegrees(-90));
+    public static final Pose2d RED_RIGHT_POSE = new Pose2d(15.10-CLIMBER_BUFFER_SPACE,4.76, Rotation2d.fromDegrees(-90));
+    public static final Pose2d BLUE_LEFT_POSE = new Pose2d(1.50+CLIMBER_BUFFER_SPACE,4.17, Rotation2d.fromDegrees(90));
+    public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(1.50+CLIMBER_BUFFER_SPACE,3.31, Rotation2d.fromDegrees(90));
     //public static final double BLUE_MID_CLIMBER_BAR = BLUE_RIGHT_POSE.getY() + (BLUE_LEFT_POSE.getY()-BLUE_RIGHT_POSE.getY());  //Meters, middle of climb bar
     //public static final double RED_MID_CLIMBER_BAR = RED_LEFT_POSE.getY() + (RED_RIGHT_POSE.getY()-RED_LEFT_POSE.getY());  //Meters, middle of climb bar
 
