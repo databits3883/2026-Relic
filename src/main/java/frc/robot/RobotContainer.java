@@ -157,9 +157,9 @@ public class RobotContainer
     //Once close to Left Climber, drives to the left climb and run climber until stopped
     NamedCommands.registerCommand("Drive to and Climb L",
                                      new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left)
-                                     .andThen(drivebase.driveCommand(Robot.doubleSupplierSuperSlow, doubleSupplierZero, doubleSupplierZero).withTimeout(0.1))
+                                     .andThen(drivebase.driveBackwardsForwardsWithAlliance().withTimeout(0.1))
                                      .andThen(new WaitCommand(2))
-                                     .andThen(drivebase.driveCommand(doubleSupplierZero, doubleSupplierZero, doubleSupplierZero).withTimeout(0.1))
+                                     .andThen(drivebase.driveBackwardsForwardsWithAlliance().withTimeout(0.1))
                                      .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
                                      
     //Have the autoChooser pull in all PathPlanner autos as options

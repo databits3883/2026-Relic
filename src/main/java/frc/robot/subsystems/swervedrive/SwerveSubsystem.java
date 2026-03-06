@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.commands.ActiveDriveToPose;
 import frc.robot.commands.ActiveDriveToPose.GoalType;
@@ -611,6 +612,22 @@ public class SwerveSubsystem extends SubsystemBase
                                                                       swerveDrive.getOdometryHeading().getRadians(),
                                                                       swerveDrive.getMaximumChassisVelocity()));
     });
+  }
+
+  /**
+   * 3883 - drive backwards with blue, forwards with red
+   * @return
+   */
+  public Command driveBackwardsForwardsWithAlliance()
+  {
+    if (isRedAlliance())
+    {
+      return driveCommand(Robot.doubleSupplierSuperSlowRed, Robot.doubleSupplierZero, Robot.doubleSupplierZero);
+    }
+    else
+    {
+      return driveCommand(Robot.doubleSupplierSuperSlowBlue, Robot.doubleSupplierZero, Robot.doubleSupplierZero);
+    }
   }
 
   /**

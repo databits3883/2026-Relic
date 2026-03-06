@@ -35,6 +35,7 @@ public class Robot extends TimedRobot
 
   private RobotContainer m_robotContainer;
   public char AUTO_WINNER_CODE = 'U';
+  public static DoubleSupplier doubleSupplierZero = ()-> 0.0;
   public static DoubleSupplier doubleSupplierSuperSlow = ()-> -0.1;
   public static DoubleSupplier doubleSupplierSuperSlowRed = ()-> 0.1;
   public static DoubleSupplier doubleSupplierSuperSlowBlue = ()-> -0.1;

@@ -168,7 +168,7 @@ public class ActiveDriveToPose extends Command {
 
     double positionErrorMagnitude = poseError.getTranslation().getDistance(Translation2d.kZero);
     
-    return (Math.abs(angleError) < 1.0) && positionErrorMagnitude < 0.035;    
+    return (Math.abs(angleError) < 1.0) && positionErrorMagnitude < 0.050;    
   }
 
   /**
