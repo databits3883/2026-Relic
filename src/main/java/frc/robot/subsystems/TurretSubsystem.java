@@ -19,6 +19,7 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Behavior;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -269,9 +270,6 @@ public class TurretSubsystem extends SubsystemBase {
 
         //Use the future pose to aim and target distance
         if (Constants.TurretConstants.USE_FUTURE_POSE) turretPose = futurePose;
-        //Plot the turret on the field
-        if (RobotContainer.DISPLAY_TURET_POSE)
-          m_field.getObject("TurretPose").setPose(turretPose);
 
         //Find new target based on robot positon
         targetPose = findTargetToAim(turretPose);    
@@ -286,6 +284,13 @@ public class TurretSubsystem extends SubsystemBase {
           targetAngle += cosAngle * Constants.TurretConstants.TURRET_LAUNCHER_CORRECTION_FRWD;
         if (cosAngle < (-1*Constants.TurretConstants.CORRECTION_DEADBAND))
           targetAngle += cosAngle * Constants.TurretConstants.TURRET_LAUNCHER_CORRECTION_BWD;
+
+        //Plot the turret on the field
+        if (RobotContainer.DISPLAY_TURET_POSE)
+        {
+          m_field.getObject("TurretPose").setPose(turretPose);
+        }
+          
         //update the turret setpoint
         setTurretSetPoint(targetAngle);
     }
