@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import javax.lang.model.util.ElementScanner14;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -45,6 +47,7 @@ public class ActiveDriveToPose extends Command {
   private boolean inAuto = true;
   private boolean atTolerance = false;
   private boolean finishedFirstStage = false;
+  private boolean errorFinish = false;
   private Timer timeAtTolerance = new Timer();
 
   private PIDController positionController = new PIDController(AutonConstants.positionKP, AutonConstants.positionKI, AutonConstants.positionKD);
@@ -63,12 +66,18 @@ public class ActiveDriveToPose extends Command {
   public ActiveDriveToPose(SwerveSubsystem swerveSubsystem, boolean inAutonomous, GoalType goal) 
   {
     drivetrain = swerveSubsystem;
-
     goalType = goal;
+    errorFinish = false;   
 
     isRed = Robot.isRedAlliance;
     if (goalType == GoalType.Climber_Right) { if (isRed) goalType = GoalType.Climber_Red_Right; else goalType = GoalType.Climber_Blue_Right;}
     if (goalType == GoalType.Climber_Left) { if (isRed) goalType = GoalType.Climber_Red_Left; else goalType = GoalType.Climber_Blue_Left;}
+    if (goalType == GoalType.Climber_Blue_Left) goalPose2d =Constants.Climber.BLUE_LEFT_POSE;
+    else if (goalType == GoalType.Climber_Blue_Right) goalPose2d =Constants.Climber.BLUE_RIGHT_POSE; 
+    else if (goalType == GoalType.Climber_Red_Left) goalPose2d =Constants.Climber.RED_LEFT_POSE; 
+    else if (goalType == GoalType.Climber_Red_Right) goalPose2d =Constants.Climber.RED_RIGHT_POSE; 
+    else errorFinish = true; /*No correct goal passed, return error */
+
     inAuto = inAutonomous;    
 
     rotationController.enableContinuousInput(-Math.PI, Math.PI);
@@ -125,48 +134,49 @@ public class ActiveDriveToPose extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    switch (goalType)
+    if (!errorFinish)
     {
-        case Climber_Blue_Left: goalPose2d =Constants.Climber.BLUE_LEFT_POSE; break;
-        case Climber_Blue_Right: goalPose2d =Constants.Climber.BLUE_RIGHT_POSE; break;
-        case Climber_Red_Left: goalPose2d =Constants.Climber.RED_LEFT_POSE; break;
-        case Climber_Red_Right: goalPose2d =Constants.Climber.RED_RIGHT_POSE; break;
-        default: goalPose2d = drivetrain.getPose();
+        //Set first goal pose to be 4 inches behind bar, after there then drive forward
+        if (isRed) firstGoalPose2d = goalPose2d.transformBy(new Transform2d(Units.inchesToMeters(-1 * Constants.AutonConstants.WAY_POINT_BEHIND_BAR),0,new Rotation2d(0)));
+        else  firstGoalPose2d = goalPose2d.transformBy(new Transform2d(Units.inchesToMeters(Constants.AutonConstants.WAY_POINT_BEHIND_BAR),0,new Rotation2d(0)));
+
+        atTolerance = false;
+        finishedFirstStage = false;
+
+        poseError = drivetrain.getPose().minus(firstGoalPose2d);
+        drivetrain.goalPose2d = firstGoalPose2d;
+        
+        ChassisSpeeds currentSpeeds = drivetrain.getRobotVelocity();
+
+        previousPositionXState.position = poseError.getX();
+        previousPositionXState.velocity = -currentSpeeds.vxMetersPerSecond;//might need to be negative
+
+        previousPositionYState.position = poseError.getY();
+        previousPositionYState.velocity = -currentSpeeds.vyMetersPerSecond;//might need to be negative
+
+        loopTimer.restart();
     }
-    //Set first goal pose to be 4 inches behind bar, after there then drive forward
-    if (isRed) firstGoalPose2d = goalPose2d.transformBy(new Transform2d(Units.inchesToMeters(-1 * Constants.AutonConstants.WAY_POINT_BEHIND_BAR),0,new Rotation2d(0)));
-    else  firstGoalPose2d = goalPose2d.transformBy(new Transform2d(Units.inchesToMeters(Constants.AutonConstants.WAY_POINT_BEHIND_BAR),0,new Rotation2d(0)));
-
-    //Draw goal on field
-    if (RobotContainer.DISPLAY_CLIMB_TARGET_POSE)
-        RobotContainer.drivebase.getField().getObject("Climber Target Pose").setPose(goalPose2d);                                         
-
-    atTolerance = false;
-    finishedFirstStage = false;
-
-    poseError = drivetrain.getPose().minus(firstGoalPose2d);
-    drivetrain.goalPose2d = firstGoalPose2d;
-    
-    ChassisSpeeds currentSpeeds = drivetrain.getRobotVelocity();
-
-    previousPositionXState.position = poseError.getX();
-    previousPositionXState.velocity = -currentSpeeds.vxMetersPerSecond;//might need to be negative
-
-    previousPositionYState.position = poseError.getY();
-    previousPositionYState.velocity = -currentSpeeds.vyMetersPerSecond;//might need to be negative
-
-    loopTimer.restart();
+    end(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() 
   {
+    //end early on any error
+    if (errorFinish) end(false);
+
     Pose2d currentPose = drivetrain.getPose();
     if (finishedFirstStage)
         poseError = currentPose.minus(goalPose2d);
     else    
         poseError = currentPose.minus(firstGoalPose2d);
+
+    //Draw goal on field
+    if ((RobotContainer.DISPLAY_CLIMB_TARGET_POSE) && (finishedFirstStage))
+        RobotContainer.drivebase.getField().getObject("Climber Target Pose").setPose(goalPose2d);       
+    else                                  
+        RobotContainer.drivebase.getField().getObject("Climber Target Pose").setPose(firstGoalPose2d);       
 
     Translation2d translationError = poseError.getTranslation();
     ChassisSpeeds currentSpeeds = drivetrain.getRobotVelocity();
@@ -184,7 +194,7 @@ public class ActiveDriveToPose extends Command {
     
     ChassisSpeeds rrSpeeds = new ChassisSpeeds(positionXPIDOutput,positionYPIDOutput, rotationPIDOutput);
     drivetrain.setChassisSpeeds(rrSpeeds);
-
+    
     loopTimer.restart();
   }
 
@@ -193,6 +203,9 @@ public class ActiveDriveToPose extends Command {
   public void end(boolean interrupted) 
   {
     drivetrain.setChassisSpeeds(new ChassisSpeeds(0,0,0));
+    //remove item
+    if ((RobotContainer.DISPLAY_CLIMB_TARGET_POSE))
+        RobotContainer.drivebase.getField().getObject("Climber Target Pose").setPose(new Pose2d());      
   }
 
 

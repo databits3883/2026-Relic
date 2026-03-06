@@ -298,9 +298,9 @@ public class RobotContainer
       //copilotBoxController.button(10).whileTrue(new TurretManualAim());
 
       //Test later
-      //driverJoystick.button(6).whileTrue(new ActiveDriveToPose(drivebase,false)); // in auto = false
+      driverJoystick.button(6).whileTrue(new ActiveDriveToPose(drivebase,false, ActiveDriveToPose.GoalType.Climber_Left)); // in auto = false
       //Picks the right or left of the climb bar to climb on based on robot's Y
-      driverJoystick.button(6).whileTrue(drivebase.driveToClimb(ActiveDriveToPose.GoalType.Climber_Left,false)); // true = use active drive, false use pathplanner (sHOW TAG)
+      //driverJoystick.button(6).whileTrue(drivebase.driveToClimb(ActiveDriveToPose.GoalType.Climber_Left,false)); // true = use active drive, false use pathplanner (sHOW TAG)
     }
   }
 
