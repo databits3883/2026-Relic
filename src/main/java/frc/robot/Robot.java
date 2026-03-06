@@ -5,8 +5,7 @@
 package frc.robot;
 
 import java.util.Optional;
-
-import javax.lang.model.util.ElementScanner14;
+import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -36,6 +35,10 @@ public class Robot extends TimedRobot
 
   private RobotContainer m_robotContainer;
   public char AUTO_WINNER_CODE = 'U';
+  public static DoubleSupplier doubleSupplierSuperSlow = ()-> -0.1;
+  public static DoubleSupplier doubleSupplierSuperSlowRed = ()-> 0.1;
+  public static DoubleSupplier doubleSupplierSuperSlowBlue = ()-> -0.1;
+
 
   private Timer disabledTimer;
 
@@ -354,6 +357,11 @@ public class Robot extends TimedRobot
     {
       isRedAlliance = myAlliance.get() == Alliance.Red;
     }
+    //Update doubleSupplier for the auto climb
+    if (isRedAlliance) 
+      doubleSupplierSuperSlow = doubleSupplierSuperSlowRed; 
+    else 
+      doubleSupplierSuperSlow = doubleSupplierSuperSlowBlue;
   }
 
 }
