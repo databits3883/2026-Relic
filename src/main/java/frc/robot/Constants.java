@@ -81,10 +81,8 @@ public final class Constants {
 
     public static final Pose2d RED_HUB_POSE = new Pose2d(RED_X_PLAYER, MID_FIELD_Y, new Rotation2d(0)); 
     public static final Pose2d RED_BOTTOM_POSE = new Pose2d(RED_X_PLAYER, (MID_FIELD_Y * 0.5), new Rotation2d(0)); 
-//    public static final Pose2d RED_BOTTOM_POSE = new Pose2d(RED_X_PLAYER+(BLUE_X_PLAYER/2), (MID_FIELD_Y * 0.5), new Rotation2d(0)); 
     public static final Pose2d RED_TOP_POSE = new Pose2d(RED_BOTTOM_POSE.getX(), (MID_FIELD_Y * 1.5), new Rotation2d(0)); 
     public static final Pose2d BLUE_HUB_POSE = new Pose2d(BLUE_X_PLAYER, MID_FIELD_Y, new Rotation2d(0)); 
-//    public static final Pose2d BLUE_BOTTOM_POSE = new Pose2d((BLUE_X_PLAYER/2), RED_BOTTOM_POSE.getY(), new Rotation2d(0)); 
     public static final Pose2d BLUE_BOTTOM_POSE = new Pose2d(BLUE_X_PLAYER, RED_BOTTOM_POSE.getY(), new Rotation2d(0)); 
     public static final Pose2d BLUE_TOP_POSE = new Pose2d(BLUE_BOTTOM_POSE.getX(), RED_TOP_POSE.getY(), new Rotation2d(0)); 
 
@@ -154,15 +152,12 @@ public final class Constants {
     //32 pose = 0.008, 4.1775126, AprilTag32 X - 45 inches?, Y== = Left
     //Right pose = Left pose, Red Y + 0.86 meter?, Blue Y - 0.86 meter?
     //45.25 inch = 1.14935 meters
-    // TODO: Will probably need to move X position back from climber -red +blue for X
-    public static final double CLIMBER_BUFFER_SPACE = Units.inchesToMeters(6);
+    public static final double CLIMBER_BUFFER_SPACE = Units.inchesToMeters(6); //This is about the size of the climber arms.  Get only this close in the first pass
     public static final Pose2d RED_LEFT_POSE = new Pose2d(15.10-CLIMBER_BUFFER_SPACE, 3.91,Rotation2d.fromDegrees(-90));
     public static final Pose2d RED_RIGHT_POSE = new Pose2d(15.10-CLIMBER_BUFFER_SPACE,4.76, Rotation2d.fromDegrees(-90));
     public static final Pose2d BLUE_LEFT_POSE = new Pose2d(1.50+CLIMBER_BUFFER_SPACE,4.17, Rotation2d.fromDegrees(90));
     public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(1.50+CLIMBER_BUFFER_SPACE,3.31, Rotation2d.fromDegrees(90));
-    //public static final double BLUE_MID_CLIMBER_BAR = BLUE_RIGHT_POSE.getY() + (BLUE_LEFT_POSE.getY()-BLUE_RIGHT_POSE.getY());  //Meters, middle of climb bar
-    //public static final double RED_MID_CLIMBER_BAR = RED_LEFT_POSE.getY() + (RED_RIGHT_POSE.getY()-RED_LEFT_POSE.getY());  //Meters, middle of climb bar
-
+    
     //For stall checks
     public static double MIN_POSITION_MOVEMENT = 0.02; /* Minimum movement in check_ms interval for stalled */
     public static int STALL_CHECK_MS = 100; /* MS between stall checks */
@@ -234,6 +229,7 @@ public final class Constants {
     public static final double rotationKI = 0.00;
     public static final double rotationKD = 0.00;
 
+    //The size of the climber arms.  Make waypoint to climb this much smaller so the robot can still move sideways
     public static final double WAY_POINT_BEHIND_BAR = 6; // Inches
   }
 }
