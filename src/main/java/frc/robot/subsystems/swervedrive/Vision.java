@@ -20,6 +20,7 @@ import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
@@ -142,6 +143,7 @@ public class Vision
        */
       visionSim.update(swerveDrive.getSimulationDriveTrainPose().get());
     }
+
     for (Cameras camera : Cameras.values())
     {
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
@@ -154,10 +156,11 @@ public class Vision
                                          camera.curStdDevs);
         //Update camera robot pose
         if (RobotContainer.DISPLAY_VISION_POSE)
-          field2d.getObject(camera.name()+" pose").setPose(pose2d);                                         
+        {
+          field2d.getObject(camera.name()+" pose").setPose(pose2d);        
+        }                                 
       }
     }
-
   }
 
   /**
@@ -325,16 +328,22 @@ public class Vision
     }
 
     List<Pose2d> poses = new ArrayList<>();
+    boolean canSeeTag = false;
     for (PhotonTrackedTarget target : targets)
     {
       if (fieldLayout.getTagPose(target.getFiducialId()).isPresent())
       {
         Pose2d targetPose = fieldLayout.getTagPose(target.getFiducialId()).get().toPose2d();
         poses.add(targetPose);
+        canSeeTag = true;
       }
     }
+
     if (RobotContainer.DISPLAY_VISION_TAGS)
+    {
       field2d.getObject("tracked targets").setPoses(poses);
+      SmartDashboard.putBoolean("Can See Tag", canSeeTag);
+    }
   }
 
   /**
