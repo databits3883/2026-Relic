@@ -159,7 +159,7 @@ public class RobotContainer
                                      new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left)
                                      .andThen(drivebase.driveCommand(Robot.doubleSupplierSuperSlow, doubleSupplierZero, doubleSupplierZero).withTimeout(0.1))
                                      .andThen(new WaitCommand(2))
-                                     .andThen(drivebase.driveCommand(doubleSupplierZero, doubleSupplierZero, doubleSupplierZero))
+                                     .andThen(drivebase.driveCommand(doubleSupplierZero, doubleSupplierZero, doubleSupplierZero).withTimeout(0.1))
                                      .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
                                      
     //Have the autoChooser pull in all PathPlanner autos as options
