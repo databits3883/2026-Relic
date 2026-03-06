@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -353,40 +354,45 @@ public class SwerveSubsystem extends SubsystemBase
    * 3883: Pick the right of left of climber based on where robot is in the Y direction
    * @return
    */
-  public Command driveToClimb(boolean useActionDrive)
+  public Command driveToClimb(ActiveDriveToPose.GoalType goalSide, boolean useActionDrive)
   {
-    //Set goal initially to current pose
-    Pose2d goalPose = getPose();
     ActiveDriveToPose.GoalType goalType;
+    Pose2d goalPose = null;
     
     //Get the current Y.  Middle of bar is ~ 3.75 on blue
-    double currentY = goalPose.getY();
     if (isRedAlliance())
     {
-      if (currentY > Constants.Climber.RED_MID_CLIMBER_BAR)
+      if (ActiveDriveToPose.GoalType.Climber_Left == goalSide)
       {
-         goalPose = Constants.Climber.RED_RIGHT_POSE; 
-         goalType = ActiveDriveToPose.GoalType.Climber_Red_Right;
-      } 
+        goalPose = Constants.Climber.RED_LEFT_POSE; 
+        goalType = ActiveDriveToPose.GoalType.Climber_Red_Left;
+      }
       else
       {
-         goalPose = Constants.Climber.RED_LEFT_POSE;
-         goalType = ActiveDriveToPose.GoalType.Climber_Red_Left;
-      } 
+       goalPose = Constants.Climber.RED_RIGHT_POSE; 
+       goalType = ActiveDriveToPose.GoalType.Climber_Red_Right;
+      }
     }
     else
     {
-      //Blue alliance
-      if (currentY > Constants.Climber.BLUE_MID_CLIMBER_BAR) 
+      //blue
+      if (ActiveDriveToPose.GoalType.Climber_Left == goalSide)
       {
         goalPose = Constants.Climber.BLUE_LEFT_POSE; 
         goalType = ActiveDriveToPose.GoalType.Climber_Blue_Left;
       }
       else
       {
-        goalPose = Constants.Climber.BLUE_RIGHT_POSE;
-        goalType = ActiveDriveToPose.GoalType.Climber_Blue_Right;
-      } 
+       goalPose = Constants.Climber.BLUE_RIGHT_POSE; 
+       goalType = ActiveDriveToPose.GoalType.Climber_Blue_Right;
+      }
+    }
+
+    //For testing, update pose like Active drive will do
+    if (!useActionDrive)
+    {
+      if (isRedAlliance()) goalPose = goalPose.transformBy(new Transform2d(Units.inchesToMeters(-1 * Constants.AutonConstants.WAY_POINT_BEHIND_BAR),0,new Rotation2d(0)));
+      else  goalPose = goalPose.transformBy(new Transform2d(Units.inchesToMeters(Constants.AutonConstants.WAY_POINT_BEHIND_BAR),0,new Rotation2d(0)));
     }
 
     //Draw goal on field
@@ -399,7 +405,9 @@ public class SwerveSubsystem extends SubsystemBase
     }
     else
     {
-      return driveToPose(goalPose);
+      //Just skip the drive to display the pose
+      return new WaitCommand(0.1);
+      //return driveToPose(goalPose);
     }
 
   }

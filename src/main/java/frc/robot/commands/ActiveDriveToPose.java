@@ -48,8 +48,6 @@ public class ActiveDriveToPose extends Command {
   private Timer timeAtTolerance = new Timer();
 
   private PIDController positionController = new PIDController(AutonConstants.positionKP, AutonConstants.positionKI, AutonConstants.positionKD);
-//  private TrapezoidProfile.State previousPositionState = new State(0, 0);
-//  private TrapezoidProfile positionTrapezoidProfile = new TrapezoidProfile(AutonConstants.positionPIDConstraints);
 
   private PIDController positionXController = new PIDController(AutonConstants.positionKP, AutonConstants.positionKI, AutonConstants.positionKD);
   private TrapezoidProfile.State previousPositionXState = new State(0, 0);
@@ -60,8 +58,6 @@ public class ActiveDriveToPose extends Command {
   private TrapezoidProfile positionYTrapezoidProfile = new TrapezoidProfile(AutonConstants.positionPIDConstraints);
   
   private PIDController rotationController = new PIDController(AutonConstants.rotationKP, AutonConstants.rotationKI, AutonConstants.rotationKD);
-//  private TrapezoidProfile.State previousRotationState = new State(0, 0);
-//  private TrapezoidProfile positionRotationProfile = new TrapezoidProfile(AutonConstants.rotationPIDConstraints);
 
   /** Creates a new ActiveDriveToGoalPose. */
   public ActiveDriveToPose(SwerveSubsystem swerveSubsystem, boolean inAutonomous, GoalType goal) 
@@ -86,6 +82,7 @@ public class ActiveDriveToPose extends Command {
   }
 
   //Find best climb based on Y and alliance
+  /*
   public ActiveDriveToPose(SwerveSubsystem swerveSubsystem, boolean inAutonomous)
   {
     isRed = Robot.isRedAlliance;
@@ -122,6 +119,7 @@ public class ActiveDriveToPose extends Command {
     
     SmartDashboard.putData(positionController);
   }
+    */
 
 
   // Called when the command is initially scheduled.
@@ -171,7 +169,6 @@ public class ActiveDriveToPose extends Command {
         poseError = currentPose.minus(firstGoalPose2d);
 
     Translation2d translationError = poseError.getTranslation();
-
     ChassisSpeeds currentSpeeds = drivetrain.getRobotVelocity();
 
     TrapezoidProfile.State currentPositionXState = new State(translationError.getX(), -currentSpeeds.vxMetersPerSecond);
@@ -185,9 +182,6 @@ public class ActiveDriveToPose extends Command {
 
     double rotationPIDOutput = rotationController.calculate(poseError.getRotation().getRadians(), 0);
     
-    //For testing, output the PID results:
-    //System.out.println("adtp x/y/r: " + positionXPIDOutput + "/" + positionYPIDOutput + "/" + rotationPIDOutput);
-
     ChassisSpeeds rrSpeeds = new ChassisSpeeds(positionXPIDOutput,positionYPIDOutput, rotationPIDOutput);
     drivetrain.setChassisSpeeds(rrSpeeds);
 
