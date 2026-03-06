@@ -173,10 +173,13 @@ public class ActiveDriveToPose extends Command {
         poseError = currentPose.minus(firstGoalPose2d);
 
     //Draw goal on field
-    if ((RobotContainer.DISPLAY_CLIMB_TARGET_POSE) && (finishedFirstStage))
-        RobotContainer.drivebase.getField().getObject("Climber Target Pose").setPose(goalPose2d);       
-    else                                  
-        RobotContainer.drivebase.getField().getObject("Climber Target Pose").setPose(firstGoalPose2d);       
+    if (RobotContainer.DISPLAY_CLIMB_TARGET_POSE)
+    {
+        if (finishedFirstStage)
+            RobotContainer.drivebase.getField().getObject("Climber Target Pose").setPose(goalPose2d);       
+        else                                  
+            RobotContainer.drivebase.getField().getObject("Climber Target Pose").setPose(firstGoalPose2d);       
+    }
 
     Translation2d translationError = poseError.getTranslation();
     ChassisSpeeds currentSpeeds = drivetrain.getRobotVelocity();
