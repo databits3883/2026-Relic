@@ -270,7 +270,7 @@ public class RobotContainer
       driverJoystick.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, true));
 
       //Outake while button is held
-      driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem));
+      driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem, intakeSubsystem));
 
       //Intake deploy/retract
       driverJoystick.button(4).onTrue(new Deploy(intakeSubsystem));
