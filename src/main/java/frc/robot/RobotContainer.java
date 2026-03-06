@@ -159,6 +159,7 @@ public class RobotContainer
     NamedCommands.registerCommand("Drive to and Climb L",
                                      new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left)
                                      .andThen(drivebase.driveCommand(doubleSupplierSuperSlow, doubleSupplierZero, doubleSupplierZero).withTimeout(0.1))
+                                     .andThen(new WaitCommand(2))
                                      .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
                                      
 
