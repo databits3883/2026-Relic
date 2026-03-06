@@ -153,10 +153,14 @@ public final class Constants {
     //Right pose = Left pose, Red Y + 0.86 meter?, Blue Y - 0.86 meter?
     //45.25 inch = 1.14935 meters
     public static final double CLIMBER_BUFFER_SPACE = Units.inchesToMeters(6); //This is about the size of the climber arms.  Get only this close in the first pass
-    public static final Pose2d RED_LEFT_POSE = new Pose2d(15.10-CLIMBER_BUFFER_SPACE, 3.91,Rotation2d.fromDegrees(-90));
-    public static final Pose2d RED_RIGHT_POSE = new Pose2d(15.10-CLIMBER_BUFFER_SPACE,4.76, Rotation2d.fromDegrees(-90));
-    public static final Pose2d BLUE_LEFT_POSE = new Pose2d(1.50+CLIMBER_BUFFER_SPACE,4.17, Rotation2d.fromDegrees(90));
-    public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(1.50+CLIMBER_BUFFER_SPACE,3.31, Rotation2d.fromDegrees(90));
+    public static final Pose2d RED_LEFT_POSE_STEP1 = new Pose2d(15.10-CLIMBER_BUFFER_SPACE, 3.91,Rotation2d.fromDegrees(-90));
+    public static final Pose2d RED_RIGHT_POSE_STEP1 = new Pose2d(15.10-CLIMBER_BUFFER_SPACE,4.76, Rotation2d.fromDegrees(-90));
+    public static final Pose2d BLUE_LEFT_POSE_STEP1 = new Pose2d(1.50+CLIMBER_BUFFER_SPACE,4.17, Rotation2d.fromDegrees(90));
+    public static final Pose2d BLUE_RIGHT_POSE_STEP1 = new Pose2d(1.50+CLIMBER_BUFFER_SPACE,3.31, Rotation2d.fromDegrees(90));
+    public static final Pose2d RED_LEFT_POSE_STEP2 = new Pose2d(15.10, 3.91,Rotation2d.fromDegrees(-90));
+    public static final Pose2d RED_RIGHT_POSE_STEP2 = new Pose2d(15.10,4.76, Rotation2d.fromDegrees(-90));
+    public static final Pose2d BLUE_LEFT_POSE_STEP2 = new Pose2d(1.50,4.17, Rotation2d.fromDegrees(90));
+    public static final Pose2d BLUE_RIGHT_POSE_STEP2 = new Pose2d(1.50,3.31, Rotation2d.fromDegrees(90));
     
     //For stall checks
     public static double MIN_POSITION_MOVEMENT = 0.02; /* Minimum movement in check_ms interval for stalled */
@@ -228,6 +232,8 @@ public final class Constants {
     public static final double rotationKP = 1.0;
     public static final double rotationKI = 0.00;
     public static final double rotationKD = 0.00;
+
+    public static final double POSITION_TOLERANCE = 0.050;
 
     //The size of the climber arms.  Make waypoint to climb this much smaller so the robot can still move sideways
     public static final double WAY_POINT_BEHIND_BAR = 6; // Inches

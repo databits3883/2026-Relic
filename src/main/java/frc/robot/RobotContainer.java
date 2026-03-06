@@ -155,11 +155,15 @@ public class RobotContainer
     //Raise intake and then prepare climber to climb
     NamedCommands.registerCommand("Prepare to Climb", new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
     //Once close to Left Climber, drives to the left climb and run climber until stopped
+    NamedCommands.registerCommand("Drive to and Climb L OLD",
+                                     new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left_Step1)
+                                     .andThen(drivebase.driveBackwardsForwardsWithAlliance().withTimeout(0.1))
+                                     .andThen(new WaitCommand(2))                                    
+                                     .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
     NamedCommands.registerCommand("Drive to and Climb L",
-                                     new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left)
-                                     .andThen(drivebase.driveBackwardsForwardsWithAlliance().withTimeout(0.1))
-                                     .andThen(new WaitCommand(2))
-                                     .andThen(drivebase.driveBackwardsForwardsWithAlliance().withTimeout(0.1))
+                                     new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left_Step1).withTimeout(5)
+                                     .andThen( new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left_Step2).withTimeout(5))
+                                     .andThen(new WaitCommand(1))                                    
                                      .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
                                      
     //Have the autoChooser pull in all PathPlanner autos as options
@@ -303,7 +307,7 @@ public class RobotContainer
       //copilotBoxController.button(10).whileTrue(new TurretManualAim());
 
       //Test later
-      driverJoystick.button(6).whileTrue(new ActiveDriveToPose(drivebase,false, ActiveDriveToPose.GoalType.Climber_Left)); // in auto = false
+      driverJoystick.button(6).whileTrue(new ActiveDriveToPose(drivebase,false, ActiveDriveToPose.GoalType.Climber_Left_Step1)); // in auto = false
       //driverJoystick.button(6).whileTrue(drivebase.driveToClimb(ActiveDriveToPose.GoalType.Climber_Left,false)); // true = use active drive, false use pathplanner (sHOW TAG)
     }
   }

@@ -6,13 +6,11 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,15 +23,13 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 public class ActiveDriveToPose extends Command {
 
   public enum GoalType {
-    Climber_Red_Right,
-    Climber_Red_Left,
-    Climber_Blue_Right,
-    Climber_Blue_Left,
-    Climber_Right,
-    Climber_Left
+    Climber_Right_Step1,
+    Climber_Left_Step1,
+    Climber_Right_Step2,
+    Climber_Left_Step2
   }
 
-  private GoalType goalType = GoalType.Climber_Red_Right;
+  private GoalType goalType = GoalType.Climber_Right_Step1;
 
   private SwerveSubsystem drivetrain;
   private Pose2d goalPose2d = Pose2d.kZero;
@@ -83,12 +79,10 @@ public class ActiveDriveToPose extends Command {
   {
     isRed = Robot.isRedAlliance;
     
-    if (goalType == GoalType.Climber_Right) { if (isRed) goalType = GoalType.Climber_Red_Right; else goalType = GoalType.Climber_Blue_Right;}
-    if (goalType == GoalType.Climber_Left) { if (isRed) goalType = GoalType.Climber_Red_Left; else goalType = GoalType.Climber_Blue_Left;}
-    if (goalType == GoalType.Climber_Blue_Left) goalPose2d =Constants.Climber.BLUE_LEFT_POSE;
-    else if (goalType == GoalType.Climber_Blue_Right) goalPose2d =Constants.Climber.BLUE_RIGHT_POSE; 
-    else if (goalType == GoalType.Climber_Red_Left) goalPose2d =Constants.Climber.RED_LEFT_POSE; 
-    else if (goalType == GoalType.Climber_Red_Right) goalPose2d =Constants.Climber.RED_RIGHT_POSE; 
+    if (goalType == GoalType.Climber_Right_Step1) { if (isRed) goalPose2d =Constants.Climber.RED_RIGHT_POSE_STEP1; else goalPose2d =Constants.Climber.BLUE_RIGHT_POSE_STEP1; }
+    else if (goalType == GoalType.Climber_Right_Step2) { if (isRed) goalPose2d =Constants.Climber.RED_RIGHT_POSE_STEP2; else goalPose2d =Constants.Climber.BLUE_RIGHT_POSE_STEP2; }
+    else if (goalType == GoalType.Climber_Left_Step1) { if (isRed) goalPose2d =Constants.Climber.RED_LEFT_POSE_STEP1; else goalPose2d =Constants.Climber.BLUE_LEFT_POSE_STEP1; }
+    else if (goalType == GoalType.Climber_Left_Step2) { if (isRed) goalPose2d =Constants.Climber.RED_LEFT_POSE_STEP2; else goalPose2d =Constants.Climber.BLUE_LEFT_POSE_STEP2; }
     else errorFinish = true; /*No correct goal passed, return error */
 
     if (!errorFinish)
@@ -168,7 +162,7 @@ public class ActiveDriveToPose extends Command {
 
     double positionErrorMagnitude = poseError.getTranslation().getDistance(Translation2d.kZero);
     
-    return (Math.abs(angleError) < 1.0) && positionErrorMagnitude < 0.050;    
+    return (Math.abs(angleError) < 1.0) && positionErrorMagnitude < Constants.AutonConstants.POSITION_TOLERANCE;    
   }
 
   /**

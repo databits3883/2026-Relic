@@ -40,7 +40,6 @@ public class Robot extends TimedRobot
   public static DoubleSupplier doubleSupplierSuperSlowRed = ()-> 0.1;
   public static DoubleSupplier doubleSupplierSuperSlowBlue = ()-> -0.1;
 
-
   private Timer disabledTimer;
 
   public Robot()

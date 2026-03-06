@@ -352,68 +352,6 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   /**
-   * 3883: Pick the right of left of climber based on where robot is in the Y direction
-   * @return
-   */
-  public Command driveToClimb(ActiveDriveToPose.GoalType goalSide, boolean useActionDrive)
-  {
-    ActiveDriveToPose.GoalType goalType;
-    Pose2d goalPose = null;
-    
-    //Get the current Y.  Middle of bar is ~ 3.75 on blue
-    if (isRedAlliance())
-    {
-      if (ActiveDriveToPose.GoalType.Climber_Left == goalSide)
-      {
-        goalPose = Constants.Climber.RED_LEFT_POSE; 
-        goalType = ActiveDriveToPose.GoalType.Climber_Red_Left;
-      }
-      else
-      {
-       goalPose = Constants.Climber.RED_RIGHT_POSE; 
-       goalType = ActiveDriveToPose.GoalType.Climber_Red_Right;
-      }
-    }
-    else
-    {
-      //blue
-      if (ActiveDriveToPose.GoalType.Climber_Left == goalSide)
-      {
-        goalPose = Constants.Climber.BLUE_LEFT_POSE; 
-        goalType = ActiveDriveToPose.GoalType.Climber_Blue_Left;
-      }
-      else
-      {
-       goalPose = Constants.Climber.BLUE_RIGHT_POSE; 
-       goalType = ActiveDriveToPose.GoalType.Climber_Blue_Right;
-      }
-    }
-
-    //For testing, update pose like Active drive will do
-    if (!useActionDrive)
-    {
-      if (isRedAlliance()) goalPose = goalPose.transformBy(new Transform2d(Units.inchesToMeters(-1 * Constants.AutonConstants.WAY_POINT_BEHIND_BAR),0,new Rotation2d(0)));
-      else  goalPose = goalPose.transformBy(new Transform2d(Units.inchesToMeters(Constants.AutonConstants.WAY_POINT_BEHIND_BAR),0,new Rotation2d(0)));
-    }
-
-    //Draw goal on field
-    if (RobotContainer.DISPLAY_CLIMB_TARGET_POSE)
-      swerveDrive.field.getObject("Climber Target Pose").setPose(goalPose);                                         
-
-    if (useActionDrive)
-    {
-      return new ActiveDriveToPose(RobotContainer.drivebase,false,goalType);
-    }
-    else
-    {
-      //Just skip the drive to display the pose
-      return new WaitCommand(0.1);
-      //return driveToPose(goalPose);
-    }
-
-  }
-
-  /**
    * 3883: return the field dashboard object
    * @return
    */
