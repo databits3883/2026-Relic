@@ -65,7 +65,24 @@ public class ActiveDriveToPose extends Command {
     goalType = goal;
     errorFinish = false;   
 
+    inAuto = inAutonomous;    
+
+    rotationController.enableContinuousInput(-Math.PI, Math.PI);
+    
+    if(!(inAutonomous))
+    {
+      addRequirements(swerveSubsystem);
+    }
+    
+    SmartDashboard.putData(positionController);
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() 
+  {
     isRed = Robot.isRedAlliance;
+    
     if (goalType == GoalType.Climber_Right) { if (isRed) goalType = GoalType.Climber_Red_Right; else goalType = GoalType.Climber_Blue_Right;}
     if (goalType == GoalType.Climber_Left) { if (isRed) goalType = GoalType.Climber_Red_Left; else goalType = GoalType.Climber_Blue_Left;}
     if (goalType == GoalType.Climber_Blue_Left) goalPose2d =Constants.Climber.BLUE_LEFT_POSE;
@@ -74,62 +91,6 @@ public class ActiveDriveToPose extends Command {
     else if (goalType == GoalType.Climber_Red_Right) goalPose2d =Constants.Climber.RED_RIGHT_POSE; 
     else errorFinish = true; /*No correct goal passed, return error */
 
-    inAuto = inAutonomous;    
-
-    rotationController.enableContinuousInput(-Math.PI, Math.PI);
-    
-    if(!(inAutonomous))
-    {
-      addRequirements(swerveSubsystem);
-    }
-    
-    SmartDashboard.putData(positionController);
-  }
-
-  //Find best climb based on Y and alliance
-  /*
-  public ActiveDriveToPose(SwerveSubsystem swerveSubsystem, boolean inAutonomous)
-  {
-    isRed = Robot.isRedAlliance;
-    Pose2d currentPose = null;
-    drivetrain = swerveSubsystem;
-    if (isRed) currentPose = Constants.DrivebaseConstants.INITITAL_RED_POSE; else currentPose = Constants.DrivebaseConstants.INITITAL_BLUE_POSE;
-    if (swerveSubsystem != null)
-    {
-      currentPose = swerveSubsystem.getPose();
-    }
-    double currentY = currentPose.getY();
-    if (isRed) 
-    {
-      if (currentY > Constants.Climber.RED_MID_CLIMBER_BAR) 
-        goalType = ActiveDriveToPose.GoalType.Climber_Red_Right;
-      else
-        goalType = ActiveDriveToPose.GoalType.Climber_Red_Left;
-    }
-    else
-    {
-      if (currentY > Constants.Climber.BLUE_MID_CLIMBER_BAR) 
-        goalType = ActiveDriveToPose.GoalType.Climber_Blue_Left;
-      else
-        goalType = ActiveDriveToPose.GoalType.Climber_Blue_Right;
-    }
-    inAuto = inAutonomous;    
-
-    rotationController.enableContinuousInput(-Math.PI, Math.PI);
-    
-    if(!(inAutonomous))
-    {
-      addRequirements(swerveSubsystem);
-    }
-    
-    SmartDashboard.putData(positionController);
-  }
-    */
-
-
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
     if (!errorFinish)
     {
         atTolerance = false;
