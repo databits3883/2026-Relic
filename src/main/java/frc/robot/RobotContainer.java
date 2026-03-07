@@ -161,9 +161,14 @@ public class RobotContainer
                                      .andThen(new WaitCommand(2))                                    
                                      .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
     NamedCommands.registerCommand("Drive to and Climb L",
-                                     new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left_Step1).withTimeout(5)
-                                     .andThen( new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left_Step2).withTimeout(5))
-                                     .andThen(new WaitCommand(1))                                    
+                                     new ParallelCommandGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left_Step1), new WaitCommand(5))
+                                     .andThen(new ParallelCommandGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left_Step2), new WaitCommand(5)))
+                                     .andThen(new WaitCommand(0.3))                                    
+                                     .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
+    NamedCommands.registerCommand("Drive to and Climb R",
+                                     new ParallelCommandGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Right_Step1), new WaitCommand(5))
+                                     .andThen(new ParallelCommandGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Right_Step2), new WaitCommand(5)))
+                                     .andThen(new WaitCommand(0.3))                                    
                                      .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
                                      
     //Have the autoChooser pull in all PathPlanner autos as options
