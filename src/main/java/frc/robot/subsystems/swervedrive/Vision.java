@@ -339,11 +339,8 @@ public class Vision
       }
     }
 
-    if (RobotContainer.DISPLAY_VISION_TAGS)
-    {
-      field2d.getObject("tracked targets").setPoses(poses);
-      SmartDashboard.putBoolean("Can See Tag", canSeeTag);
-    }
+    field2d.getObject("tracked targets").setPoses(poses);
+    SmartDashboard.putBoolean("Can See Tag", canSeeTag);
   }
 
   /**

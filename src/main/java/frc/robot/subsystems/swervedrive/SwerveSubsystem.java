@@ -213,8 +213,11 @@ public class SwerveSubsystem extends SubsystemBase
     {
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
-      //Update the tracked vision target on the field
-      vision.updateVisionField();
+      //Update the tracked vision target on the field, if enabled
+      if (RobotContainer.DISPLAY_VISION_TAGS)
+      {
+        vision.updateVisionField();
+      }
     }
   }
 
