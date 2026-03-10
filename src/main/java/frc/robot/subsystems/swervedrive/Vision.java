@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
@@ -150,14 +151,20 @@ public class Vision
       if (poseEst.isPresent())
       {
         var pose = poseEst.get();
+        var robotPose = swerveDrive.getPose();
         var pose2d = pose.estimatedPose.toPose2d();
-        swerveDrive.addVisionMeasurement(pose2d,
-                                         pose.timestampSeconds,
-                                         camera.curStdDevs);
-        //Update camera robot pose
-        if (RobotContainer.DISPLAY_VISION_POSE)
+        //ignore if tag is more than 5 meters away
+        double distanceToTag = PhotonUtils.getDistanceToPose(robotPose, pose2d);
+        if (distanceToTag <= Constants.MAX_TAG_DISTANCE)
         {
-          field2d.getObject(camera.name()+" pose").setPose(pose2d);        
+          swerveDrive.addVisionMeasurement(pose2d,
+                                          pose.timestampSeconds,
+                                          camera.curStdDevs);
+          //Update camera robot pose
+          if (RobotContainer.DISPLAY_VISION_POSE)
+          {
+            field2d.getObject(camera.name()+" pose").setPose(pose2d);        
+          }
         }                                 
       }
     }

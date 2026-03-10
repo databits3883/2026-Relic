@@ -33,6 +33,9 @@ public final class Constants {
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
   public static final double MAX_SPEED  = Units.feetToMeters(14.5);
 
+  //The max distance we will accept a photonvision tag
+  public static final double MAX_TAG_DISTANCE = 5.0;
+
   public static final boolean CALIBRATION_MODE = true;
   public static final boolean CALIBRATION_MODE_EXTREME = false;
 
