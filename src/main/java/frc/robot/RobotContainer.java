@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -161,15 +162,15 @@ public class RobotContainer
                                      .andThen(new WaitCommand(2))                                    
                                      .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
     NamedCommands.registerCommand("Drive to and Climb L",
-                                     new ParallelCommandGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left_Step1), new WaitCommand(5))
+                                     new ParallelRaceGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left_Step1), new WaitCommand(5))
                                      .andThen(new WaitCommand(0.3))                                    
-                                     .andThen(new ParallelCommandGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left_Step2), new WaitCommand(5)))
+                                     .andThen(new ParallelRaceGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left_Step2), new WaitCommand(5)))
                                      .andThen(new WaitCommand(0.3))                                    
                                      .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
     NamedCommands.registerCommand("Drive to and Climb R",
-                                     new ParallelCommandGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Right_Step1), new WaitCommand(5))
+                                     new ParallelRaceGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Right_Step1), new WaitCommand(5))
                                      .andThen(new WaitCommand(0.3))                                    
-                                     .andThen(new ParallelCommandGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Right_Step2), new WaitCommand(5)))
+                                     .andThen(new ParallelRaceGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Right_Step2), new WaitCommand(5)))
                                      .andThen(new WaitCommand(0.3))                                    
                                      .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
                                      
