@@ -279,7 +279,7 @@ public class TurretSubsystem extends SubsystemBase {
         double airTime2 = (distance2 *  0.44) + 0.427;
 
         //Update the dashboard if it is greater than .25 second update
-        if (Math.abs(airTime2 - x_latencySec) > .25)
+        if (Math.abs(airTime2 - x_latencySec) >= .125)
         {
           SmartDashboard.putNumber("Turret Latency (sec)",airTime2);
           x_latencySec = airTime2;
