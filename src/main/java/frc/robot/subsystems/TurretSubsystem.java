@@ -262,9 +262,29 @@ public class TurretSubsystem extends SubsystemBase {
         //Transform robot pose
         Pose2d turretPose = robotPose.plus(Constants.TurretConstants.BACK_LEFT_TURRET_FROM_CENTER_BOT);
 
+        //calculate latency
+
         //If we want to use a future pose based on current velocity
-        //var robotSpeed = RobotContainer.drivebase.getRobotVelocity();
         var robotSpeed = RobotContainer.drivebase.getFieldVelocity();
+
+        //Get zero moving distnace
+        Pose2d zeroPose = findTargetToAim(turretPose);    
+        double distanceZeroSpeed = PhotonUtils.getDistanceToPose(turretPose, zeroPose);
+        double airTimeZero = (distanceZeroSpeed *  0.44) + 0.427;
+        Translation2d futureTranslation1 = turretPose.getTranslation().plus(new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond).times(airTimeZero));
+        Pose2d futurePose1 = new Pose2d(futureTranslation1, turretPose.getRotation().plus(new Rotation2d( + robotSpeed.omegaRadiansPerSecond * airTimeZero)));
+
+        //Get the airTime a second time based on this position
+        double distance2 = PhotonUtils.getDistanceToPose(turretPose, futurePose1);
+        double airTime2 = (distance2 *  0.44) + 0.427;
+
+        //Update the dashboard if it is greater than .25 second update
+        if (Math.abs(airTime2 - x_latencySec) > .25)
+        {
+          SmartDashboard.putNumber("Turret Latency (sec)",airTime2);
+          x_latencySec = airTime2;
+        }
+
         //Based on current robot speed find the future position of the turret by X seconds
         Translation2d futureTranslation = turretPose.getTranslation().plus(new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond).times(x_latencySec));
         Pose2d futurePose = new Pose2d(futureTranslation, turretPose.getRotation().plus(new Rotation2d( + robotSpeed.omegaRadiansPerSecond * x_latencySec)));
