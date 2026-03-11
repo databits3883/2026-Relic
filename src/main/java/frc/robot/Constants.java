@@ -187,7 +187,7 @@ public final class Constants {
     public static final double TOLERANCE = 500; //rps
 
     public static final int SPINDEXER_MOTOR_ID = 15;
-    public static double SPINDEXER_MOTOR_POWER = 10.0;
+    public static double SPINDEXER_MOTOR_POWER = 8.0;
     public static boolean SPINDEXER_INVERSE = true;
 
     public static final int OMNIDEXER_MOTOR_ID = 18;
