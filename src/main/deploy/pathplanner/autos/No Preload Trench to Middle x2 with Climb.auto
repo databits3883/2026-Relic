@@ -24,12 +24,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Middle to Trench Quarter L"
@@ -45,12 +39,6 @@
           "type": "path",
           "data": {
             "pathName": "Trench to Middle Half L"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
           }
         },
         {
