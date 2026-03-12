@@ -21,6 +21,9 @@ public class Deploy extends Command {
         intake.runFourBar();
         //start a timer, We can stop after X seconds if it does not reach limit
         startTime = System.currentTimeMillis();
+
+        //Start intake
+        intake.runIntake();
     }
 
     @Override
