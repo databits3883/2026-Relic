@@ -73,12 +73,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Shoot 3sec"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -98,9 +92,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Drive to and Climb L"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Drive to and Climb L"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot 5sec"
+                }
+              }
+            ]
           }
         }
       ]
