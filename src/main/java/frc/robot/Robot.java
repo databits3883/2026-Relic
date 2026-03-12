@@ -289,10 +289,11 @@ public class Robot extends TimedRobot
     //If we have not run auto set up initial pose
     if (!hasRunAuto)
     {
-      if (isRedAlliance)
+      /*if (isRedAlliance)
         RobotContainer.drivebase.resetOdometry(Constants.DrivebaseConstants.INITITAL_RED_POSE);
       else
         RobotContainer.drivebase.resetOdometry(Constants.DrivebaseConstants.INITITAL_BLUE_POSE);
+        */
       RobotContainer.turretSubsystem.zeroEncoder();
       hasRunAuto = false;
     }
