@@ -289,11 +289,12 @@ public class TurretSubsystem extends SubsystemBase {
         Translation2d futureTranslation = turretPose.getTranslation().plus(new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond).times(x_latencySec));
         Pose2d futurePose = new Pose2d(futureTranslation, turretPose.getRotation().plus(new Rotation2d( + robotSpeed.omegaRadiansPerSecond * x_latencySec)));
 
+        //Find new target based on robot positon
+        targetPose = findTargetToAim(turretPose);    
+
         //Use the future pose to aim and target distance
         if (Constants.TurretConstants.USE_FUTURE_POSE) turretPose = futurePose;
 
-        //Find new target based on robot positon
-        targetPose = findTargetToAim(turretPose);    
         targetAngle = getAngle(turretPose, targetPose);
 
         //Use PhotonVision helper method to get distance
