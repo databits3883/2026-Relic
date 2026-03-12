@@ -239,11 +239,12 @@ public class Robot extends TimedRobot
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     //Assign robot position
+    /**
     if (isRedAlliance)
       RobotContainer.drivebase.resetOdometry(Constants.DrivebaseConstants.INITITAL_RED_POSE);
     else
       RobotContainer.drivebase.resetOdometry(Constants.DrivebaseConstants.INITITAL_BLUE_POSE);
-
+    */
 
     //Print the selected autonomous command upon autonomous init
     System.out.println("Auto selected: " + m_autonomousCommand);
