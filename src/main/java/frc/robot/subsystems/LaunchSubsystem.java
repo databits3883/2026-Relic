@@ -229,25 +229,16 @@ public class LaunchSubsystem extends SubsystemBase
     {
       newTargetVelocity = Constants.LaunchConstants.TARGET_VELOCITY_RPM;
     }
-    /* //disable this section
-    else if (targetDistanceMeters >= 3.2)
-    {
-      //We know 3.2  - 3.7 at least works at 2500, can remove if we want to use equation for everything
-      newTargetVelocity = 2500;
-    } */
     else
     {
       //first rough equation, best fit from a few values - https://mycurvefit.com/
-      //newTargetVelocity = 153.8462*targetDistanceMeters + 1930.769;
-      //new estimate, based on inches
-      //double targetDistanceInches = Units.metersToInches(targetDistanceMeters); 
+
       //need to adjust 0.9, camera offset is slightly off from measured
-      double targetDistanceCameraOffset = targetDistanceMeters - 0.09;
+      double targetDistanceCameraOffset = targetDistanceMeters; //Removing this - 0.09;
 
       //old
       //newTargetVelocity = 1687+(97.8*targetDistanceCameraOffset) + (20.7*targetDistanceCameraOffset*targetDistanceCameraOffset);
-      //Take 10% off
-      //newTargetVelocity = newTargetVelocity*0.95;
+      //new
       newTargetVelocity = 1975+(-183*targetDistanceCameraOffset) + (81.2*targetDistanceCameraOffset*targetDistanceCameraOffset) + (-6.05*targetDistanceCameraOffset*targetDistanceCameraOffset*targetDistanceCameraOffset);
       
       
