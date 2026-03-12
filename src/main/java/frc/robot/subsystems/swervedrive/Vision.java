@@ -151,12 +151,12 @@ public class Vision
       if (poseEst.isPresent())
       {
         var pose = poseEst.get();
-        var robotPose = swerveDrive.getPose();
+        //var robotPose = swerveDrive.getPose();        
         var pose2d = pose.estimatedPose.toPose2d();
         //ignore if tag is more than 5 meters away
-        double distanceToTag = PhotonUtils.getDistanceToPose(robotPose, pose2d);
-        if (distanceToTag <= Constants.MAX_TAG_DISTANCE)
-        {
+        //double distanceToTag = PhotonUtils.getDistanceToPose(robotPose, pose2d);
+        //if (distanceToTag <= Constants.MAX_TAG_DISTANCE)
+        //{
           swerveDrive.addVisionMeasurement(pose2d,
                                           pose.timestampSeconds,
                                           camera.curStdDevs);
@@ -165,7 +165,7 @@ public class Vision
           {
             field2d.getObject(camera.name()+" pose").setPose(pose2d);        
           }
-        }                                 
+        //}                                 
       }
     }
   }
@@ -329,7 +329,16 @@ public class Vision
         PhotonPipelineResult latest = c.resultsList.get(0);
         if (latest.hasTargets())
         {
-          targets.addAll(latest.targets);
+          //Loop through targets, exclude then add
+          List<PhotonTrackedTarget> newTargets = new ArrayList<PhotonTrackedTarget>();
+          for (PhotonTrackedTarget target: latest.getTargets())
+          {
+            double distanceToTag = target.bestCameraToTarget.getTranslation().getDistance(Translation3d.kZero);
+            if (distanceToTag <= Constants.MAX_TAG_DISTANCE)
+              newTargets.add(target);
+          }
+
+          targets.addAll(newTargets);
         }
       }
     }

@@ -317,8 +317,10 @@ public class IntakeSubsystem extends SubsystemBase
   public void runPowerIntake(double targetVoltage)
   {
     //Only allow the intake to run if deployed
+    /*
     if (isIntakeDeployed())
     {
+    */
       SmartDashboard.putBoolean("Intake Stalled", false);
       m_intake_motor.setVoltage(targetVoltage);
       m_intakePower = targetVoltage;
@@ -334,7 +336,7 @@ public class IntakeSubsystem extends SubsystemBase
       
       intakeLastStallReading = System.currentTimeMillis()+1000; //allow 1 second to spin up
       intakeStalledLastPositionRead = getIntakePosition();
-    }
+    //}
   }
   /**
    * Run the intake reverse speed
