@@ -83,10 +83,10 @@ public final class Constants {
     public static final double BLUE_X_PLAYER = Units.inchesToMeters(182.11);
 
     public static final Pose2d RED_HUB_POSE = new Pose2d(RED_X_PLAYER, MID_FIELD_Y, new Rotation2d(0)); 
-    public static final Pose2d RED_BOTTOM_POSE = new Pose2d(RED_X_PLAYER + 0.5, (MID_FIELD_Y * 0.5), new Rotation2d(0)); 
+    public static final Pose2d RED_BOTTOM_POSE = new Pose2d(RED_X_PLAYER + 1, (MID_FIELD_Y * 0.5), new Rotation2d(0)); 
     public static final Pose2d RED_TOP_POSE = new Pose2d(RED_BOTTOM_POSE.getX(), (MID_FIELD_Y * 1.5), new Rotation2d(0)); 
     public static final Pose2d BLUE_HUB_POSE = new Pose2d(BLUE_X_PLAYER, MID_FIELD_Y, new Rotation2d(0)); 
-    public static final Pose2d BLUE_BOTTOM_POSE = new Pose2d(BLUE_X_PLAYER - 0.5, RED_BOTTOM_POSE.getY(), new Rotation2d(0)); 
+    public static final Pose2d BLUE_BOTTOM_POSE = new Pose2d(BLUE_X_PLAYER - 1, RED_BOTTOM_POSE.getY(), new Rotation2d(0)); 
     public static final Pose2d BLUE_TOP_POSE = new Pose2d(BLUE_BOTTOM_POSE.getX(), RED_TOP_POSE.getY(), new Rotation2d(0)); 
 
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_BACK = new Transform2d(Units.inchesToMeters(-7),0,new Rotation2d(0));
