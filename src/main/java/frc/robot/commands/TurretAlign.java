@@ -5,14 +5,13 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.TurretSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TurretAlign  extends Command 
 {
-  static int ANGLE_OFFSET_DEFAULT = 10; //default degrees °
-
   int currentAngle = 0;
   int angleCount = 0;
   boolean switchFound = false;
@@ -23,7 +22,7 @@ public class TurretAlign  extends Command
    */
   public TurretAlign()
   {
-    this(ANGLE_OFFSET_DEFAULT);
+    this(Constants.TurretConstants.ALIGN_ANGLE_OFFSET);
   }
 
   /**
@@ -58,7 +57,7 @@ public class TurretAlign  extends Command
     {
       if (!turret.isOnAlignSwitch())
       {
-        currentAngle++;  //increase one degree
+        currentAngle = currentAngle+Constants.TurretConstants.ALIGN_INC_SIZE;  //increase one degree
         //Loop around back to zero if 360 or higher
         if (currentAngle >= 360) currentAngle = currentAngle % 360;
         turret.setManualAimTarget(currentAngle);
