@@ -156,7 +156,7 @@ public class RobotContainer
     NamedCommands.registerCommand("Shoot 1sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(1));  
     NamedCommands.registerCommand("wait 1/2 second", new WaitCommand(0.5));
     NamedCommands.registerCommand("Deploy Intake", new Deploy(intakeSubsystem));    
-    NamedCommands.registerCommand("Align Turret",new TurretAlign(180));
+    NamedCommands.registerCommand("Align Turret",new TurretAlign(20)); //Try to start -20 and rotate to find zero switch
     //Raise intake and then prepare climber to climb
     NamedCommands.registerCommand("Prepare to Climb", new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
     //Once close to Left Climber, drives to the left climb and run climber until stopped
@@ -316,7 +316,7 @@ public class RobotContainer
       copilotSNESController.button(4).onTrue(new StowClimber(climberSubsystem));
       
       //Try to home the turret
-      copilotSNESController.button(1).onTrue(new TurretAlign(180));
+      copilotSNESController.button(1).onTrue(new TurretAlign(20));
       //Manually Aim when on
       //copilotBoxController.button(10).whileTrue(new TurretManualAim());
 
