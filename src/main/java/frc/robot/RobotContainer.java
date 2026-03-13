@@ -34,6 +34,7 @@ import frc.robot.commands.ActiveDriveToPose;
 import frc.robot.commands.ActiveDriveToPose.GoalType;
 import frc.robot.commands.Outtake;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.TurretAlign;
 import frc.robot.commands.TurretAutoAim;
 import frc.robot.commands.TurretManualAim;
 import frc.robot.commands.ClimberCommands.Climb;
@@ -311,6 +312,8 @@ public class RobotContainer
       driverJoystick.button(9).onTrue(new StowClimber(climberSubsystem));
       copilotSNESController.button(4).onTrue(new StowClimber(climberSubsystem));
       
+      //Try to home the turret
+      copilotSNESController.button(0).onTrue(new TurretAlign(25));
       //Manually Aim when on
       //copilotBoxController.button(10).whileTrue(new TurretManualAim());
 

@@ -250,6 +250,8 @@ public class TurretSubsystem extends SubsystemBase {
     public void zeroEncoder()
     {
         turretEncoder.setPosition(0);
+        //set the zetpoint back to zero
+         closedLoopController.setSetpoint(0, ControlType.kPosition, ClosedLoopSlot.kSlot0);
     }
 
     /**
@@ -357,6 +359,26 @@ public class TurretSubsystem extends SubsystemBase {
       else if (CALIBRATION_MODE) System.out.println("delta Angle too small");
 
       return updated;
+    }
+
+    /**
+     * Return is the turret is on the alignment switch
+     * @return
+     */
+    public boolean isOnAlignSwitch()
+    {
+      return turretAlignmentSwitch.isPressed();
+    }
+
+    /**
+     * Gets the current Turret angle in degrees
+     * @return
+     */
+    public double getCurrentAngle()
+    {
+      double currentMotorRotations = turretEncoder.getPosition();
+      double currentAngleRot2Degree = getTurretDegrees(currentMotorRotations);
+      return currentAngleRot2Degree;
     }
 
     /**
