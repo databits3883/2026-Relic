@@ -56,6 +56,7 @@ public class TurretAlign  extends Command
       if (!turret.isOnAlignSwitch())
       {
         currentAngle++;  //increase one degree        
+        turret.setManualAimTarget(currentAngle);
       }
     }
     //wait to get to set point
