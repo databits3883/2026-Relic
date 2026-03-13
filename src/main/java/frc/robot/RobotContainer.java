@@ -315,7 +315,7 @@ public class RobotContainer
       copilotSNESController.button(4).onTrue(new StowClimber(climberSubsystem));
       
       //Try to home the turret
-      copilotSNESController.button(0).onTrue(new TurretAlign(25));
+      copilotSNESController.button(1).onTrue(new TurretAlign(25));
       //Manually Aim when on
       //copilotBoxController.button(10).whileTrue(new TurretManualAim());
 
