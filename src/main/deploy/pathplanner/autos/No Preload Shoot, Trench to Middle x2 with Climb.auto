@@ -55,9 +55,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "Trench to Middle Half L"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Trench to Middle Half L"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot 3sec"
+                }
+              }
+            ]
           }
         },
         {
@@ -70,6 +83,12 @@
           "type": "path",
           "data": {
             "pathName": "Middle to Trench Half L"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot 2sec"
           }
         },
         {
