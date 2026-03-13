@@ -351,7 +351,8 @@ public class Vision
             }
           }
 
-          targets.addAll(newTargets);
+          //replace targets with the newTargets list
+          targets = newTargets;
         }
       }
     }
