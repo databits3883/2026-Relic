@@ -84,9 +84,6 @@ public class ClimberSubsystem extends SubsystemBase
       double currentPosition = getCurrentClimberPosition();
       double deltaPosition = currentPosition - lastPositionRead;
       if (Math.abs(deltaPosition) < Constants.Climber.MIN_POSITION_MOVEMENT) isMotorStalled = true;      
-    System.out.println("Stall debug: delta: " + deltaTime);
-    System.out.println("Stall debug: currentPosition: " + currentPosition);
-    System.out.println("Stall debug: deltaPosition: " + deltaPosition);
       //update last readings
       lastStallReading = currentTime;
       lastPositionRead = currentPosition;
@@ -225,6 +222,15 @@ public class ClimberSubsystem extends SubsystemBase
   public double getCurrentClimberPosition()
   { 
     return (m_climberEncoder.getPosition());  
+  }
+
+  /**
+   * Return if the climber is stowed or not
+   * @return
+   */
+  public boolean isClimberStowed()
+  {
+    return m_isStowed;
   }
 
   @Override

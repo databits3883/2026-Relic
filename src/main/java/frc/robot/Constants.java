@@ -6,6 +6,9 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import java.util.List;
+import java.util.Arrays;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -171,6 +174,10 @@ public final class Constants {
     //For stall checks
     public static double MIN_POSITION_MOVEMENT = 0.02; /* Minimum movement in check_ms interval for stalled */
     public static int STALL_CHECK_MS = 100; /* MS between stall checks */
+
+    // This will be used to ignore climber tags when stowed and only use them when not stowed
+    public static boolean IGNORE_CLIMBER_TAGS_WHEN_STOWED = true;
+    public static final List<Integer> CLIMBER_TAG_LIST = Arrays.asList(15,16,31,32);
   }
 
   public static class StageConstants {

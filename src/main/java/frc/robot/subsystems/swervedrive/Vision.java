@@ -331,11 +331,24 @@ public class Vision
         {
           //Loop through targets, exclude then add
           List<PhotonTrackedTarget> newTargets = new ArrayList<PhotonTrackedTarget>();
+          Integer tagNum = 0;
           for (PhotonTrackedTarget target: latest.getTargets())
           {
-            double distanceToTag = target.bestCameraToTarget.getTranslation().getDistance(Translation3d.kZero);
-            if (distanceToTag <= Constants.MAX_TAG_DISTANCE)
-              newTargets.add(target);
+            boolean canUseTag = Constants.Climber.IGNORE_CLIMBER_TAGS_WHEN_STOWED;
+            if (!canUseTag)
+            {
+              tagNum = target.getFiducialId();
+              boolean isTagInIgnoreList = Constants.Climber.CLIMBER_TAG_LIST.contains(tagNum);
+              boolean isStowed = RobotContainer.climberSubsystem.isClimberStowed();
+              if (isStowed && isTagInIgnoreList) canUseTag = false;
+              else if (!isStowed && !isTagInIgnoreList) canUseTag = false;
+            }
+            if (canUseTag)
+            {
+              double distanceToTag = target.bestCameraToTarget.getTranslation().getDistance(Translation3d.kZero);
+              if (distanceToTag <= Constants.MAX_TAG_DISTANCE)
+                newTargets.add(target);
+            }
           }
 
           targets.addAll(newTargets);
