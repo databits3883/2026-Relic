@@ -99,6 +99,9 @@ public final class Constants {
     public static final double TURRET_LAUNCHER_CORRECTION_BWD = 5; //10; //Will be used with the sin of the angle to create an offset
     public static final double CORRECTION_DEADBAND = 0.2;
 
+    public static final int ALIGN_ANGLE_OFFSET = 30;
+    public static final int ALIGN_INC_SIZE = 3;
+
     //Future pose calculation
     public static final double LATENCY_SEC = 0.2;    
     public static final boolean USE_FUTURE_POSE = true;
