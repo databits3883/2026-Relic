@@ -86,6 +86,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot 2sec"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
