@@ -334,7 +334,7 @@ public class Vision
           Integer tagNum = 0;
           for (PhotonTrackedTarget target: latest.getTargets())
           {
-            boolean canUseTag = Constants.Climber.IGNORE_CLIMBER_TAGS_WHEN_STOWED;
+            boolean canUseTag = !Constants.Climber.IGNORE_CLIMBER_TAGS_WHEN_STOWED;
             if (!canUseTag)
             {
               tagNum = target.getFiducialId();
@@ -342,6 +342,7 @@ public class Vision
               boolean isStowed = RobotContainer.climberSubsystem.isClimberStowed();
               if (isStowed && isTagInIgnoreList) canUseTag = false;
               else if (!isStowed && !isTagInIgnoreList) canUseTag = false;
+              else canUseTag = true;
             }
             if (canUseTag)
             {
