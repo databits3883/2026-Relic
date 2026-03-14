@@ -334,7 +334,8 @@ public class Vision
         }
       }
     }
-
+    boolean isTeleop = DriverStation.isTeleop();
+    
     //Loop through targets and filter
     List<PhotonTrackedTarget> newTargets = new ArrayList<PhotonTrackedTarget>();
     Integer tagNum = 0;
@@ -342,7 +343,7 @@ public class Vision
     {
       boolean canUseTag = !Constants.Climber.IGNORE_CLIMBER_TAGS_WHEN_STOWED;
       //Only run in teleop mode
-      if (!canUseTag && DriverStation.isTeleop())
+      if (!canUseTag && isTeleop)
       {
         tagNum = target.getFiducialId();
         boolean isTagInIgnoreList = Constants.Climber.CLIMBER_TAG_LIST.contains(tagNum);
