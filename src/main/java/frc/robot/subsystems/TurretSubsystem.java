@@ -272,13 +272,16 @@ public class TurretSubsystem extends SubsystemBase {
         //Get zero moving distnace
         Pose2d zeroPose = findTargetToAim(turretPose);    
         double distanceZeroSpeed = PhotonUtils.getDistanceToPose(turretPose, zeroPose);
-        double airTimeZero = (distanceZeroSpeed *  0.44) + 0.427;
+        // old: before pi day
+        //double airTimeZero = (distanceZeroSpeed *  0.44) + 0.427;
+        //new as of pi day, from data saved on "Shooting data" google sheet, tab 2
+        double airTimeZero = (distanceZeroSpeed *  0.21) + 0.3769;
         Translation2d futureTranslation1 = turretPose.getTranslation().plus(new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond).times(airTimeZero));
         Pose2d futurePose1 = new Pose2d(futureTranslation1, turretPose.getRotation().plus(new Rotation2d( + robotSpeed.omegaRadiansPerSecond * airTimeZero)));
 
         //Get the airTime a second time based on this position
         double distance2 = PhotonUtils.getDistanceToPose(turretPose, futurePose1);
-        double airTime2 = (distance2 *  0.44) + 0.427;
+        double airTime2 = (distance2 *  0.21) + 0.3769;
 
         //Update the dashboard if it is greater than .25 second update
         if (Math.abs(airTime2 - x_latencySec) >= .125)

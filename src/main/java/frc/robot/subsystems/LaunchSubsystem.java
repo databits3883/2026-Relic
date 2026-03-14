@@ -239,8 +239,9 @@ public class LaunchSubsystem extends SubsystemBase
       //old
       //newTargetVelocity = 1687+(97.8*targetDistanceCameraOffset) + (20.7*targetDistanceCameraOffset*targetDistanceCameraOffset);
       //new
-      newTargetVelocity = 1975+(-183*targetDistanceCameraOffset) + (81.2*targetDistanceCameraOffset*targetDistanceCameraOffset) + (-6.05*targetDistanceCameraOffset*targetDistanceCameraOffset*targetDistanceCameraOffset);
-      
+      //newTargetVelocity = 1975+(-183*targetDistanceCameraOffset) + (81.2*targetDistanceCameraOffset*targetDistanceCameraOffset) + (-6.05*targetDistanceCameraOffset*targetDistanceCameraOffset*targetDistanceCameraOffset);
+      //new as of pi day, from data saved on "Shooting data" google sheet, tab 2
+      newTargetVelocity = 1390 + (221*targetDistanceCameraOffset);
       
     }
 
