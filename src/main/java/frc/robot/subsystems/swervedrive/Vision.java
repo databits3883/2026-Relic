@@ -329,38 +329,37 @@ public class Vision
         PhotonPipelineResult latest = c.resultsList.get(0);
         if (latest.hasTargets())
         {
-          //Loop through targets, exclude then add
-          List<PhotonTrackedTarget> newTargets = new ArrayList<PhotonTrackedTarget>();
-          Integer tagNum = 0;
-          for (PhotonTrackedTarget target: latest.getTargets())
-          {
-            boolean canUseTag = !Constants.Climber.IGNORE_CLIMBER_TAGS_WHEN_STOWED;
-            if (!canUseTag)
-            {
-              tagNum = target.getFiducialId();
-              boolean isTagInIgnoreList = Constants.Climber.CLIMBER_TAG_LIST.contains(tagNum);
-              boolean isStowed = RobotContainer.climberSubsystem.isClimberStowed();
-              if (isStowed && isTagInIgnoreList) canUseTag = false;
-              else if (!isStowed && !isTagInIgnoreList) canUseTag = false;
-              else canUseTag = true;
-            }
-            if (canUseTag)
-            {
-              double distanceToTag = target.bestCameraToTarget.getTranslation().getDistance(Translation3d.kZero);
-              if (distanceToTag <= Constants.MAX_TAG_DISTANCE)
-                newTargets.add(target);
-            }
-          }
-
-          //replace targets with the newTargets list
-          targets = newTargets;
+          targets.addAll(latest.getTargets());
         }
+      }
+    }
+
+    //Loop through targets and filter
+    List<PhotonTrackedTarget> newTargets = new ArrayList<PhotonTrackedTarget>();
+    Integer tagNum = 0;
+    for (PhotonTrackedTarget target: targets)
+    {
+      boolean canUseTag = !Constants.Climber.IGNORE_CLIMBER_TAGS_WHEN_STOWED;
+      if (!canUseTag)
+      {
+        tagNum = target.getFiducialId();
+        boolean isTagInIgnoreList = Constants.Climber.CLIMBER_TAG_LIST.contains(tagNum);
+        boolean isStowed = RobotContainer.climberSubsystem.isClimberStowed();
+        if (isStowed && isTagInIgnoreList) canUseTag = false;
+        else if (!isStowed && !isTagInIgnoreList) canUseTag = false;
+        else canUseTag = true;
+      }
+      if (canUseTag)
+      {
+        double distanceToTag = target.bestCameraToTarget.getTranslation().getDistance(Translation3d.kZero);
+        if (distanceToTag <= Constants.MAX_TAG_DISTANCE)
+          newTargets.add(target);
       }
     }
 
     List<Pose2d> poses = new ArrayList<>();
     boolean canSeeTag = false;
-    for (PhotonTrackedTarget target : targets)
+    for (PhotonTrackedTarget target :newTargets /*  targets */)
     {
       if (fieldLayout.getTagPose(target.getFiducialId()).isPresent())
       {
