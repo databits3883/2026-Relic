@@ -13,6 +13,8 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Behavior;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -248,13 +250,17 @@ public class ClimberSubsystem extends SubsystemBase
     }*/
 
     //If we are "stowed" and not currently running the climber ensure our position does not drift too far up
-    if ((m_isStowed) && (xlastPositionRead >= Constants.Climber.MAX_ROTATIONS_UNDER_BAR) && !isClimberRunning()) 
+    //Only run this in teleop
+    if (DriverStation.isTeleop())
     {
-      //Run the stow command
-      System.out.println("Stowing climber again!");
-      m_isStowed = false;
-      CommandScheduler.getInstance().schedule(new StowClimber(RobotContainer.climberSubsystem));
-    }
+      if ((m_isStowed) && (xlastPositionRead >= Constants.Climber.MAX_ROTATIONS_UNDER_BAR) && !isClimberRunning()) 
+      {
+        //Run the stow command
+        System.out.println("Stowing climber again!");
+        m_isStowed = false;
+        CommandScheduler.getInstance().schedule(new StowClimber(RobotContainer.climberSubsystem));
+      }
+      }
   }
 
   @Override
