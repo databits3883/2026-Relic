@@ -297,7 +297,7 @@ public class TurretSubsystem extends SubsystemBase {
         targetPose = findTargetToAim(turretPose);    
 
         //Use the future pose to aim and target distance
-        if (Constants.TurretConstants.USE_FUTURE_POSE) turretPose = futurePose;
+        if ((Constants.TurretConstants.USE_FUTURE_POSE) && (lastTaget == 1 || lastTaget ==4)) turretPose = futurePose;
 
         targetAngle = getAngle(turretPose, targetPose);
 
