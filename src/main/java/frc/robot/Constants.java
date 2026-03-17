@@ -119,7 +119,7 @@ public final class Constants {
     public static int FOUR_BAR_BACKWARD_TIMEOUT_SEC = 4; /* Max run time in case we do not hit limit */
 
     public static final int INTAKE_MOTOR_ID = 14;
-    public static double INTAKE_MOTOR_POWER = 8.0;
+    public static double INTAKE_MOTOR_POWER = 14.0;
     public static double INTAKE_MOTOR_MAX_POWER = 14; //volts
     public static boolean INTAKE_MOTOR_INVERSE = true;
 
