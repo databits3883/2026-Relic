@@ -221,6 +221,8 @@ public class LaunchSubsystem extends SubsystemBase
    */
   private double estimateVelocityForTargetDistance(double targetDistanceMeters)
   {
+    SmartDashboard.putNumber("Launch Calc Distance", targetDistanceMeters);
+
     //Found 2500RPM works from 3.5-3.7
     double newTargetVelocity = Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM;
     //If we are further than a max distance just shoot full power
