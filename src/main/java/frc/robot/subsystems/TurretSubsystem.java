@@ -274,12 +274,14 @@ public class TurretSubsystem extends SubsystemBase {
       {
         //Use Matt's Formula
         ChassisSpeeds robotSpeed = swerveSubsystem.getRobotVelocity();
+        ChassisSpeeds fieldSpeed = swerveSubsystem.getFieldVelocity();
         //Get the hub we are focused on
         Pose2d hubPose = Robot.isRedAlliance ? Constants.TurretConstants.RED_HUB_POSE : Constants.TurretConstants.BLUE_HUB_POSE;
         
         double omegaHub = Math.atan2((hubPose.getY() - robotPose.getY()), (hubPose.getX() - robotPose.getX()));
         double omegaHubDeg = Units.radiansToDegrees(omegaHub);
-        double omegaRh = robotPose.getRotation().getDegrees() - omegaHubDeg;
+        double robotFieldTravelAngleRad = Math.atan2(fieldSpeed.vyMetersPerSecond, fieldSpeed.vxMetersPerSecond);
+        double omegaRh = Units.radiansToDegrees(robotFieldTravelAngleRad) - omegaHubDeg;
         double omegaRhRad = Units.degreesToRadians(omegaRh);
         double speedR = Math.hypot(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond);
         double speedRt = (-1 * speedR) * Math.cos(omegaRhRad);
@@ -306,6 +308,7 @@ public class TurretSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Turret speedLs", speedLs);
         SmartDashboard.putNumber("Turret speedL", speedL);
         SmartDashboard.putNumber("Turret omegaODeg", omegaODeg);
+        SmartDashboard.putNumber("Turret Robot travel angle", Units.radiansToDegrees(robotFieldTravelAngleRad));
 
         setTurretSetPoint(targetAngle);
       }
