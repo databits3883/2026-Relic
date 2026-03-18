@@ -274,41 +274,46 @@ public class TurretSubsystem extends SubsystemBase {
       {
         //Use Matt's Formula
         ChassisSpeeds robotSpeed = swerveSubsystem.getRobotVelocity();
-        ChassisSpeeds fieldSpeed = swerveSubsystem.getFieldVelocity();
-        //Get the hub we are focused on
-        Pose2d hubPose = Robot.isRedAlliance ? Constants.TurretConstants.RED_HUB_POSE : Constants.TurretConstants.BLUE_HUB_POSE;
-        
-        double omegaHub = Math.atan2((hubPose.getY() - robotPose.getY()), (hubPose.getX() - robotPose.getX()));
-        double omegaHubDeg = Units.radiansToDegrees(omegaHub);
-        double robotFieldTravelAngleRad = Math.atan2(fieldSpeed.vyMetersPerSecond, fieldSpeed.vxMetersPerSecond);
-        double omegaRh = Units.radiansToDegrees(robotFieldTravelAngleRad) - omegaHubDeg;
-        double omegaRhRad = Units.degreesToRadians(omegaRh);
-        double speedR = Math.hypot(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond);
-        double speedRt = (-1 * speedR) * Math.cos(omegaRhRad);
-        double speedRp = speedR * Math.sin(omegaRhRad);
 
-        double speedLs = getHorizontalBallVelocityByDistance(distanceToTarget);
-        double speedL = Math.sqrt(Math.pow((speedLs - speedRt),2) + (speedRp * speedRp));
-        //get fake distance to target using equation to go from horizontal ball speed to distance or launch wheel speed
-        distanceToTarget = getFakeDistanceByHorizontalBallVelocity(speedL);
-        double omegaO = Math.atan2(speedRp,speedL);
-        double omegaODeg = Units.radiansToDegrees(omegaO);
+        //Check if robot is moving and skip if not moving
+        if (robotSpeed.vxMetersPerSecond > 0.05 && robotSpeed.vyMetersPerSecond > 0.05)
+        {
+          ChassisSpeeds fieldSpeed = swerveSubsystem.getFieldVelocity();
+          //Get the hub we are focused on
+          Pose2d hubPose = Robot.isRedAlliance ? Constants.TurretConstants.RED_HUB_POSE : Constants.TurretConstants.BLUE_HUB_POSE;
+          
+          double omegaHub = Math.atan2((hubPose.getY() - robotPose.getY()), (hubPose.getX() - robotPose.getX()));
+          double omegaHubDeg = Units.radiansToDegrees(omegaHub);
+          double robotFieldTravelAngleRad = Math.atan2(fieldSpeed.vyMetersPerSecond, fieldSpeed.vxMetersPerSecond);
+          double omegaRh = Units.radiansToDegrees(robotFieldTravelAngleRad) - omegaHubDeg;
+          double omegaRhRad = Units.degreesToRadians(omegaRh);
+          double speedR = Math.hypot(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond);
+          double speedRt = (-1 * speedR) * Math.cos(omegaRhRad);
+          double speedRp = speedR * Math.sin(omegaRhRad);
 
-        //use omegaO as an update to targetAngle
-        targetAngle = targetAngle - omegaODeg;
-        //Put back to -359 to 359 range
-        targetAngle = targetAngle % 360;
+          double speedLs = getHorizontalBallVelocityByDistance(distanceToTarget);
+          double speedL = Math.sqrt(Math.pow((speedLs - speedRt),2) + (speedRp * speedRp));
+          //get fake distance to target using equation to go from horizontal ball speed to distance or launch wheel speed
+          distanceToTarget = getFakeDistanceByHorizontalBallVelocity(speedL);
+          double omegaO = Math.atan2(speedRp,speedL);
+          double omegaODeg = Units.radiansToDegrees(omegaO);
 
-        //For debugging
-        SmartDashboard.putNumber("Turret omegaHubDeg", omegaHubDeg);
-        SmartDashboard.putNumber("Turret omegaRh", omegaRh);
-        SmartDashboard.putNumber("Turret speedR", speedR);
-        SmartDashboard.putNumber("Turret speedRt", speedRt);
-        SmartDashboard.putNumber("Turret speedRp", speedRp);
-        SmartDashboard.putNumber("Turret speedLs", speedLs);
-        SmartDashboard.putNumber("Turret speedL", speedL);
-        SmartDashboard.putNumber("Turret omegaODeg", omegaODeg);
-        SmartDashboard.putNumber("Turret Robot travel angle", Units.radiansToDegrees(robotFieldTravelAngleRad));
+          //use omegaO as an update to targetAngle
+          targetAngle = targetAngle - omegaODeg;
+          //Put back to -359 to 359 range
+          targetAngle = targetAngle % 360;
+
+          //For debugging
+          SmartDashboard.putNumber("Turret omegaHubDeg", omegaHubDeg);
+          SmartDashboard.putNumber("Turret omegaRh", omegaRh);
+          SmartDashboard.putNumber("Turret speedR", speedR);
+          SmartDashboard.putNumber("Turret speedRt", speedRt);
+          SmartDashboard.putNumber("Turret speedRp", speedRp);
+          SmartDashboard.putNumber("Turret speedLs", speedLs);
+          SmartDashboard.putNumber("Turret speedL", speedL);
+          SmartDashboard.putNumber("Turret omegaODeg", omegaODeg);
+          SmartDashboard.putNumber("Turret Robot travel angle", Units.radiansToDegrees(robotFieldTravelAngleRad));
+        }
 
         setTurretSetPoint(targetAngle);
       }
