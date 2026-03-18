@@ -291,6 +291,11 @@ public class TurretSubsystem extends SubsystemBase {
         double omegaO = Math.atan(speedRp/speedL);
         double omegaODeg = Units.radiansToDegrees(omegaO);
 
+        //use omegaO as an update to targetAngle
+        targetAngle = targetAngle + omegaODeg;
+        //Put back to -359 to 359 range
+        targetAngle = targetAngle % 360;
+
         //For debugging
         SmartDashboard.putNumber("Turret omegaHubDeg", omegaHubDeg);
         SmartDashboard.putNumber("Turret omegaRh", omegaRh);
@@ -301,7 +306,7 @@ public class TurretSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Turret speedL", speedL);
         SmartDashboard.putNumber("Turret omegaODeg", omegaODeg);
 
-        setTurretSetPoint(omegaODeg);
+        setTurretSetPoint(targetAngle);
       }
       else
       {
