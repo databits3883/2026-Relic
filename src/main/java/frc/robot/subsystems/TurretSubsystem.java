@@ -295,7 +295,7 @@ public class TurretSubsystem extends SubsystemBase {
         double omegaODeg = Units.radiansToDegrees(omegaO);
 
         //use omegaO as an update to targetAngle
-        targetAngle = targetAngle + omegaODeg;
+        targetAngle = targetAngle - omegaODeg;
         //Put back to -359 to 359 range
         targetAngle = targetAngle % 360;
 
