@@ -236,12 +236,7 @@ public class LaunchSubsystem extends SubsystemBase
       //need to adjust 0.9, camera offset is slightly off from measured
       double targetDistanceCameraOffset = targetDistanceMeters; //Removing this - 0.09;
 
-      //old
-      //newTargetVelocity = 1687+(97.8*targetDistanceCameraOffset) + (20.7*targetDistanceCameraOffset*targetDistanceCameraOffset);
-      //new
-      //newTargetVelocity = 1975+(-183*targetDistanceCameraOffset) + (81.2*targetDistanceCameraOffset*targetDistanceCameraOffset) + (-6.05*targetDistanceCameraOffset*targetDistanceCameraOffset*targetDistanceCameraOffset);
-      //new as of pi day, from data saved on "Shooting data" google sheet, tab 2
-      newTargetVelocity = 1390 + (221*targetDistanceCameraOffset);
+      newTargetVelocity = getVelocityByDistance(targetDistanceCameraOffset); 
       
     }
 
@@ -250,6 +245,17 @@ public class LaunchSubsystem extends SubsystemBase
 
     SmartDashboard.putNumber("Launch Calc Velocity", newTargetVelocity);
     return newTargetVelocity;
+  }
+
+  //Equation to get launch wheel target velocity based on distance
+  public double getVelocityByDistance(double distance)
+  {
+    //old
+    //newTargetVelocity = 1687+(97.8*targetDistanceCameraOffset) + (20.7*targetDistanceCameraOffset*targetDistanceCameraOffset);
+    //new
+    //newTargetVelocity = 1975+(-183*targetDistanceCameraOffset) + (81.2*targetDistanceCameraOffset*targetDistanceCameraOffset) + (-6.05*targetDistanceCameraOffset*targetDistanceCameraOffset*targetDistanceCameraOffset);
+    //new as of pi day, from data saved on "Shooting data" google sheet, tab 2
+    return 1390 + (221*distance);
   }
 
   @Override
