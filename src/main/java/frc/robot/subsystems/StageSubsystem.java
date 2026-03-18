@@ -83,7 +83,6 @@ public class StageSubsystem extends SubsystemBase
       SmartDashboard.putNumber("Stage P Gain", kP);
       SmartDashboard.putNumber("Stage I Gain", kI);
       SmartDashboard.putNumber("Stage D Gain", kD);
-      SmartDashboard.putNumber("Stage IAccum", 0);
       SmartDashboard.putNumber("Stage Current Velocity", 0);
   }
 
@@ -247,8 +246,18 @@ public class StageSubsystem extends SubsystemBase
     return Math.abs(getVelocity() - targetVelocity) < tolerance;
   }
 
+  /**
+   * Get the temp of the spindexer
+   * @return
+   */
+  public double getSpindexerTemp()
+  {
+    return m_spindexer_motor.getMotorTemperature();
+  }
+
   @Override
-  public void periodic() {
+  public void periodic() 
+  {
     // This method will be called once per scheduler run
     if (!isRunning && SmartDashboard.getBoolean("Stage Run Motor", false)) 
     {      
@@ -299,7 +308,7 @@ public class StageSubsystem extends SubsystemBase
     } // end update stage PID 
     
     SmartDashboard.putNumber("Stage Current Velocity", getVelocity());
-    SmartDashboard.putNumber("Stage IAccum", closedLoopController.getIAccum());
+    SmartDashboard.putNumber("Stage Spindexer Temp", getSpindexerTemp());
   }
 
   @Override
