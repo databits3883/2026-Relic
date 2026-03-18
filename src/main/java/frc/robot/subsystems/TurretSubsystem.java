@@ -276,7 +276,7 @@ public class TurretSubsystem extends SubsystemBase {
         ChassisSpeeds robotSpeed = swerveSubsystem.getRobotVelocity();
 
         //Check if robot is moving and skip if not moving
-        if (robotSpeed.vxMetersPerSecond > 0.05 && robotSpeed.vyMetersPerSecond > 0.05)
+        if (robotSpeed.vxMetersPerSecond > 0.05 || robotSpeed.vyMetersPerSecond > 0.05)
         {
           ChassisSpeeds fieldSpeed = swerveSubsystem.getFieldVelocity();
           //Get the hub we are focused on
