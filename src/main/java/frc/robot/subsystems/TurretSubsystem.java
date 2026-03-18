@@ -277,18 +277,19 @@ public class TurretSubsystem extends SubsystemBase {
         //Get the hub we are focused on
         Pose2d hubPose = Robot.isRedAlliance ? Constants.TurretConstants.RED_HUB_POSE : Constants.TurretConstants.BLUE_HUB_POSE;
         
-        double omegaHub = Math.atan((hubPose.getY() - robotPose.getY()) / (hubPose.getX() - robotPose.getX()));
+        double omegaHub = Math.atan2((hubPose.getY() - robotPose.getY()), (hubPose.getX() - robotPose.getX()));
         double omegaHubDeg = Units.radiansToDegrees(omegaHub);
         double omegaRh = robotPose.getRotation().getDegrees() - omegaHubDeg;
+        double omegaRhRad = Units.degreesToRadians(omegaRh);
         double speedR = Math.hypot(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond);
-        double speedRt = (-1 * speedR) * Math.cos(omegaRh);
-        double speedRp = speedR * Math.sin(omegaRh);
+        double speedRt = (-1 * speedR) * Math.cos(omegaRhRad);
+        double speedRp = speedR * Math.sin(omegaRhRad);
 
         double speedLs = getHorizontalBallVelocityByDistance(distanceToTarget);
         double speedL = Math.sqrt(Math.pow((speedLs - speedRt),2) + (speedRp * speedRp));
         //get fake distance to target using equation to go from horizontal ball speed to distance or launch wheel speed
         distanceToTarget = getFakeDistanceByHorizontalBallVelocity(speedL);
-        double omegaO = Math.atan(speedRp/speedL);
+        double omegaO = Math.atan2(speedRp,speedL);
         double omegaODeg = Units.radiansToDegrees(omegaO);
 
         //use omegaO as an update to targetAngle
