@@ -407,7 +407,7 @@ public class TurretSubsystem extends SubsystemBase {
     /** Returns a fake distance measurement to get the wanted ball velocity */
     public double getFakeDistanceByHorizontalBallVelocity(double bVelocity)
     {
-      double fakeDistance = 290*bVelocity + 1311;
+      double fakeDistance = 0.284*bVelocity + 2.12;
       return fakeDistance;
     }
 
