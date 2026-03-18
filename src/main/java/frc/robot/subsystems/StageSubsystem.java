@@ -84,6 +84,7 @@ public class StageSubsystem extends SubsystemBase
       SmartDashboard.putNumber("Stage I Gain", kI);
       SmartDashboard.putNumber("Stage D Gain", kD);
       SmartDashboard.putNumber("Stage Current Velocity", 0);
+      SmartDashboard.putNumber("Stage Spindexer Temp", 0);
   }
 
  public void stopStageSystem()
