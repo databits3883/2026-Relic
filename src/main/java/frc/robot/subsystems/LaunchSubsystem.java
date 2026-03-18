@@ -112,7 +112,6 @@ public class LaunchSubsystem extends SubsystemBase
         SmartDashboard.putNumber("Launch D Gain", SLOT1_kD);
         SmartDashboard.putNumber("Launch V Gain", SLOT1_kV);
       }
-      SmartDashboard.putNumber("Launch IAccum", 0);
       SmartDashboard.putNumber("Launch Current Velocity",0);
       SmartDashboard.putNumber("Launch Current VelocityB",0);
   }
@@ -231,13 +230,9 @@ public class LaunchSubsystem extends SubsystemBase
     }
     else
     {
-      //first rough equation, best fit from a few values - https://mycurvefit.com/
+      double targetDistanceCameraOffset = targetDistanceMeters;
 
-      //need to adjust 0.9, camera offset is slightly off from measured
-      double targetDistanceCameraOffset = targetDistanceMeters; //Removing this - 0.09;
-
-      newTargetVelocity = getVelocityByDistance(targetDistanceCameraOffset); 
-      
+      newTargetVelocity = getVelocityByDistance(targetDistanceCameraOffset);       
     }
 
     //If we are below a min velocity just use the min velocity
@@ -347,7 +342,6 @@ public class LaunchSubsystem extends SubsystemBase
       } //end if updatePID
     } //end update PID
     
-    SmartDashboard.putNumber("Launch IAccum", closedLoopController_a.getIAccum());
     SmartDashboard.putNumber("Launch Current Velocity",getVelocityPrimary());
     SmartDashboard.putNumber("Launch Current VelocityB",getVelocitySecondary());
   }
