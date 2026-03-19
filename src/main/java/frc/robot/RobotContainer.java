@@ -164,15 +164,12 @@ public class RobotContainer
     NamedCommands.registerCommand("Shoot 1sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(1));  
     NamedCommands.registerCommand("wait 1/2 second", new WaitCommand(0.5));
     NamedCommands.registerCommand("Deploy Intake", new Deploy(intakeSubsystem));    
+    NamedCommands.registerCommand("Retract Intake",new Retract(intakeSubsystem));
+    NamedCommands.registerCommand("Toggle Intake",Commands.runOnce(intakeSubsystem::toggleIntake));
     NamedCommands.registerCommand("Align Turret",new TurretAlign(Constants.TurretConstants.ALIGN_ANGLE_OFFSET)); //Try to start -20 and rotate to find zero switch
     //Raise intake and then prepare climber to climb
     NamedCommands.registerCommand("Prepare to Climb", new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
     //Once close to Left Climber, drives to the left climb and run climber until stopped
-    NamedCommands.registerCommand("Drive to and Climb L OLD",
-                                     new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left_Step1)
-                                     .andThen(drivebase.driveBackwardsForwardsWithAlliance().withTimeout(0.1))
-                                     .andThen(new WaitCommand(2))                                    
-                                     .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
     NamedCommands.registerCommand("Drive to and Climb L",
                                      new ParallelRaceGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left_Step1), new WaitCommand(1))
                                      .andThen(new WaitCommand(0.3))                                    
