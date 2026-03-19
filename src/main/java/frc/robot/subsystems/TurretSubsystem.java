@@ -427,7 +427,7 @@ public class TurretSubsystem extends SubsystemBase {
       //Get the launch wheel velocity for this distance
       double launchRPM = LaunchSubsystem.getVelocityByDistance(distance);       
       //get the ball velocity
-      double bVelocity = 0.1016 /*launch wheel size (4 in) */ * launchRPM / 60 * Math.cos(Units.degreesToRadians(75));
+      double bVelocity = Units.inchesToMeters(Constants.LaunchConstants.WHEEL_DIAMETER_IN) /*launch wheel size (4 in) */ * launchRPM / 60 * Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG));
 
       return bVelocity;
     }
@@ -435,7 +435,7 @@ public class TurretSubsystem extends SubsystemBase {
     public double getCalcDistanceByHorizontalBallVelocity(double bVelocity)
     {
       //get launch RPM based on given ball velocity
-      double launchRPM = bVelocity * 60 / (Math.cos(Units.degreesToRadians(75)) * 0.1016);
+      double launchRPM = bVelocity * 60 / (Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG)) *  Units.inchesToMeters(Constants.LaunchConstants.WHEEL_DIAMETER_IN));
       //Lookup the distance based on the given launch velocity
       double distance = LaunchSubsystem.getDistanceByRPM(launchRPM);
       return distance;

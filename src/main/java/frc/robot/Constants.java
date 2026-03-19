@@ -99,8 +99,10 @@ public final class Constants {
     //public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(6.125),Units.inchesToMeters(3.25),new Rotation2d(0));
     public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(-3.25),Units.inchesToMeters(6.125),new Rotation2d(0));
     public static final double TURRET_LAUNCHER_CORRECTION_FRWD = 0; //Will be used with the sin of the angle to create an offset
-    public static final double TURRET_LAUNCHER_CORRECTION_BWD = 5; //10; //Will be used with the sin of the angle to create an offset
+    public static final double TURRET_LAUNCHER_CORRECTION_BWD = 10; //10; //Will be used with the sin of the angle to create an offset
     public static final double CORRECTION_DEADBAND = 0.2;
+
+    public static final double HOOD_ANGLE_DEG = 85;
 
     public static final int ALIGN_ANGLE_OFFSET = 30;
     public static final int ALIGN_INC_SIZE = 3;
@@ -221,7 +223,8 @@ public final class Constants {
     public static final int MAX_CURRENT = 60; //amps
     public static final double MAX_VOLTAGE = 12; //volts
     public static final double TARGET_VELOCITY_RPM = 2700; 
-    public static final double TOLERANCE = 50; //rps
+    public static final double TOLERANCE = 50; //rpm
+    public static final double WHEEL_DIAMETER_IN = 4;
 
     public static final double MAX_SHOOTING_DISTANCE = 4.5; //Max distance we can shoot at max velocity in meters
     public static final double MIN_SHOOTING_MIN_VELOCITY_RPM = 1100;
