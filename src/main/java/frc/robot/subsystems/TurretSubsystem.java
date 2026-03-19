@@ -291,10 +291,12 @@ public class TurretSubsystem extends SubsystemBase {
           double speedRt = (-1 * speedR) * Math.cos(omegaRhRad);
           double speedRp = speedR * Math.sin(omegaRhRad);
 
-          double speedLs = getHorizontalBallVelocityByDistance(distanceToTarget);
+          //double speedLs = getHorizontalBallVelocityByDistance(distanceToTarget);
+          double speedLs = getBallValocityByDistance(distanceToTarget);
           double speedL = Math.sqrt(Math.pow((speedLs - speedRt),2) + (speedRp * speedRp));
           //get fake distance to target using equation to go from horizontal ball speed to distance or launch wheel speed
-          distanceToTarget = getFakeDistanceByHorizontalBallVelocity(speedL);
+          //distanceToTarget = getFakeDistanceByHorizontalBallVelocity(speedL);
+          distanceToTarget = getCalcDistanceByHorizontalBallVelocity(speedL);
           double omegaO = Math.atan2(speedRp,speedL);
           double omegaODeg = Units.radiansToDegrees(omegaO);
 
@@ -418,6 +420,25 @@ public class TurretSubsystem extends SubsystemBase {
       double airTime = getAirTimeByDistance(distance);
       double horizontalVelocity = distance / airTime;
       return horizontalVelocity;
+    }
+
+    public double getBallValocityByDistance(double distance)
+    { 
+      //Get the launch wheel velocity for this distance
+      double launchRPM = LaunchSubsystem.getVelocityByDistance(distance);       
+      //get the ball velocity
+      double bVelocity = 0.1016 /*launch wheel size (4 in) */ * launchRPM / 60 * Math.cos(Units.degreesToRadians(75));
+
+      return bVelocity;
+    }
+
+    public double getCalcDistanceByHorizontalBallVelocity(double bVelocity)
+    {
+      //get launch RPM based on given ball velocity
+      double launchRPM = bVelocity * 60 / (Math.cos(Units.degreesToRadians(75)) * 0.1016);
+      //Lookup the distance based on the given launch velocity
+      double distance = LaunchSubsystem.getDistanceByRPM(launchRPM);
+      return distance;
     }
 
     /** Returns a fake distance measurement to get the wanted ball velocity */

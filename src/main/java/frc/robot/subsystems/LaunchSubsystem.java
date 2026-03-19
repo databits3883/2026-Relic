@@ -234,7 +234,7 @@ public class LaunchSubsystem extends SubsystemBase
     {
       double targetDistanceCameraOffset = targetDistanceMeters;
 
-      newTargetVelocity = getVelocityByDistance(targetDistanceCameraOffset);       
+      newTargetVelocity = LaunchSubsystem.getVelocityByDistance(targetDistanceCameraOffset);       
     }
 
     //If we are below a min velocity just use the min velocity
@@ -245,14 +245,25 @@ public class LaunchSubsystem extends SubsystemBase
   }
 
   //Equation to get launch wheel target velocity based on distance
-  public double getVelocityByDistance(double distance)
+  public static double getVelocityByDistance(double distance)
   {
     //old
     //newTargetVelocity = 1687+(97.8*targetDistanceCameraOffset) + (20.7*targetDistanceCameraOffset*targetDistanceCameraOffset);
     //new
     //newTargetVelocity = 1975+(-183*targetDistanceCameraOffset) + (81.2*targetDistanceCameraOffset*targetDistanceCameraOffset) + (-6.05*targetDistanceCameraOffset*targetDistanceCameraOffset*targetDistanceCameraOffset);
     //new as of pi day, from data saved on "Shooting data" google sheet, tab 2 
-    return 1390 + (221*distance);
+    double launchRPM = 1390 + (221*distance);
+    return launchRPM;
+  }
+
+  /**
+   * Return the distance if the launch wheels were spinning at given RPM
+   */
+  public static double getDistanceByRPM(double launchRPM)
+  {
+    //Reverse of method above
+    double distance = (launchRPM - 1390) / 221;
+    return distance;
   }
 
   @Override
