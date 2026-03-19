@@ -314,14 +314,22 @@ public class TurretSubsystem extends SubsystemBase {
           SmartDashboard.putNumber("Turret omegaODeg", omegaODeg);
           SmartDashboard.putNumber("Turret Robot travel angle", Units.radiansToDegrees(robotFieldTravelAngleRad));
         }
+      }
+      //Adjust Angle by offset, We found the angle is off when facing forward by left, and  right when facing backward
+      double cosAngle = Math.cos(targetAngle);
+      if (cosAngle > Constants.TurretConstants.CORRECTION_DEADBAND)
+        targetAngle += cosAngle * Constants.TurretConstants.TURRET_LAUNCHER_CORRECTION_FRWD;
+      if (cosAngle < (-1*Constants.TurretConstants.CORRECTION_DEADBAND))
+        targetAngle += cosAngle * Constants.TurretConstants.TURRET_LAUNCHER_CORRECTION_BWD;
 
-        setTurretSetPoint(targetAngle);
-      }
-      else
+      //Plot the turret on the field
+      if (RobotContainer.DISPLAY_TURET_POSE)
       {
-        //update the turret setpoint
-        setTurretSetPoint(targetAngle);
+        m_field.getObject("TurretPose").setPose(turretPose);
       }
+
+      //update the turret setpoint
+      setTurretSetPoint(targetAngle);
     }
 
     /**
