@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.signals.AnimationDirectionValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -31,7 +30,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ActiveDriveToPose;
-import frc.robot.commands.ActiveDriveToPose.GoalType;
 import frc.robot.commands.Outtake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.TurretAlign;
@@ -96,6 +94,16 @@ public class RobotContainer
                                                         .scaleTranslation(0.8)
                                                         .allianceRelativeControl(true);                                                            
 
+  SwerveInputStream driveAngularVelocityPrecise = SwerveInputStream.of(drivebase.getSwerveDrive(),
+                                                            () -> driverJoystick.getY() * -0.5,
+                                                            () -> driverJoystick.getX() * -0.5)
+                                                        .withControllerRotationAxis(() -> driverJoystick.getTwist() * -0.65)
+                                                        .deadband(OperatorConstants.DEADBAND)
+                                                        .scaleTranslation(0.8)
+                                                        .allianceRelativeControl(true);                                                            
+
+
+                                                         
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
    */
@@ -285,7 +293,9 @@ public class RobotContainer
       driverJoystick.povRight().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(270);}));
 
       //Shoot while button is held, auto distance
-      driverJoystick.button(1).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
+      driverJoystick.button(1).whileTrue(new ParallelCommandGroup(
+                                          drivebase.driveFieldOriented(driveAngularVelocityPrecise),
+                                          new Shoot(launchSubsystem, stageSubsystem, false)));
       copilotSNESController.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
       //Shoot with manual velocity control
       driverJoystick.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, true));
