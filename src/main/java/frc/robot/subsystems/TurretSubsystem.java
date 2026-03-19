@@ -291,12 +291,12 @@ public class TurretSubsystem extends SubsystemBase {
           double speedRt = (-1 * speedR) * Math.cos(omegaRhRad);
           double speedRp = speedR * Math.sin(omegaRhRad);
 
-          //double speedLs = getHorizontalBallVelocityByDistance(distanceToTarget);
-          double speedLs = getBallValocityByDistance(distanceToTarget);
+          double speedLs = getHorizontalBallVelocityByDistance(distanceToTarget);
+          //double speedLs = getBallValocityByDistance(distanceToTarget);
           double speedL = Math.sqrt(Math.pow((speedLs - speedRt),2) + (speedRp * speedRp));
           //get fake distance to target using equation to go from horizontal ball speed to distance or launch wheel speed
-          //distanceToTarget = getFakeDistanceByHorizontalBallVelocity(speedL);
-          distanceToTarget = getCalcDistanceByHorizontalBallVelocity(speedL);
+          distanceToTarget = getFakeDistanceByHorizontalBallVelocity(speedL);
+          //distanceToTarget = getCalcDistanceByHorizontalBallVelocity(speedL);
           double omegaO = Math.atan2(speedRp,speedL);
           double omegaODeg = Units.radiansToDegrees(omegaO);
 
