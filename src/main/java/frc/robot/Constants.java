@@ -106,6 +106,8 @@ public final class Constants {
 
     public static final int ALIGN_ANGLE_OFFSET = 30;
     public static final int ALIGN_INC_SIZE = 3;
+    //friction, air resistance, etc
+    public static final double PHYSICS_FACTOR = 0.7;
 
     //Future pose calculation
     public static final double LATENCY_SEC = 0.2;    
