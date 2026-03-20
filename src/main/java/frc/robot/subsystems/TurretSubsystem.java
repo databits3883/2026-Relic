@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.BiConsumer;
+
 import org.photonvision.PhotonUtils;
 
 import com.revrobotics.PersistMode;
@@ -430,11 +432,10 @@ public class TurretSubsystem extends SubsystemBase {
     public double getBallValocityByDistance(double distance)
     { 
       //Get the launch wheel velocity for this distance
-      double launchRPM = LaunchSubsystem.getVelocityByDistance(distance);       
+      double launchRPM = LaunchSubsystem.getVelocityByDistance(distance);  
+      double xC = (Constants.TurretConstants.PHYSICS_FACTOR * Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG)) * Constants.LaunchConstants.WHEEL_DIAMETER_IN * Math.PI) /60;
       //get the ball velocity
-      //=PHYSICS_FACTOR*(RPM*WHEEL_DIAMETER_IN*3.14159/60) * cos(Radians(HOOD_ANGLE_DEG))
-      double bVelocity = (Constants.TurretConstants.PHYSICS_FACTOR * launchRPM * Constants.LaunchConstants.WHEEL_DIAMETER_IN *
-                          Math.PI /60) * Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG));
+      double bVelocity = xC * launchRPM;
 
       return bVelocity;
     }
@@ -442,9 +443,8 @@ public class TurretSubsystem extends SubsystemBase {
     public double getCalcDistanceByHorizontalBallVelocity(double bVelocity)
     {
       //get launch RPM based on given ball velocity
-      //launchRPM = (bVelocity / (COS(DEGREES(85)) / (Physics*  wheelDiaM * PI)
-      double launchRPM = ((bVelocity / (Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG)))) /  
-                          (Constants.TurretConstants.PHYSICS_FACTOR * Units.inchesToMeters(Constants.LaunchConstants.WHEEL_DIAMETER_IN)*Math.PI))*60;
+      double xC = (Constants.TurretConstants.PHYSICS_FACTOR * Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG)) * Constants.LaunchConstants.WHEEL_DIAMETER_IN * Math.PI) /60;
+      double launchRPM = bVelocity / xC;
       //Lookup the distance based on the given launch velocity
       double distance = LaunchSubsystem.getDistanceByRPM(launchRPM);
 

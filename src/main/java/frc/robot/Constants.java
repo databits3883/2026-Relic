@@ -102,7 +102,7 @@ public final class Constants {
     public static final double TURRET_LAUNCHER_CORRECTION_BWD = 15; //10; //Will be used with the sin of the angle to create an offset
     public static final double CORRECTION_DEADBAND = 0.2;
 
-    public static final double HOOD_ANGLE_DEG = 85;
+    public static final double HOOD_ANGLE_DEG = 70;
 
     public static final int ALIGN_ANGLE_OFFSET = 30;
     public static final int ALIGN_INC_SIZE = 3;
