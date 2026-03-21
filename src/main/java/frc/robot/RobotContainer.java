@@ -295,7 +295,7 @@ public class RobotContainer
                                           new Shoot(launchSubsystem, stageSubsystem, false)));
       copilotSNESController.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
       //Shoot with manual velocity control
-      driverJoystick.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, true));
+      driverJoystick.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
 
       //Outake while button is held
       driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem, intakeSubsystem));
