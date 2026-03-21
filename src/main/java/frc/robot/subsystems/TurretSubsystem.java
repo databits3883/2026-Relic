@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.function.BiConsumer;
 
 import org.photonvision.PhotonUtils;
 
@@ -588,6 +587,7 @@ public class TurretSubsystem extends SubsystemBase {
             else if (isManuallyAiming)
             {
               //Set the set point to the manual defined target
+            if (CALIBRATION_MODE) manualAimTargetDegrees = SmartDashboard.getNumber("Turret Target Position", angleSetpoint);
               setTurretSetPoint(manualAimTargetDegrees);
             }
             /*
@@ -848,7 +848,7 @@ public class TurretSubsystem extends SubsystemBase {
         //convert from negative rotation to positive rotation degrees
         targetPositionDegrees = 360 + targetPositionDegrees;
     }
-
+    if (CALIBRATION_MODE) SmartDashboard.putNumber("Turret Target Position", targetPositionDegrees);
     manualAimTargetDegrees = targetPositionDegrees;
   }
 }

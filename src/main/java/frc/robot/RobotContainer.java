@@ -284,6 +284,7 @@ public class RobotContainer
       driverJoystick.button(14).onTrue(new TurretAutoAim());
       //manual aim override button
       driverJoystick.button(12).whileTrue(new TurretManualAim());
+      copilotSNESController.button(2).whileTrue(new TurretManualAim());
       driverJoystick.povUp().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(0);}));
       driverJoystick.povDown().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(180);}));
       driverJoystick.povLeft().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(90);}));
