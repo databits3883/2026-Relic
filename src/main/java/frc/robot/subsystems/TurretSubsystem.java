@@ -433,8 +433,8 @@ public class TurretSubsystem extends SubsystemBase {
     { 
       //Get the launch wheel velocity for this distance
       double launchRPM = LaunchSubsystem.getVelocityByDistance(distance);  
-      double efficiencyFacotr = Constants.TurretConstants.PHYSICS_FACTOR;
-      double xC = (efficiencyFacotr * Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG)) * Constants.LaunchConstants.WHEEL_DIAMETER_IN * Math.PI) /60;
+      double efficiencyFactor = Constants.TurretConstants.PHYSICS_FACTOR;
+      double xC = (efficiencyFactor * Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG)) * Constants.LaunchConstants.WHEEL_DIAMETER_IN * Math.PI) /60;
       //get the ball velocity
       double bVelocity = xC * launchRPM;
 
@@ -444,7 +444,8 @@ public class TurretSubsystem extends SubsystemBase {
     public double getCalcDistanceByHorizontalBallVelocity(double bVelocity)
     {
       //get launch RPM based on given ball velocity
-      double xC = (Constants.TurretConstants.PHYSICS_FACTOR * Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG)) * Constants.LaunchConstants.WHEEL_DIAMETER_IN * Math.PI) /60;
+      double efficiencyFactor = Constants.TurretConstants.PHYSICS_FACTOR;
+      double xC = (efficiencyFactor * Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG)) * Constants.LaunchConstants.WHEEL_DIAMETER_IN * Math.PI) /60;
       double launchRPM = bVelocity / xC;
       //Lookup the distance based on the given launch velocity
       double distance = LaunchSubsystem.getDistanceByRPM(launchRPM);
