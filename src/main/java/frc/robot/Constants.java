@@ -195,7 +195,7 @@ public final class Constants {
     public static double MAX_OUTPUT = 1.0;
     public static final double MAX_ACCELERATION = 0.5; // Max acceleration in units/sec^2
     public static final int MAX_CURRENT = 40; //amps
-    public static final double MAX_VOLTAGE = 14;  // Max voltage when in non-pid mode
+    public static final double MAX_VOLTAGE = 10;  // Max voltage when in non-pid mode
     public static final double TARGET_VELOCITY_RPS = 7000; 
     //not used for now
     public static final double TOLERANCE = 500; //rps
@@ -224,7 +224,7 @@ public final class Constants {
     public static final double MAX_ACCELERATION = 0.5 ;
     public static final int MAX_CURRENT = 60; //amps
     public static final double MAX_VOLTAGE = 12; //volts
-    public static final double TARGET_VELOCITY_RPM = 3000; 
+    public static final double TARGET_VELOCITY_RPM = 3500; 
     public static final double TOLERANCE = 50; //rpm
     public static final double WHEEL_DIAMETER_IN = 4;
 
