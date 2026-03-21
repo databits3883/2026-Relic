@@ -433,7 +433,8 @@ public class TurretSubsystem extends SubsystemBase {
     { 
       //Get the launch wheel velocity for this distance
       double launchRPM = LaunchSubsystem.getVelocityByDistance(distance);  
-      double xC = (Constants.TurretConstants.PHYSICS_FACTOR * Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG)) * Constants.LaunchConstants.WHEEL_DIAMETER_IN * Math.PI) /60;
+      double efficiencyFacotr = Constants.TurretConstants.PHYSICS_FACTOR;
+      double xC = (efficiencyFacotr * Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG)) * Constants.LaunchConstants.WHEEL_DIAMETER_IN * Math.PI) /60;
       //get the ball velocity
       double bVelocity = xC * launchRPM;
 
