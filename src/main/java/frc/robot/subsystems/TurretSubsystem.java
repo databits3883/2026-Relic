@@ -283,7 +283,7 @@ public class TurretSubsystem extends SubsystemBase {
           //Get the hub we are focused on
           Pose2d hubPose = Robot.isRedAlliance ? Constants.TurretConstants.RED_HUB_POSE : Constants.TurretConstants.BLUE_HUB_POSE;
           
-          double omegaHub = Math.atan2((hubPose.getY() - robotPose.getY()), (hubPose.getX() - robotPose.getX()));
+          double omegaHub = Math.atan2((hubPose.getY() - turretPose.getY()), (hubPose.getX() - turretPose.getX()));
           //360 normalize
           omegaHub = omegaHub + 360;
           omegaHub = omegaHub % 360;
