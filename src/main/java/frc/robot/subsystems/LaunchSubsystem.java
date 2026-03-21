@@ -252,7 +252,7 @@ public class LaunchSubsystem extends SubsystemBase
     //new
     //newTargetVelocity = 1975+(-183*targetDistanceCameraOffset) + (81.2*targetDistanceCameraOffset*targetDistanceCameraOffset) + (-6.05*targetDistanceCameraOffset*targetDistanceCameraOffset*targetDistanceCameraOffset);
     //new as of pi day, from data saved on "Shooting data" google sheet, tab 2 
-    double launchRPM = 1390 + (221*distance);
+    double launchRPM = 1444 + (210*distance);
     return launchRPM;
   }
 
@@ -262,7 +262,7 @@ public class LaunchSubsystem extends SubsystemBase
   public static double getDistanceByRPM(double launchRPM)
   {
     //Reverse of method above
-    double distance = (launchRPM - 1390) / 221;
+    double distance = (launchRPM - 1444) / 210;
     return distance;
   }
 
