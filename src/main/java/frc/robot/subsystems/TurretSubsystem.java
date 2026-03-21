@@ -362,13 +362,13 @@ public class TurretSubsystem extends SubsystemBase {
         // old: before pi day
         //double airTimeZero = (distanceZeroSpeed *  0.44) + 0.427;
         //new as of pi day, from data saved on "Shooting data" google sheet, tab 2
-        double airTimeZero = getAirTimeByDistance(distanceZeroSpeed);
+        double airTimeZero = getAirTimeByDistance_UNUSED(distanceZeroSpeed);
         Translation2d futureTranslation1 = turretPose.getTranslation().plus(new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond).times(airTimeZero));
         Pose2d futurePose1 = new Pose2d(futureTranslation1, turretPose.getRotation().plus(new Rotation2d( + robotSpeed.omegaRadiansPerSecond * airTimeZero)));
 
         //Get the airTime a second time based on this position
         double distance2 = PhotonUtils.getDistanceToPose(turretPose, futurePose1);
-        double airTime2 =  getAirTimeByDistance(distance2);
+        double airTime2 =  getAirTimeByDistance_UNUSED(distance2);
 
         //Update the dashboard if it is greater than .25 second update
         if (Math.abs(airTime2 - x_latencySec) >= .125)
@@ -409,7 +409,7 @@ public class TurretSubsystem extends SubsystemBase {
         setTurretSetPoint(targetAngle);
     }
 
-    public double getAirTimeByDistance(double distance)
+    public double getAirTimeByDistance_UNUSED(double distance)
     {
       // old: before pi day
       //double airTimeZero = (distanceZeroSpeed *  0.44) + 0.427;
@@ -422,9 +422,9 @@ public class TurretSubsystem extends SubsystemBase {
      * @param distance
      * @return
      */
-    public double getHorizontalBallVelocityByDistance(double distance)
+    public double getHorizontalBallVelocityByDistance_UNUSED(double distance)
     {
-      double airTime = getAirTimeByDistance(distance);
+      double airTime = getAirTimeByDistance_UNUSED(distance);
       double horizontalVelocity = distance / airTime;
       return horizontalVelocity;
     }
@@ -433,7 +433,8 @@ public class TurretSubsystem extends SubsystemBase {
     { 
       //Get the launch wheel velocity for this distance
       double launchRPM = LaunchSubsystem.getVelocityByDistance(distance);  
-      double efficiencyFactor = Constants.TurretConstants.PHYSICS_FACTOR;
+      double efficiencyFactor = Constants.TurretConstants.PHYSICS_FACTOR_LONG;
+      if (distance <= Constants.TurretConstants.PHYSICS_FACTOR_DISTANCE) efficiencyFactor = Constants.TurretConstants.PHYSICS_FACTOR_SHORT;
       double xC = (efficiencyFactor * Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG)) * Constants.LaunchConstants.WHEEL_DIAMETER_IN * Math.PI) /60;
       //get the ball velocity
       double bVelocity = xC * launchRPM;
@@ -444,7 +445,8 @@ public class TurretSubsystem extends SubsystemBase {
     public double getCalcDistanceByHorizontalBallVelocity(double bVelocity)
     {
       //get launch RPM based on given ball velocity
-      double efficiencyFactor = Constants.TurretConstants.PHYSICS_FACTOR;
+      double efficiencyFactor = Constants.TurretConstants.PHYSICS_FACTOR_LONG;
+      if (bVelocity <= Constants.TurretConstants.PHYSICS_FACTOR_SPEED) efficiencyFactor = Constants.TurretConstants.PHYSICS_FACTOR_SHORT;
       double xC = (efficiencyFactor * Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG)) * Constants.LaunchConstants.WHEEL_DIAMETER_IN * Math.PI) /60;
       double launchRPM = bVelocity / xC;
       //Lookup the distance based on the given launch velocity
@@ -454,7 +456,7 @@ public class TurretSubsystem extends SubsystemBase {
     }
 
     /** Returns a fake distance measurement to get the wanted ball velocity */
-    public double getFakeDistanceByHorizontalBallVelocity(double bVelocity)
+    public double getFakeDistanceByHorizontalBallVelocity_UNUSED(double bVelocity)
     {
       double fakeDistance = 0.284*bVelocity + 2.12;
       return fakeDistance;
