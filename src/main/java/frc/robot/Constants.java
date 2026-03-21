@@ -224,7 +224,7 @@ public final class Constants {
     public static final double MAX_ACCELERATION = 0.5 ;
     public static final int MAX_CURRENT = 60; //amps
     public static final double MAX_VOLTAGE = 12; //volts
-    public static final double TARGET_VELOCITY_RPM = 2700; 
+    public static final double TARGET_VELOCITY_RPM = 3000; 
     public static final double TOLERANCE = 50; //rpm
     public static final double WHEEL_DIAMETER_IN = 4;
 
