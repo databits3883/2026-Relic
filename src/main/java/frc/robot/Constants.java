@@ -99,7 +99,7 @@ public final class Constants {
     //public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(6.125),Units.inchesToMeters(3.25),new Rotation2d(0));
     public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(-3.25),Units.inchesToMeters(6.125),new Rotation2d(0));
     public static final double TURRET_LAUNCHER_CORRECTION_FRWD = 0; //Will be used with the sin of the angle to create an offset
-    public static final double TURRET_LAUNCHER_CORRECTION_BWD = 15; //10; //Will be used with the sin of the angle to create an offset
+    public static final double TURRET_LAUNCHER_CORRECTION_BWD = 0; //10; //Will be used with the sin of the angle to create an offset
     public static final double CORRECTION_DEADBAND = 0.2;
 
     public static final double HOOD_ANGLE_DEG = 70;

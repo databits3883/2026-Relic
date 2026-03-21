@@ -324,7 +324,7 @@ public class TurretSubsystem extends SubsystemBase {
         }
       }
       //Adjust Angle by offset, We found the angle is off when facing forward by left, and  right when facing backward
-      double cosAngle = Math.cos(targetAngle);
+      double cosAngle = Math.cos(Units.degreesToRadians(targetAngle));
       if (cosAngle > Constants.TurretConstants.CORRECTION_DEADBAND)
         targetAngle += cosAngle * Constants.TurretConstants.TURRET_LAUNCHER_CORRECTION_FRWD;
       if (cosAngle < (-1*Constants.TurretConstants.CORRECTION_DEADBAND))
