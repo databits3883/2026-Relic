@@ -284,9 +284,17 @@ public class TurretSubsystem extends SubsystemBase {
           Pose2d hubPose = Robot.isRedAlliance ? Constants.TurretConstants.RED_HUB_POSE : Constants.TurretConstants.BLUE_HUB_POSE;
           
           double omegaHub = Math.atan2((hubPose.getY() - robotPose.getY()), (hubPose.getX() - robotPose.getX()));
+          //360 normalize
+          omegaHub = omegaHub + 360;
+          omegaHub = omegaHub % 360;
+
           double omegaHubDeg = Units.radiansToDegrees(omegaHub);
           double robotFieldTravelAngleRad = Math.atan2(fieldSpeed.vyMetersPerSecond, fieldSpeed.vxMetersPerSecond);
           double omegaRh = Units.radiansToDegrees(robotFieldTravelAngleRad) - omegaHubDeg;
+          //360 normalize
+          omegaRh = omegaRh + 360;
+          omegaRh = omegaRh % 360;
+
           double omegaRhRad = Units.degreesToRadians(omegaRh);
           double speedR = Math.hypot(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond);
           double speedRt = (-1 * speedR) * Math.cos(omegaRhRad);
@@ -309,6 +317,7 @@ public class TurretSubsystem extends SubsystemBase {
           //use omegaO as an update to targetAngle
           targetAngle = targetAngle - omegaODeg;
           //Put back to -359 to 359 range
+          targetAngle = targetAngle + 360;
           targetAngle = targetAngle % 360;
 
           //For debugging
@@ -331,7 +340,7 @@ public class TurretSubsystem extends SubsystemBase {
       if (sinAngle < (-1*Constants.TurretConstants.CORRECTION_DEADBAND))
         targetAngle += sinAngle * Constants.TurretConstants.TURRET_LAUNCHER_CORRECTION_BWD;
       */
-      
+
       //Adjust the manually found offsets
       //targetAngle = adjustMeasuredOffset(targetAngle);
 
