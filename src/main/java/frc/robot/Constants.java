@@ -107,7 +107,7 @@ public final class Constants {
     public static final int ALIGN_ANGLE_OFFSET = 30;
     public static final int ALIGN_INC_SIZE = 3;
     //friction, air resistance, etc
-    public static final double PHYSICS_FACTOR_LONG = 0.7;
+    public static final double PHYSICS_FACTOR_LONG = 0.75;
     public static final double PHYSICS_FACTOR_SHORT = 0.8;
     public static final double PHYSICS_FACTOR_DISTANCE = 3; //meters
     public static final double PHYSICS_FACTOR_SPEED = 3; //kvel matches for some reason
