@@ -330,6 +330,9 @@ public class TurretSubsystem extends SubsystemBase {
       if (sinAngle < (-1*Constants.TurretConstants.CORRECTION_DEADBAND))
         targetAngle += sinAngle * Constants.TurretConstants.TURRET_LAUNCHER_CORRECTION_BWD;
 
+      //Adjust the manually found offsets
+      targetAngle = adjustMeasuredOffset(targetAngle);
+
       //Plot the turret on the field
       if (RobotContainer.DISPLAY_TURET_POSE)
       {
@@ -414,6 +417,18 @@ public class TurretSubsystem extends SubsystemBase {
       //double airTimeZero = (distanceZeroSpeed *  0.44) + 0.427;
       //new as of pi day, from data saved on "Shooting data" google sheet, tab 2
       return (distance *  0.21) + 0.3769;      
+    }
+
+    //We measured the offset at various angles
+    public double adjustMeasuredOffset(double targetAngle)
+    {
+      double newAngle = targetAngle;
+      if (newAngle >330) newAngle += 7;
+      else if (newAngle >= 225 && newAngle <= 255) newAngle -= 2;
+      else if (newAngle <= 100 && newAngle >= 50) newAngle += 3;
+      else if (newAngle <= 15) newAngle += 7;
+
+      return newAngle;
     }
 
     /**
