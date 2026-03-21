@@ -87,6 +87,7 @@ public class IntakeSubsystem extends SubsystemBase
       SmartDashboard.putNumber("Intake Current Velocity",0);
       */
       SmartDashboard.putBoolean("Intake Stalled", false);
+      SmartDashboard.putNumber("Intake Temp", 0);
   }
 
   /**
@@ -355,6 +356,17 @@ public class IntakeSubsystem extends SubsystemBase
     return m_intakeEncoder.getVelocity();
   }
 
+  /**
+   * Get the temp of the intake
+   * @return
+   */
+  public double getIntakeTemp()
+  {
+    double tempC = m_intake_motor.getMotorTemperature();
+    double tempF = (tempC * 9/5) + 32;
+    return tempF;
+  }
+
 
   @Override
   public void periodic() 
@@ -409,6 +421,8 @@ public class IntakeSubsystem extends SubsystemBase
     
     SmartDashboard.putNumber("Intake Current Velocity",getVelocityPrimary());
     */
+
+    SmartDashboard.putNumber("Intake Temp", getIntakeTemp());
   }
 
   @Override

@@ -324,14 +324,16 @@ public class TurretSubsystem extends SubsystemBase {
         }
       }
       //Adjust Angle by offset, We found the angle is off when facing forward by left, and  right when facing backward
+      /*
       double sinAngle = Math.sin(Units.degreesToRadians(targetAngle));
       if (sinAngle > Constants.TurretConstants.CORRECTION_DEADBAND)
         targetAngle += sinAngle * Constants.TurretConstants.TURRET_LAUNCHER_CORRECTION_FRWD;
       if (sinAngle < (-1*Constants.TurretConstants.CORRECTION_DEADBAND))
         targetAngle += sinAngle * Constants.TurretConstants.TURRET_LAUNCHER_CORRECTION_BWD;
-
+      */
+      
       //Adjust the manually found offsets
-      targetAngle = adjustMeasuredOffset(targetAngle);
+      //targetAngle = adjustMeasuredOffset(targetAngle);
 
       //Plot the turret on the field
       if (RobotContainer.DISPLAY_TURET_POSE)
@@ -424,6 +426,7 @@ public class TurretSubsystem extends SubsystemBase {
     {
       double newAngle = targetAngle;
       if (newAngle >330) newAngle += 7;
+      else if (newAngle >= 190 && newAngle <= 215) newAngle -= 15;
       else if (newAngle >= 225 && newAngle <= 255) newAngle -= 2;
       else if (newAngle <= 100 && newAngle >= 50) newAngle += 3;
       else if (newAngle <= 15) newAngle += 7;
