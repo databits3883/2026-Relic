@@ -158,10 +158,10 @@ public class RobotContainer
     DoubleSupplier doubleSupplierZero = () -> 0.0;
     
     //Create the NamedCommands that will be used in PathPlanner
-    NamedCommands.registerCommand("Shoot 5sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(5));    
-    NamedCommands.registerCommand("Shoot 3sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(3));  
-    NamedCommands.registerCommand("Shoot 2sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(2));  
-    NamedCommands.registerCommand("Shoot 1sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(1));  
+    NamedCommands.registerCommand("Shoot 5sec",new Shoot(launchSubsystem, stageSubsystem, intakeSubsystem).withTimeout(5));    
+    NamedCommands.registerCommand("Shoot 3sec",new Shoot(launchSubsystem, stageSubsystem, intakeSubsystem).withTimeout(3));  
+    NamedCommands.registerCommand("Shoot 2sec",new Shoot(launchSubsystem, stageSubsystem, intakeSubsystem).withTimeout(2));  
+    NamedCommands.registerCommand("Shoot 1sec",new Shoot(launchSubsystem, stageSubsystem, intakeSubsystem).withTimeout(1));  
     NamedCommands.registerCommand("wait 1/2 second", new WaitCommand(0.5));
     NamedCommands.registerCommand("Deploy Intake", new Deploy(intakeSubsystem));    
     NamedCommands.registerCommand("Retract Intake",new Retract(intakeSubsystem));
@@ -193,8 +193,8 @@ public class RobotContainer
     autoChooser.addOption("Drive Forward 3sec", drivebase.driveForward().withTimeout(3));
 
     //Add a simple auto option to have the robot drive forward for 1 second then stop
-    autoChooser.addOption("Deploy/Shoot 20sec", new ParallelCommandGroup(new Deploy(intakeSubsystem),new WaitCommand(1).andThen(new Shoot(launchSubsystem, stageSubsystem).withTimeout(20))));
-    autoChooser.addOption("Shoot 20sec", new WaitCommand(1).andThen(new Shoot(launchSubsystem, stageSubsystem).withTimeout(20)));
+    autoChooser.addOption("Deploy/Shoot 20sec", new ParallelCommandGroup(new Deploy(intakeSubsystem),new WaitCommand(1).andThen(new Shoot(launchSubsystem, stageSubsystem, intakeSubsystem).withTimeout(20))));
+    autoChooser.addOption("Shoot 20sec", new WaitCommand(1).andThen(new Shoot(launchSubsystem, stageSubsystem, intakeSubsystem).withTimeout(20)));
     
     //Put the autoChooser on the SmartDashboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -291,12 +291,12 @@ public class RobotContainer
 
       //Shoot while button is held, auto distance
       driverJoystick.button(1).whileTrue(
-                                          new Shoot(launchSubsystem, stageSubsystem, false));
+                                          new Shoot(launchSubsystem, stageSubsystem, intakeSubsystem, false));
       copilotSNESController.button(5).whileTrue(new ParallelCommandGroup(
                                           drivebase.driveFieldOriented(driveAngularVelocityPrecise),
-                                          new Shoot(launchSubsystem, stageSubsystem, false)));
+                                          new Shoot(launchSubsystem, stageSubsystem, intakeSubsystem, false)));
       //Shoot with manual velocity control
-      driverJoystick.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
+      driverJoystick.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, intakeSubsystem, false));
 
       //Outake while button is held
       driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem, intakeSubsystem));
