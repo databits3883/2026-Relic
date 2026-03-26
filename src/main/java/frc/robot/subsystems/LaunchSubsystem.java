@@ -37,6 +37,8 @@ public class LaunchSubsystem extends SubsystemBase
   private boolean isRunning = false;
   private boolean x_useTargetDistance = true;
   private boolean x_useSlot0 = false;
+
+  private double velocityTweak = 1.1; 
   
   private SparkFlex m_motor_a = new SparkFlex(Constants.LaunchConstants.LAUNCH_MOTOR_ID_A, MotorType.kBrushless);
   private SparkFlex m_motor_b = new SparkFlex(Constants.LaunchConstants.LAUNCH_MOTOR_ID_B, MotorType.kBrushless);
@@ -110,7 +112,6 @@ public class LaunchSubsystem extends SubsystemBase
         SmartDashboard.putNumber("Launch D Gain", SLOT1_kD);
         SmartDashboard.putNumber("Launch V Gain", SLOT1_kV);
       }
-      SmartDashboard.putNumber("Launch IAccum", 0);
       SmartDashboard.putNumber("Launch Current Velocity",0);
       SmartDashboard.putNumber("Launch Current VelocityB",0);
   }
@@ -167,7 +168,7 @@ public class LaunchSubsystem extends SubsystemBase
       if (x_useSlot0)
         closedLoopController_a.setSetpoint(targetVelocityRPM, ControlType.kVelocity,ClosedLoopSlot.kSlot0);
       else
-        closedLoopController_a.setSetpoint(targetVelocityRPM*1.1, ControlType.kVelocity,ClosedLoopSlot.kSlot1);
+        closedLoopController_a.setSetpoint(targetVelocityRPM*velocityTweak, ControlType.kVelocity,ClosedLoopSlot.kSlot1);
     }
   }
    
@@ -220,6 +221,8 @@ public class LaunchSubsystem extends SubsystemBase
    */
   private double estimateVelocityForTargetDistance(double targetDistanceMeters)
   {
+    SmartDashboard.putNumber("Launch Calc Distance", targetDistanceMeters);
+
     //Found 2500RPM works from 3.5-3.7
     double newTargetVelocity = Constants.LaunchConstants.MIN_SHOOTING_MIN_VELOCITY_RPM;
     //If we are further than a max distance just shoot full power
@@ -227,24 +230,11 @@ public class LaunchSubsystem extends SubsystemBase
     {
       newTargetVelocity = Constants.LaunchConstants.TARGET_VELOCITY_RPM;
     }
-    /* //disable this section
-    else if (targetDistanceMeters >= 3.2)
-    {
-      //We know 3.2  - 3.7 at least works at 2500, can remove if we want to use equation for everything
-      newTargetVelocity = 2500;
-    } */
     else
     {
-      //first rough equation, best fit from a few values - https://mycurvefit.com/
-      //newTargetVelocity = 153.8462*targetDistanceMeters + 1930.769;
-      //new estimate, based on inches
-      //double targetDistanceInches = Units.metersToInches(targetDistanceMeters); 
-      //need to adjust 0.9, camera offset is slightly off from measured
-      double targetDistanceCameraOffset = targetDistanceMeters - 0.09;
-      newTargetVelocity = 1687+(97.8*targetDistanceCameraOffset) + (20.7*targetDistanceCameraOffset*targetDistanceCameraOffset);
-      
-      //Assume 200 rpm for every .3 Meters
-      //newTargetVelocity = ((3.5 - targetDistanceMeters ) / 0.3) * 200;
+      double targetDistanceCameraOffset = targetDistanceMeters;
+
+      newTargetVelocity = LaunchSubsystem.getVelocityByDistance(targetDistanceCameraOffset);       
     }
 
     //If we are below a min velocity just use the min velocity
@@ -252,6 +242,28 @@ public class LaunchSubsystem extends SubsystemBase
 
     SmartDashboard.putNumber("Launch Calc Velocity", newTargetVelocity);
     return newTargetVelocity;
+  }
+
+  //Equation to get launch wheel target velocity based on distance
+  public static double getVelocityByDistance(double distance)
+  {
+    //old
+    //newTargetVelocity = 1687+(97.8*targetDistanceCameraOffset) + (20.7*targetDistanceCameraOffset*targetDistanceCameraOffset);
+    //new
+    //newTargetVelocity = 1975+(-183*targetDistanceCameraOffset) + (81.2*targetDistanceCameraOffset*targetDistanceCameraOffset) + (-6.05*targetDistanceCameraOffset*targetDistanceCameraOffset*targetDistanceCameraOffset);
+    //new as of pi day, from data saved on "Shooting data" google sheet, tab 2 
+    double launchRPM = 1444 + (210*distance);
+    return launchRPM;
+  }
+
+  /**
+   * Return the distance if the launch wheels were spinning at given RPM
+   */
+  public static double getDistanceByRPM(double launchRPM)
+  {
+    //Reverse of method above
+    double distance = (launchRPM - 1444) / 210;
+    return distance;
   }
 
   @Override
@@ -343,7 +355,6 @@ public class LaunchSubsystem extends SubsystemBase
       } //end if updatePID
     } //end update PID
     
-    SmartDashboard.putNumber("Launch IAccum", closedLoopController_a.getIAccum());
     SmartDashboard.putNumber("Launch Current Velocity",getVelocityPrimary());
     SmartDashboard.putNumber("Launch Current VelocityB",getVelocitySecondary());
   }

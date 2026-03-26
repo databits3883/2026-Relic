@@ -18,8 +18,11 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
@@ -59,7 +62,7 @@ public class Vision
   /**
    * Ambiguity defined as a value between (0,1). Used in {@link Vision#filterPose}.
    */
-  private final       double              maximumAmbiguity                = 0.25;
+  private final       double              maximumAmbiguity                = 0.15;
   /**
    * Photon Vision Simulation
    */
@@ -142,22 +145,30 @@ public class Vision
        */
       visionSim.update(swerveDrive.getSimulationDriveTrainPose().get());
     }
+
     for (Cameras camera : Cameras.values())
     {
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
       if (poseEst.isPresent())
       {
         var pose = poseEst.get();
+        //var robotPose = swerveDrive.getPose();        
         var pose2d = pose.estimatedPose.toPose2d();
-        swerveDrive.addVisionMeasurement(pose2d,
-                                         pose.timestampSeconds,
-                                         camera.curStdDevs);
-        //Update camera robot pose
-        if (RobotContainer.DISPLAY_VISION_POSE)
-          field2d.getObject(camera.name()+" pose").setPose(pose2d);                                         
+        //ignore if tag is more than 5 meters away
+        //double distanceToTag = PhotonUtils.getDistanceToPose(robotPose, pose2d);
+        //if (distanceToTag <= Constants.MAX_TAG_DISTANCE)
+        //{
+          swerveDrive.addVisionMeasurement(pose2d,
+                                          pose.timestampSeconds,
+                                          camera.curStdDevs);
+          //Update camera robot pose
+          if (RobotContainer.DISPLAY_VISION_POSE)
+          {
+            field2d.getObject(camera.name()+" pose").setPose(pose2d);        
+          }
+        //}                                 
       }
     }
-
   }
 
   /**
@@ -319,22 +330,50 @@ public class Vision
         PhotonPipelineResult latest = c.resultsList.get(0);
         if (latest.hasTargets())
         {
-          targets.addAll(latest.targets);
+          targets.addAll(latest.getTargets());
         }
+      }
+    }
+    boolean isTeleop = DriverStation.isTeleop();
+    
+    //Loop through targets and filter
+    List<PhotonTrackedTarget> newTargets = new ArrayList<PhotonTrackedTarget>();
+    Integer tagNum = 0;
+    for (PhotonTrackedTarget target: targets)
+    {
+      boolean canUseTag = !Constants.Climber.IGNORE_CLIMBER_TAGS_WHEN_STOWED;
+      //Only run in teleop mode
+      if (!canUseTag && isTeleop)
+      {
+        tagNum = target.getFiducialId();
+        boolean isTagInIgnoreList = Constants.Climber.CLIMBER_TAG_LIST.contains(tagNum);
+        boolean isStowed = RobotContainer.climberSubsystem.isClimberStowed();
+        if (isStowed && isTagInIgnoreList) canUseTag = false;
+        else if (!isStowed && !isTagInIgnoreList) canUseTag = false;
+        else canUseTag = true;
+      }
+      if (canUseTag)
+      {
+        double distanceToTag = target.bestCameraToTarget.getTranslation().getDistance(Translation3d.kZero);
+        if (distanceToTag <= Constants.MAX_TAG_DISTANCE)
+          newTargets.add(target);
       }
     }
 
     List<Pose2d> poses = new ArrayList<>();
-    for (PhotonTrackedTarget target : targets)
+    boolean canSeeTag = false;
+    for (PhotonTrackedTarget target :newTargets /*  targets */)
     {
       if (fieldLayout.getTagPose(target.getFiducialId()).isPresent())
       {
         Pose2d targetPose = fieldLayout.getTagPose(target.getFiducialId()).get().toPose2d();
         poses.add(targetPose);
+        canSeeTag = true;
       }
     }
-    if (RobotContainer.DISPLAY_VISION_TAGS)
-      field2d.getObject("tracked targets").setPoses(poses);
+
+    field2d.getObject("tracked targets").setPoses(poses);
+    SmartDashboard.putBoolean("Can See Tag", canSeeTag);
   }
 
   /**

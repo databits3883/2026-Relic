@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -29,9 +30,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ActiveDriveToPose;
-import frc.robot.commands.ActiveDriveToPose.GoalType;
 import frc.robot.commands.Outtake;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.TurretAlign;
 import frc.robot.commands.TurretAutoAim;
 import frc.robot.commands.TurretManualAim;
 import frc.robot.commands.ClimberCommands.Climb;
@@ -46,6 +47,7 @@ import frc.robot.subsystems.StageSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
+import java.util.function.DoubleSupplier;
 
 import swervelib.SwerveInputStream;
 
@@ -58,8 +60,8 @@ public class RobotContainer
 {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  public static final         CommandJoystick driverJoystick = new CommandJoystick(0);
-  final         CommandJoystick copilotBoxController = new CommandJoystick(1);
+  public static final CommandJoystick driverJoystick = new CommandJoystick(0);
+  private final       CommandJoystick copilotSNESController = new CommandJoystick(1);
 
   // The robot's subsystems and commands are defined here...
   public static final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/relic"));
@@ -72,6 +74,8 @@ public class RobotContainer
   //debug/field/dashboard, etc
   public static boolean DISPLAY_VISION_TAGS = true;
   public static boolean DISPLAY_VISION_POSE = false;
+  public static boolean DISPLAY_CLIMB_TARGET_POSE = true;
+  public static boolean DISPLAY_TURET_POSE = true;
   public static boolean DISPLAY_TARGET = true;
   public static boolean CAN_SHOOT = false;
   public static boolean ABOUT_TO_BE_ABLE_TO_SHOOT = false;
@@ -85,11 +89,21 @@ public class RobotContainer
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                                             () -> driverJoystick.getY() * -1,
                                                             () -> driverJoystick.getX() * -1)
-                                                        .withControllerRotationAxis(() -> driverJoystick.getTwist() * 0.65)
+                                                        .withControllerRotationAxis(() -> driverJoystick.getTwist() * -0.65)
                                                         .deadband(OperatorConstants.DEADBAND)
                                                         .scaleTranslation(0.8)
                                                         .allianceRelativeControl(true);                                                            
 
+  SwerveInputStream driveAngularVelocityPrecise = SwerveInputStream.of(drivebase.getSwerveDrive(),
+                                                            () -> driverJoystick.getY() * -0.5,
+                                                            () -> driverJoystick.getX() * -0.5)
+                                                        .withControllerRotationAxis(() -> driverJoystick.getTwist() * -0.65)
+                                                        .deadband(OperatorConstants.DEADBAND)
+                                                        .scaleTranslation(0.8)
+                                                        .allianceRelativeControl(true);                                                            
+
+
+                                                         
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
    */
@@ -140,11 +154,35 @@ public class RobotContainer
     // Configure the trigger bindings
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
+
+    DoubleSupplier doubleSupplierZero = () -> 0.0;
     
     //Create the NamedCommands that will be used in PathPlanner
-    NamedCommands.registerCommand("AutoAlign R", new ActiveDriveToPose(drivebase, true,GoalType.Climber_Right));    
-    NamedCommands.registerCommand("AutoAlign L", new ActiveDriveToPose(drivebase, true,GoalType.Climber_Left));    
-
+    NamedCommands.registerCommand("Shoot 5sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(5));    
+    NamedCommands.registerCommand("Shoot 3sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(3));  
+    NamedCommands.registerCommand("Shoot 2sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(2));  
+    NamedCommands.registerCommand("Shoot 1sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(1));  
+    NamedCommands.registerCommand("wait 1/2 second", new WaitCommand(0.5));
+    NamedCommands.registerCommand("Deploy Intake", new Deploy(intakeSubsystem));    
+    NamedCommands.registerCommand("Retract Intake",new Retract(intakeSubsystem));
+    NamedCommands.registerCommand("Toggle Intake",Commands.runOnce(intakeSubsystem::toggleIntake));
+    NamedCommands.registerCommand("Align Turret",new TurretAlign(Constants.TurretConstants.ALIGN_ANGLE_OFFSET)); //Try to start -20 and rotate to find zero switch
+    //Raise intake and then prepare climber to climb
+    NamedCommands.registerCommand("Prepare to Climb", new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
+    //Once close to Left Climber, drives to the left climb and run climber until stopped
+    NamedCommands.registerCommand("Drive to and Climb L",
+                                     new ParallelRaceGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left_Step1), new WaitCommand(1))
+                                     .andThen(new WaitCommand(0.3))                                    
+                                     .andThen(new ParallelRaceGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Left_Step2), new WaitCommand(1)))
+                                                                        
+                                     .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
+    NamedCommands.registerCommand("Drive to and Climb R",
+                                     new ParallelRaceGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Right_Step1), new WaitCommand(1))
+                                     .andThen(new WaitCommand(0.3))                                    
+                                     .andThen(new ParallelRaceGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Right_Step2), new WaitCommand(1)))
+                                                                       
+                                     .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
+                                     
     //Have the autoChooser pull in all PathPlanner autos as options
     autoChooser = AutoBuilder.buildAutoChooser();
 
@@ -244,43 +282,55 @@ public class RobotContainer
       
       //Start or stop aiming at target, call the TurretAim to toggle on/off      
       driverJoystick.button(14).onTrue(new TurretAutoAim());
-      //manual aim override button
-      driverJoystick.button(12).whileTrue(new TurretManualAim());
+      copilotSNESController.button(2).whileTrue(new TurretAutoAim());
+      
       driverJoystick.povUp().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(0);}));
       driverJoystick.povDown().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(180);}));
       driverJoystick.povLeft().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(90);}));
       driverJoystick.povRight().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(270);}));
 
       //Shoot while button is held, auto distance
-      driverJoystick.button(1).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
+      driverJoystick.button(1).whileTrue(
+                                          new Shoot(launchSubsystem, stageSubsystem, false));
+      copilotSNESController.button(5).whileTrue(new ParallelCommandGroup(
+                                          drivebase.driveFieldOriented(driveAngularVelocityPrecise),
+                                          new Shoot(launchSubsystem, stageSubsystem, false)));
       //Shoot with manual velocity control
-      driverJoystick.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, true));
+      driverJoystick.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
 
       //Outake while button is held
-      driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem));
+      driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem, intakeSubsystem));
 
       //Intake deploy/retract
       driverJoystick.button(4).onTrue(new Deploy(intakeSubsystem));
+      copilotSNESController.axisLessThan(0,-0.5).onTrue(new Deploy(intakeSubsystem));
       driverJoystick.button(3).onTrue(new Retract(intakeSubsystem));
+      copilotSNESController.axisGreaterThan(0,0.5).onTrue(new Retract(intakeSubsystem));
+      //Run intake while this button is off and stop when button is on
+      copilotSNESController.button(3).onTrue(Commands.runOnce(intakeSubsystem::toggleIntake));
+      //Run intake max speed while held
+      copilotSNESController.button(6).onTrue(Commands.runOnce(() -> { intakeSubsystem.setIntakeMax(true);;}));
+      copilotSNESController.button(6).onFalse(Commands.runOnce(() -> { intakeSubsystem.setIntakeMax(false);;}));
 
       //Climber
-      driverJoystick.button(7).onTrue(new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
-      driverJoystick.button(8).onTrue(new Climb(climberSubsystem));
-      driverJoystick.button(9).onTrue(new StowClimber(climberSubsystem));
-      
-      //CO-Pilot overrides
-      //Manually Aim when on
-      copilotBoxController.button(10).whileTrue(new TurretManualAim());
       //climber stow/prepare
-      copilotBoxController.button(7).onTrue(new StowClimber(climberSubsystem));
-      copilotBoxController.button(8).onTrue(new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
-      //Run intake while this button is off and stop when button is on
-      //copilotBoxController.button(6).whileFalse(Commands.runOnce(intakeSubsystem::overrideStopIntake).repeatedly());
-      //Stow the climber when on every X seconds
-      //copilotBoxController.button(10).whileTrue(new StowClimber(climberSubsystem,3));
-      //copilotBoxController.button(6).whileTrue(Commands.runOnce(intakeSubsystem::overrideStartIntake).repeatedly());
+      driverJoystick.button(7).onTrue(new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
+      copilotSNESController.button(9).onTrue(new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
+      //climb
+      driverJoystick.button(8).onTrue(new Climb(climberSubsystem));
+      copilotSNESController.button(10).onTrue(new Climb(climberSubsystem));
+      //Stow
+      driverJoystick.button(9).onTrue(new StowClimber(climberSubsystem));
+      copilotSNESController.button(4).onTrue(new StowClimber(climberSubsystem));
+      
+      //Try to home the turret
+      copilotSNESController.button(1).onTrue(new TurretAlign(Constants.TurretConstants.ALIGN_ANGLE_OFFSET));
+      //Manually Aim when on
+      //copilotBoxController.button(10).whileTrue(new TurretManualAim());
+
       //Test later
-      driverJoystick.button(6).whileTrue(new SequentialCommandGroup(new ActiveDriveToPose(drivebase, true, GoalType.Climber_Right),new Climb(climberSubsystem)));
+      driverJoystick.button(6).whileTrue(new ActiveDriveToPose(drivebase,false, ActiveDriveToPose.GoalType.Climber_Left_Step1)); // in auto = false
+      //driverJoystick.button(6).whileTrue(drivebase.driveToClimb(ActiveDriveToPose.GoalType.Climber_Left,false)); // true = use active drive, false use pathplanner (sHOW TAG)
     }
   }
 

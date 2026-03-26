@@ -6,6 +6,9 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import java.util.List;
+import java.util.Arrays;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -26,12 +29,18 @@ import swervelib.math.Matter;
  */
 public final class Constants {
   public static final double ROBOT_BATTARY_MASS = Units.lbsToKilograms(12.89);
-  public static final double ROBOT_BUMPER_MASS = Units.lbsToKilograms(9);
-  public static final double ROBOT_CHASSIS_MASS = Units.lbsToKilograms(106);
+  public static final double ROBOT_BUMPER_MASS = Units.lbsToKilograms(9.5);
+  public static final double ROBOT_CHASSIS_MASS = Units.lbsToKilograms(109.4);
   public static final double ROBOT_MASS = ROBOT_BATTARY_MASS + ROBOT_BUMPER_MASS + ROBOT_CHASSIS_MASS;
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
   public static final double MAX_SPEED  = Units.feetToMeters(14.5);
+
+  //The max distance we will accept a photonvision tag
+  public static final double MAX_TAG_DISTANCE = 5.0;
+
+  public static final boolean CALIBRATION_MODE = true;
+  public static final boolean CALIBRATION_MODE_EXTREME = false;
 
   public static class OperatorConstants 
   {
@@ -69,7 +78,7 @@ public final class Constants {
     public static final double ALIGNMENT_SWITCH_ANGLE_CCW = 312.12; // When moving CCW
     public static final double START_TURRET_ANGLE = 0; //The angle the turret starts in
     public static final double MAX_ANGLE_ERROR = 15; //If the turret is off by this or more when the switch is hit then update the angle
-    public static final double ANGLE_DEADBAND = 3.0; //If we get within one degree when moving to set point that is close enough
+    public static final double ANGLE_DEADBAND = 1.0; //If we get within one degree when moving to set point that is close enough
     public static final boolean USE_LIMIT_SWITCH = false;
 
     public static final double MID_FIELD_Y = Units.inchesToMeters(158.84);
@@ -77,12 +86,10 @@ public final class Constants {
     public static final double BLUE_X_PLAYER = Units.inchesToMeters(182.11);
 
     public static final Pose2d RED_HUB_POSE = new Pose2d(RED_X_PLAYER, MID_FIELD_Y, new Rotation2d(0)); 
-    public static final Pose2d RED_BOTTOM_POSE = new Pose2d(RED_X_PLAYER, (MID_FIELD_Y * 0.5), new Rotation2d(0)); 
-//    public static final Pose2d RED_BOTTOM_POSE = new Pose2d(RED_X_PLAYER+(BLUE_X_PLAYER/2), (MID_FIELD_Y * 0.5), new Rotation2d(0)); 
+    public static final Pose2d RED_BOTTOM_POSE = new Pose2d(RED_X_PLAYER + 1, (MID_FIELD_Y * 0.5), new Rotation2d(0)); 
     public static final Pose2d RED_TOP_POSE = new Pose2d(RED_BOTTOM_POSE.getX(), (MID_FIELD_Y * 1.5), new Rotation2d(0)); 
     public static final Pose2d BLUE_HUB_POSE = new Pose2d(BLUE_X_PLAYER, MID_FIELD_Y, new Rotation2d(0)); 
-//    public static final Pose2d BLUE_BOTTOM_POSE = new Pose2d((BLUE_X_PLAYER/2), RED_BOTTOM_POSE.getY(), new Rotation2d(0)); 
-    public static final Pose2d BLUE_BOTTOM_POSE = new Pose2d(BLUE_X_PLAYER, RED_BOTTOM_POSE.getY(), new Rotation2d(0)); 
+    public static final Pose2d BLUE_BOTTOM_POSE = new Pose2d(BLUE_X_PLAYER - 1, RED_BOTTOM_POSE.getY(), new Rotation2d(0)); 
     public static final Pose2d BLUE_TOP_POSE = new Pose2d(BLUE_BOTTOM_POSE.getX(), RED_TOP_POSE.getY(), new Rotation2d(0)); 
 
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_BACK = new Transform2d(Units.inchesToMeters(-7),0,new Rotation2d(0));
@@ -91,10 +98,22 @@ public final class Constants {
     //public static final Transform2d CENTER_TURRET_FROM_CENTER_BOT_RIGHT = new Transform2d(0,Units.inchesToMeters(-7),new Rotation2d(0));
     //public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(6.125),Units.inchesToMeters(3.25),new Rotation2d(0));
     public static final Transform2d BACK_LEFT_TURRET_FROM_CENTER_BOT = new Transform2d(Units.inchesToMeters(-3.25),Units.inchesToMeters(6.125),new Rotation2d(0));
-    public static final double TURRET_ANGLE_OFFSET = 0; //Offset all targets by 30 degrees clockwise
+    public static final double TURRET_LAUNCHER_CORRECTION_FRWD = 0; //Will be used with the sin of the angle to create an offset
+    public static final double TURRET_LAUNCHER_CORRECTION_BWD = 0; //10; //Will be used with the sin of the angle to create an offset
+    public static final double CORRECTION_DEADBAND = 0.2;
+
+    public static final double HOOD_ANGLE_DEG = 70;
+
+    public static final int ALIGN_ANGLE_OFFSET = 30;
+    public static final int ALIGN_INC_SIZE = 3;
+    //friction, air resistance, etc
+    public static final double PHYSICS_FACTOR_LONG = 0.75;
+    public static final double PHYSICS_FACTOR_SHORT = 0.8;
+    public static final double PHYSICS_FACTOR_DISTANCE = 3; //meters
+    public static final double PHYSICS_FACTOR_SPEED = 3; //kvel matches for some reason
 
     //Future pose calculation
-    public static final double LATENCY_SEC = 0.25;    
+    public static final double LATENCY_SEC = 0.2;    
     public static final boolean USE_FUTURE_POSE = true;
   }
   
@@ -108,11 +127,20 @@ public final class Constants {
 
     public static final int INTAKE_MOTOR_ID = 14;
     public static double INTAKE_MOTOR_POWER = 14.0;
+    public static double INTAKE_MOTOR_MAX_POWER = 14; //volts
     public static boolean INTAKE_MOTOR_INVERSE = true;
 
     //For stall checks
-    public static double INTAKE_MIN_POSITION_MOVEMENT = 0.02; /* Minimum movement in check_ms interval for stalled */
-    public static int INTAKE_STALL_CHECK_MS = 50; /* MS between stall checks */
+    public static double INTAKE_MIN_POSITION_MOVEMENT = 1; /* Minimum movement in check_ms interval for stalled */
+    public static int INTAKE_STALL_CHECK_MS = 500; /* MS between stall checks */
+
+    //PID velocity control
+    public static double SLOT1_KP = 0.00005;
+    public static double SLOT1_KI = 0.0;
+    public static double SLOT1_KD = 0.0;
+    public static double SLOT1_kV = 0.0016;
+    public static double MAX_OUTPUT = 1;
+    public static final double TARGET_VELOCITY_RPM = 1000; 
   }
 
   public static class Climber
@@ -122,27 +150,41 @@ public final class Constants {
     public static final int SECONDARY_MOTOR_ID = 17; 
     
     public static double MAX_POWER = 14.0;
+    public static double MAX_REVERSE_POWER = -1 * MAX_POWER;
     public static double SLOW_REVERSE_SPEED = -0.3 * MAX_POWER;
     public static double SLOW_FORWARD_SPEED = 0.3 * MAX_POWER;
 
     public static int CLIMBER_TIMEOUT_SEC = 4;
     public static double STOW_TIMEOUT_SEC = 1.5;
     public static boolean INVERT = true;
-    public static double ROTATIONS_FULLY_EXTENDED = 23.5; //Rotation count when fully extended, determine actual number
+    public static double ROTATIONS_FULLY_EXTENDED = 27.0; //Rotation count when fully extended, determine actual number
     public static double ROTATIONS_AT_CLIMB = 3.4; //Rotation count when fully at climb, fallback to if we drive past limit
     public static double MAX_ROTATIONS_IN_FRAME = 1; //Max motor rotations and still keep climber in frame
     public static double MAX_ROTATIONS_UNDER_BAR = 0.3; //Max motor rotations and still keep climber under bar for travel
 
     //Climber Poses for Blue/Red/Right/Left
-    //TODO: Define these poses
-    public static final Pose2d RED_LEFT_POSE = new Pose2d(new Translation2d(Meter.of(16), Meter.of(4)), Rotation2d.fromDegrees(0));
-    public static final Pose2d RED_RIGHT_POSE = new Pose2d(new Translation2d(Meter.of(16), Meter.of(4)), Rotation2d.fromDegrees(0));
-    public static final Pose2d BLUE_LEFT_POSE = new Pose2d(Units.inchesToMeters(18.5),Units.inchesToMeters(251.84), Rotation2d.fromDegrees(180));
-    public static final Pose2d BLUE_RIGHT_POSE = new Pose2d(Units.inchesToMeters(18.5),Units.inchesToMeters(251.84), Rotation2d.fromDegrees(180));
-
+    //climb suppoorts 45.25 inches from tag approx, left side is centered on tags 16,32 
+    //16 pose = 16.5329616,3.8917626, AprilTag16 X + 45 inches?, Y== = Left
+    //32 pose = 0.008, 4.1775126, AprilTag32 X - 45 inches?, Y== = Left
+    //Right pose = Left pose, Red Y + 0.86 meter?, Blue Y - 0.86 meter?
+    //45.25 inch = 1.14935 meters
+    public static final double CLIMBER_BUFFER_SPACE = Units.inchesToMeters(6); //This is about the size of the climber arms.  Get only this close in the first pass
+    public static final Pose2d RED_LEFT_POSE_STEP1 = new Pose2d(15.10-CLIMBER_BUFFER_SPACE, 3.91,Rotation2d.fromDegrees(-90));
+    public static final Pose2d RED_RIGHT_POSE_STEP1 = new Pose2d(15.10-CLIMBER_BUFFER_SPACE,4.76, Rotation2d.fromDegrees(-90));
+    public static final Pose2d BLUE_LEFT_POSE_STEP1 = new Pose2d(1.50+CLIMBER_BUFFER_SPACE,4.17, Rotation2d.fromDegrees(90));
+    public static final Pose2d BLUE_RIGHT_POSE_STEP1 = new Pose2d(1.50+CLIMBER_BUFFER_SPACE,3.31, Rotation2d.fromDegrees(90));
+    public static final Pose2d RED_LEFT_POSE_STEP2 = new Pose2d(15.10, 3.91,Rotation2d.fromDegrees(-90));
+    public static final Pose2d RED_RIGHT_POSE_STEP2 = new Pose2d(15.10,4.76, Rotation2d.fromDegrees(-90));
+    public static final Pose2d BLUE_LEFT_POSE_STEP2 = new Pose2d(1.50,4.17, Rotation2d.fromDegrees(90));
+    public static final Pose2d BLUE_RIGHT_POSE_STEP2 = new Pose2d(1.50,3.31, Rotation2d.fromDegrees(90));
+    
     //For stall checks
     public static double MIN_POSITION_MOVEMENT = 0.02; /* Minimum movement in check_ms interval for stalled */
-    public static int STALL_CHECK_MS = 50; /* MS between stall checks */
+    public static int STALL_CHECK_MS = 100; /* MS between stall checks */
+
+    // This will be used to ignore climber tags when stowed and only use them when not stowed
+    public static boolean IGNORE_CLIMBER_TAGS_WHEN_STOWED = false;
+    public static final List<Integer> CLIMBER_TAG_LIST = Arrays.asList(15,16,31,32);
   }
 
   public static class StageConstants {
@@ -156,17 +198,17 @@ public final class Constants {
     public static double MAX_OUTPUT = 1.0;
     public static final double MAX_ACCELERATION = 0.5; // Max acceleration in units/sec^2
     public static final int MAX_CURRENT = 40; //amps
-    public static final double MAX_VOLTAGE = 14;  // Max voltage when in non-pid mode
+    public static final double MAX_VOLTAGE = 10;  // Max voltage when in non-pid mode
     public static final double TARGET_VELOCITY_RPS = 7000; 
     //not used for now
     public static final double TOLERANCE = 500; //rps
 
     public static final int SPINDEXER_MOTOR_ID = 15;
-    public static double SPINDEXER_MOTOR_POWER = 3.0;
+    public static double SPINDEXER_MOTOR_POWER = 8.0;
     public static boolean SPINDEXER_INVERSE = true;
 
     public static final int OMNIDEXER_MOTOR_ID = 18;
-    public static double OMNIDEXER_MOTOR_POWER = 3.0;
+    public static double OMNIDEXER_MOTOR_POWER = 10.0;
   }
 
   public static class LaunchConstants {
@@ -185,8 +227,9 @@ public final class Constants {
     public static final double MAX_ACCELERATION = 0.5 ;
     public static final int MAX_CURRENT = 60; //amps
     public static final double MAX_VOLTAGE = 12; //volts
-    public static final double TARGET_VELOCITY_RPM = 2700; 
-    public static final double TOLERANCE = 50; //rps
+    public static final double TARGET_VELOCITY_RPM = 3500; 
+    public static final double TOLERANCE = 50; //rpm
+    public static final double WHEEL_DIAMETER_IN = 4;
 
     public static final double MAX_SHOOTING_DISTANCE = 4.5; //Max distance we can shoot at max velocity in meters
     public static final double MIN_SHOOTING_MIN_VELOCITY_RPM = 1100;
@@ -207,8 +250,13 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints positionPIDConstraints = new Constraints(MAX_SPEED/*meters per second */, 12 /*meters per second per second*/);
     public static final TrapezoidProfile.Constraints rotationPIDConstraints = new Constraints(2/*radians per second */, 2 /*radians per second per second*/);
 
-    public static final double rotationKP = 4.0;
+    public static final double rotationKP = 1.0;
     public static final double rotationKI = 0.00;
     public static final double rotationKD = 0.00;
+
+    public static final double POSITION_TOLERANCE = 0.050;
+
+    //The size of the climber arms.  Make waypoint to climb this much smaller so the robot can still move sideways
+    public static final double WAY_POINT_BEHIND_BAR = 6; // Inches
   }
 }

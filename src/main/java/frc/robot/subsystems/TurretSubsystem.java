@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+
 import org.photonvision.PhotonUtils;
 
 import com.revrobotics.PersistMode;
@@ -19,6 +20,7 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Behavior;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,8 +32,8 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class TurretSubsystem extends SubsystemBase {
      
-    private static boolean CALIBRATION_MODE = true;
-    private static boolean CALIBRATION_MODE_EXTREME = false;
+    private static boolean CALIBRATION_MODE = Constants.CALIBRATION_MODE;
+    private static boolean CALIBRATION_MODE_EXTREME = Constants.CALIBRATION_MODE_EXTREME;
 
     // PID Gains and Motion Profile Constraints
     private static double kP = Constants.TurretConstants.KP;
@@ -249,37 +251,241 @@ public class TurretSubsystem extends SubsystemBase {
     public void zeroEncoder()
     {
         turretEncoder.setPosition(0);
+        //set the zetpoint back to zero
+         closedLoopController.setSetpoint(0, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+    }
+
+    /**
+     * Try a new shoot on the move when not in neutral zone
+     */
+    private void autoAimToBestTargetNEW()
+    {
+      Pose2d robotPose = swerveSubsystem.getPose();
+      //Transform robot pose
+      Pose2d turretPose = robotPose.plus(Constants.TurretConstants.BACK_LEFT_TURRET_FROM_CENTER_BOT);
+      //Find new target based on robot positon
+      targetPose = findTargetToAim(turretPose);    
+      //Angle if robot is still
+      targetAngle = getAngle(turretPose, targetPose);
+      //Use PhotonVision helper method to get distance
+      distanceToTarget = PhotonUtils.getDistanceToPose(turretPose, targetPose);        
+
+      //Use the future pose to aim and target distance
+      if ((Constants.TurretConstants.USE_FUTURE_POSE) && (lastTaget == 1 || lastTaget ==4))
+      {
+        //Use Matt's Formula
+        ChassisSpeeds robotSpeed = swerveSubsystem.getRobotVelocity();
+
+        //Check if robot is moving and skip if not moving
+        if (robotSpeed.vxMetersPerSecond > 0.05 || robotSpeed.vyMetersPerSecond > 0.05)
+        {
+          ChassisSpeeds fieldSpeed = swerveSubsystem.getFieldVelocity();
+          //Get the hub we are focused on
+          Pose2d hubPose = Robot.isRedAlliance ? Constants.TurretConstants.RED_HUB_POSE : Constants.TurretConstants.BLUE_HUB_POSE;
+          
+          double omegaHub = Math.atan2((hubPose.getY() - turretPose.getY()), (hubPose.getX() - turretPose.getX()));
+          //360 normalize
+          omegaHub = omegaHub + 360;
+          omegaHub = omegaHub % 360;
+
+          double omegaHubDeg = Units.radiansToDegrees(omegaHub);
+          double robotFieldTravelAngleRad = Math.atan2(fieldSpeed.vyMetersPerSecond, fieldSpeed.vxMetersPerSecond);
+          double omegaRh = Units.radiansToDegrees(robotFieldTravelAngleRad) - omegaHubDeg;
+          //360 normalize
+          omegaRh = omegaRh + 360;
+          omegaRh = omegaRh % 360;
+
+          double omegaRhRad = Units.degreesToRadians(omegaRh);
+          double speedR = Math.hypot(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond);
+          double speedRt = (-1 * speedR) * Math.cos(omegaRhRad);
+          double speedRp = speedR * Math.sin(omegaRhRad);
+
+          //Use measured airtime equation
+          //double speedLs = getHorizontalBallVelocityByDistance(distanceToTarget);
+          //Use physics for Velo ball
+          double speedLs = getBallValocityByDistance(distanceToTarget);
+          
+          double speedL = Math.sqrt(Math.pow((speedLs - speedRt),2) + (speedRp * speedRp));
+          //get fake distance to target using measured airtime equation to go from horizontal ball speed to distance or launch wheel speed
+          //distanceToTarget = getFakeDistanceByHorizontalBallVelocity(speedL);
+          //use physics to get distance from vel ball
+          distanceToTarget = getCalcDistanceByHorizontalBallVelocity(speedL);
+          
+          double omegaO = Math.atan2(speedRp,speedL);
+          double omegaODeg = Units.radiansToDegrees(omegaO);
+
+          //use omegaO as an update to targetAngle
+          targetAngle = targetAngle - omegaODeg;
+          //Put back to -359 to 359 range
+          targetAngle = targetAngle + 360;
+          targetAngle = targetAngle % 360;
+
+          //For debugging
+          SmartDashboard.putNumber("Turret omegaHubDeg", omegaHubDeg);
+          SmartDashboard.putNumber("Turret omegaRh", omegaRh);
+          SmartDashboard.putNumber("Turret speedR", speedR);
+          SmartDashboard.putNumber("Turret speedRt", speedRt);
+          SmartDashboard.putNumber("Turret speedRp", speedRp);
+          SmartDashboard.putNumber("Turret speedLs", speedLs);
+          SmartDashboard.putNumber("Turret speedL", speedL);
+          SmartDashboard.putNumber("Turret omegaODeg", omegaODeg);
+          SmartDashboard.putNumber("Turret Robot travel angle", Units.radiansToDegrees(robotFieldTravelAngleRad));
+        }
+      }
+      //Adjust Angle by offset, We found the angle is off when facing forward by left, and  right when facing backward
+      /*
+      double sinAngle = Math.sin(Units.degreesToRadians(targetAngle));
+      if (sinAngle > Constants.TurretConstants.CORRECTION_DEADBAND)
+        targetAngle += sinAngle * Constants.TurretConstants.TURRET_LAUNCHER_CORRECTION_FRWD;
+      if (sinAngle < (-1*Constants.TurretConstants.CORRECTION_DEADBAND))
+        targetAngle += sinAngle * Constants.TurretConstants.TURRET_LAUNCHER_CORRECTION_BWD;
+      */
+
+      //Adjust the manually found offsets
+      //targetAngle = adjustMeasuredOffset(targetAngle);
+
+      //Plot the turret on the field
+      if (RobotContainer.DISPLAY_TURET_POSE)
+      {
+        m_field.getObject("TurretPose").setPose(turretPose);
+      }
+
+      //update the turret setpoint
+      setTurretSetPoint(targetAngle);
     }
 
     /**
      * Finds the best target and sets the turret to aim there
      */
-    private void autoAimToBestTarget()
+    private void autoAimToBestTargetOLD()
     {
         Pose2d robotPose = swerveSubsystem.getPose();
 
         //Transform robot pose
         Pose2d turretPose = robotPose.plus(Constants.TurretConstants.BACK_LEFT_TURRET_FROM_CENTER_BOT);
 
+        //calculate latency
+
         //If we want to use a future pose based on current velocity
-        var robotSpeed = RobotContainer.drivebase.getRobotVelocity();
+        var robotSpeed = RobotContainer.drivebase.getFieldVelocity();
+
+        //Get zero moving distnace
+        Pose2d zeroPose = findTargetToAim(turretPose);    
+        double distanceZeroSpeed = PhotonUtils.getDistanceToPose(turretPose, zeroPose);
+        // old: before pi day
+        //double airTimeZero = (distanceZeroSpeed *  0.44) + 0.427;
+        //new as of pi day, from data saved on "Shooting data" google sheet, tab 2
+        double airTimeZero = getAirTimeByDistance_UNUSED(distanceZeroSpeed);
+        Translation2d futureTranslation1 = turretPose.getTranslation().plus(new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond).times(airTimeZero));
+        Pose2d futurePose1 = new Pose2d(futureTranslation1, turretPose.getRotation().plus(new Rotation2d( + robotSpeed.omegaRadiansPerSecond * airTimeZero)));
+
+        //Get the airTime a second time based on this position
+        double distance2 = PhotonUtils.getDistanceToPose(turretPose, futurePose1);
+        double airTime2 =  getAirTimeByDistance_UNUSED(distance2);
+
+        //Update the dashboard if it is greater than .25 second update
+        if (Math.abs(airTime2 - x_latencySec) >= .125)
+        {
+          SmartDashboard.putNumber("Turret Latency (sec)",airTime2);
+          x_latencySec = airTime2;
+        }
+
         //Based on current robot speed find the future position of the turret by X seconds
         Translation2d futureTranslation = turretPose.getTranslation().plus(new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond).times(x_latencySec));
         Pose2d futurePose = new Pose2d(futureTranslation, turretPose.getRotation().plus(new Rotation2d( + robotSpeed.omegaRadiansPerSecond * x_latencySec)));
 
-        //Use the future pose to aim and target distance
-        if (Constants.TurretConstants.USE_FUTURE_POSE) turretPose = futurePose;
-        //Plot the turret on the field
-        if (RobotContainer.DISPLAY_TARGET)
-          m_field.getObject("TurretPose").setPose(turretPose);
-
         //Find new target based on robot positon
         targetPose = findTargetToAim(turretPose);    
+
+        //Use the future pose to aim and target distance
+        if ((Constants.TurretConstants.USE_FUTURE_POSE) && (lastTaget == 1 || lastTaget ==4)) turretPose = futurePose;
+
         targetAngle = getAngle(turretPose, targetPose);
+
         //Use PhotonVision helper method to get distance
         distanceToTarget = PhotonUtils.getDistanceToPose(turretPose, targetPose);
+
+        //Adjust Angle by offset, We found the angle is off when facing forward by left, and  right when facing backward
+        double cosAngle = Math.cos(targetAngle);
+        if (cosAngle > Constants.TurretConstants.CORRECTION_DEADBAND)
+          targetAngle += cosAngle * Constants.TurretConstants.TURRET_LAUNCHER_CORRECTION_FRWD;
+        if (cosAngle < (-1*Constants.TurretConstants.CORRECTION_DEADBAND))
+          targetAngle += cosAngle * Constants.TurretConstants.TURRET_LAUNCHER_CORRECTION_BWD;
+
+        //Plot the turret on the field
+        if (RobotContainer.DISPLAY_TURET_POSE)
+        {
+          m_field.getObject("TurretPose").setPose(turretPose);
+        }
+          
         //update the turret setpoint
         setTurretSetPoint(targetAngle);
+    }
+
+    public double getAirTimeByDistance_UNUSED(double distance)
+    {
+      // old: before pi day
+      //double airTimeZero = (distanceZeroSpeed *  0.44) + 0.427;
+      //new as of pi day, from data saved on "Shooting data" google sheet, tab 2
+      return (distance *  0.21) + 0.3769;      
+    }
+
+    //We measured the offset at various angles
+    public double adjustMeasuredOffset(double targetAngle)
+    {
+      double newAngle = targetAngle;
+      if (newAngle >330) newAngle += 7;
+      else if (newAngle >= 190 && newAngle <= 215) newAngle -= 15;
+      else if (newAngle >= 225 && newAngle <= 255) newAngle -= 2;
+      else if (newAngle <= 100 && newAngle >= 50) newAngle += 3;
+      else if (newAngle <= 15) newAngle += 7;
+
+      return newAngle;
+    }
+
+    /**
+     * Get the horizontal ball velocity based on distance to target
+     * @param distance
+     * @return
+     */
+    public double getHorizontalBallVelocityByDistance_UNUSED(double distance)
+    {
+      double airTime = getAirTimeByDistance_UNUSED(distance);
+      double horizontalVelocity = distance / airTime;
+      return horizontalVelocity;
+    }
+
+    public double getBallValocityByDistance(double distance)
+    { 
+      //Get the launch wheel velocity for this distance
+      double launchRPM = LaunchSubsystem.getVelocityByDistance(distance);  
+      double efficiencyFactor = Constants.TurretConstants.PHYSICS_FACTOR_LONG;
+      if (distance <= Constants.TurretConstants.PHYSICS_FACTOR_DISTANCE) efficiencyFactor = Constants.TurretConstants.PHYSICS_FACTOR_SHORT;
+      double xC = (efficiencyFactor * Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG)) * Constants.LaunchConstants.WHEEL_DIAMETER_IN * Math.PI) /60;
+      //get the ball velocity
+      double bVelocity = xC * launchRPM;
+
+      return bVelocity;
+    }
+
+    public double getCalcDistanceByHorizontalBallVelocity(double bVelocity)
+    {
+      //get launch RPM based on given ball velocity
+      double efficiencyFactor = Constants.TurretConstants.PHYSICS_FACTOR_LONG;
+      if (bVelocity <= Constants.TurretConstants.PHYSICS_FACTOR_SPEED) efficiencyFactor = Constants.TurretConstants.PHYSICS_FACTOR_SHORT;
+      double xC = (efficiencyFactor * Math.cos(Units.degreesToRadians(Constants.TurretConstants.HOOD_ANGLE_DEG)) * Constants.LaunchConstants.WHEEL_DIAMETER_IN * Math.PI) /60;
+      double launchRPM = bVelocity / xC;
+      //Lookup the distance based on the given launch velocity
+      double distance = LaunchSubsystem.getDistanceByRPM(launchRPM);
+
+      return distance;
+    }
+
+    /** Returns a fake distance measurement to get the wanted ball velocity */
+    public double getFakeDistanceByHorizontalBallVelocity_UNUSED(double bVelocity)
+    {
+      double fakeDistance = 0.284*bVelocity + 2.12;
+      return fakeDistance;
     }
 
     /**
@@ -322,6 +528,26 @@ public class TurretSubsystem extends SubsystemBase {
       else if (CALIBRATION_MODE) System.out.println("delta Angle too small");
 
       return updated;
+    }
+
+    /**
+     * Return is the turret is on the alignment switch
+     * @return
+     */
+    public boolean isOnAlignSwitch()
+    {
+      return turretAlignmentSwitch.isPressed();
+    }
+
+    /**
+     * Gets the current Turret angle in degrees
+     * @return
+     */
+    public double getCurrentAngle()
+    {
+      double currentMotorRotations = turretEncoder.getPosition();
+      double currentAngleRot2Degree = getTurretDegrees(currentMotorRotations);
+      return currentAngleRot2Degree;
     }
 
     /**
@@ -382,12 +608,14 @@ public class TurretSubsystem extends SubsystemBase {
             //check if auto aim is defined, if so get the new target
             if (isAutoAiming)
             {
-                autoAimToBestTarget();
+              //autoAimToBestTargetOLD();
+              autoAimToBestTargetNEW();
             }
             else if (isManuallyAiming)
             {
-                //Set the set point to the manual defined target
-                setTurretSetPoint(manualAimTargetDegrees);
+              //Set the set point to the manual defined target
+            if (CALIBRATION_MODE) manualAimTargetDegrees = SmartDashboard.getNumber("Turret Target Position", angleSetpoint);
+              setTurretSetPoint(manualAimTargetDegrees);
             }
             /*
             * Get the target position from SmartDashboard and set it as the setpoint
@@ -536,7 +764,8 @@ public class TurretSubsystem extends SubsystemBase {
     }  //End blue alliance
     //If no target is found turn off aim, do we need this??
     if (targetPose == null) isAutoAiming = false;
-    m_field.getObject("Target").setPose(targetPose);
+    if (RobotContainer.DISPLAY_TARGET)
+      m_field.getObject("Target").setPose(targetPose);
     return targetPose;
   }
 
@@ -585,8 +814,6 @@ public class TurretSubsystem extends SubsystemBase {
         System.out.println(output.toString());
         lastOuput = currentTime;
     }
-    //Adjust Angle by offset , We found the angle is off for some reason, fix with offset
-    relativeRotationDeg += Constants.TurretConstants.TURRET_ANGLE_OFFSET;
     //Right now set target to just the angle to tag
     return relativeRotationDeg;
   }
@@ -648,7 +875,7 @@ public class TurretSubsystem extends SubsystemBase {
         //convert from negative rotation to positive rotation degrees
         targetPositionDegrees = 360 + targetPositionDegrees;
     }
-
+    if (CALIBRATION_MODE) SmartDashboard.putNumber("Turret Target Position", targetPositionDegrees);
     manualAimTargetDegrees = targetPositionDegrees;
   }
 }

@@ -5,8 +5,7 @@
 package frc.robot;
 
 import java.util.Optional;
-
-import javax.lang.model.util.ElementScanner14;
+import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -36,6 +35,10 @@ public class Robot extends TimedRobot
 
   private RobotContainer m_robotContainer;
   public char AUTO_WINNER_CODE = 'U';
+  public static DoubleSupplier doubleSupplierZero = ()-> 0.0;
+  public static DoubleSupplier doubleSupplierSuperSlow = ()-> -0.1;
+  public static DoubleSupplier doubleSupplierSuperSlowRed = ()-> 0.1;
+  public static DoubleSupplier doubleSupplierSuperSlowBlue = ()-> -0.1;
 
   private Timer disabledTimer;
 
@@ -59,6 +62,9 @@ public class Robot extends TimedRobot
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
+    //populate Climber poses
+    populateClimberPoses();
+
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
@@ -70,6 +76,12 @@ public class Robot extends TimedRobot
 
     SmartDashboard.putBoolean("Match:Shoot Now", false);
     SmartDashboard.putBoolean("Match:About to shoot", false);
+  }
+
+  public void populateClimberPoses()
+  {
+    //TODO: use 16/32 april tags to build out red/blue right/left poses
+    //aprilTagFieldLayout_AllTags.getTagPose(16).get().getX()
   }
 
   /**
@@ -210,9 +222,9 @@ public class Robot extends TimedRobot
       m_robotContainer.setMotorBrake(false);
       disabledTimer.stop();
       disabledTimer.reset();
+      //Disable auto aim
+      RobotContainer.turretSubsystem.disableAutoAim();
     }
-    //Disable auto aim
-    RobotContainer.turretSubsystem.disableAutoAim();
   }
 
   /**
@@ -227,11 +239,12 @@ public class Robot extends TimedRobot
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     //Assign robot position
+    /**
     if (isRedAlliance)
       RobotContainer.drivebase.resetOdometry(Constants.DrivebaseConstants.INITITAL_RED_POSE);
     else
       RobotContainer.drivebase.resetOdometry(Constants.DrivebaseConstants.INITITAL_BLUE_POSE);
-
+    */
 
     //Print the selected autonomous command upon autonomous init
     System.out.println("Auto selected: " + m_autonomousCommand);
@@ -276,11 +289,13 @@ public class Robot extends TimedRobot
     //If we have not run auto set up initial pose
     if (!hasRunAuto)
     {
-      if (isRedAlliance)
+      /*if (isRedAlliance)
         RobotContainer.drivebase.resetOdometry(Constants.DrivebaseConstants.INITITAL_RED_POSE);
       else
         RobotContainer.drivebase.resetOdometry(Constants.DrivebaseConstants.INITITAL_BLUE_POSE);
+        */
       RobotContainer.turretSubsystem.zeroEncoder();
+      hasRunAuto = false;
     }
 
     //Enable auto aim
@@ -301,8 +316,8 @@ public class Robot extends TimedRobot
     SmartDashboard.putBoolean("Match:Shoot Now", RobotContainer.CAN_SHOOT);
     SmartDashboard.putBoolean("Match:About to shoot", RobotContainer.ABOUT_TO_BE_ABLE_TO_SHOOT);
 
-    //adjust tweaked distance with joystick slider
-    RobotContainer.launchSubsystem.updateTweakDistance(RobotContainer.driverJoystick.getRawAxis(3));
+    //adjust tweaked distance with joystick slider, disble for now
+    //RobotContainer.launchSubsystem.updateTweakDistance(RobotContainer.driverJoystick.getRawAxis(3));
   }
 
 
@@ -344,6 +359,11 @@ public class Robot extends TimedRobot
     {
       isRedAlliance = myAlliance.get() == Alliance.Red;
     }
+    //Update doubleSupplier for the auto climb
+    if (isRedAlliance) 
+      doubleSupplierSuperSlow = doubleSupplierSuperSlowRed; 
+    else 
+      doubleSupplierSuperSlow = doubleSupplierSuperSlowBlue;
   }
 
 }

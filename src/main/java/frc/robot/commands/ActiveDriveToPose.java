@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -17,18 +16,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ActiveDriveToPose extends Command {
 
   public enum GoalType {
-    Climber_Right,
-    Climber_Left
+    Climber_Right_Step1,
+    Climber_Left_Step1,
+    Climber_Right_Step2,
+    Climber_Left_Step2
   }
 
-  private GoalType goalType = GoalType.Climber_Right;
+  private GoalType goalType = GoalType.Climber_Right_Step1;
 
   private SwerveSubsystem drivetrain;
   private Pose2d goalPose2d = Pose2d.kZero;
@@ -38,11 +39,10 @@ public class ActiveDriveToPose extends Command {
   private Timer loopTimer = new Timer();
   private boolean inAuto = true;
   private boolean atTolerance = false;
+  private boolean errorFinish = false;
   private Timer timeAtTolerance = new Timer();
 
   private PIDController positionController = new PIDController(AutonConstants.positionKP, AutonConstants.positionKI, AutonConstants.positionKD);
-//  private TrapezoidProfile.State previousPositionState = new State(0, 0);
-//  private TrapezoidProfile positionTrapezoidProfile = new TrapezoidProfile(AutonConstants.positionPIDConstraints);
 
   private PIDController positionXController = new PIDController(AutonConstants.positionKP, AutonConstants.positionKI, AutonConstants.positionKD);
   private TrapezoidProfile.State previousPositionXState = new State(0, 0);
@@ -53,17 +53,14 @@ public class ActiveDriveToPose extends Command {
   private TrapezoidProfile positionYTrapezoidProfile = new TrapezoidProfile(AutonConstants.positionPIDConstraints);
   
   private PIDController rotationController = new PIDController(AutonConstants.rotationKP, AutonConstants.rotationKI, AutonConstants.rotationKD);
-//  private TrapezoidProfile.State previousRotationState = new State(0, 0);
-//  private TrapezoidProfile positionRotationProfile = new TrapezoidProfile(AutonConstants.rotationPIDConstraints);
 
   /** Creates a new ActiveDriveToGoalPose. */
   public ActiveDriveToPose(SwerveSubsystem swerveSubsystem, boolean inAutonomous, GoalType goal) 
   {
     drivetrain = swerveSubsystem;
-
     goalType = goal;
+    errorFinish = false;   
 
-    isRed = Robot.isRedAlliance;
     inAuto = inAutonomous;    
 
     rotationController.enableContinuousInput(-Math.PI, Math.PI);
@@ -78,50 +75,57 @@ public class ActiveDriveToPose extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    if(goalType == GoalType.Climber_Left)
-    {
-      goalPose2d = (isRed ? Constants.Climber.RED_LEFT_POSE: Constants.Climber.BLUE_LEFT_POSE);
-    }
-    else if (goalType == GoalType.Climber_Right){
-      goalPose2d = (isRed ? Constants.Climber.RED_RIGHT_POSE: Constants.Climber.BLUE_RIGHT_POSE);
-    }
-    else
-    {
-      goalPose2d = drivetrain.getPose();
-    }
-
-    atTolerance = false;
+  public void initialize() 
+  {
+    isRed = Robot.isRedAlliance;
     
-    poseError = drivetrain.getPose().minus(goalPose2d);
-    drivetrain.goalPose2d = goalPose2d;
-    
-    ChassisSpeeds currentSpeeds = drivetrain.getRobotVelocity();
+    if (goalType == GoalType.Climber_Right_Step1) { if (isRed) goalPose2d =Constants.Climber.RED_RIGHT_POSE_STEP1; else goalPose2d =Constants.Climber.BLUE_RIGHT_POSE_STEP1; }
+    else if (goalType == GoalType.Climber_Right_Step2) { if (isRed) goalPose2d =Constants.Climber.RED_RIGHT_POSE_STEP2; else goalPose2d =Constants.Climber.BLUE_RIGHT_POSE_STEP2; }
+    else if (goalType == GoalType.Climber_Left_Step1) { if (isRed) goalPose2d =Constants.Climber.RED_LEFT_POSE_STEP1; else goalPose2d =Constants.Climber.BLUE_LEFT_POSE_STEP1; }
+    else if (goalType == GoalType.Climber_Left_Step2) { if (isRed) goalPose2d =Constants.Climber.RED_LEFT_POSE_STEP2; else goalPose2d =Constants.Climber.BLUE_LEFT_POSE_STEP2; }
+    else errorFinish = true; /*No correct goal passed, return error */
 
-    previousPositionXState.position = poseError.getX();
-    previousPositionXState.velocity = -currentSpeeds.vxMetersPerSecond;//might need to be negative
+    if (!errorFinish)
+    {
+        atTolerance = false;
 
-    previousPositionYState.position = poseError.getY();
-    previousPositionYState.velocity = -currentSpeeds.vyMetersPerSecond;//might need to be negative
+        poseError = drivetrain.getPose().minus(goalPose2d);
+        drivetrain.goalPose2d = goalPose2d;
+        
+        ChassisSpeeds currentSpeeds = drivetrain.getRobotVelocity();
 
-    loopTimer.restart();
+        previousPositionXState.position = poseError.getX();
+        previousPositionXState.velocity = -currentSpeeds.vxMetersPerSecond;//might need to be negative
+
+        previousPositionYState.position = poseError.getY();
+        previousPositionYState.velocity = -currentSpeeds.vyMetersPerSecond;//might need to be negative
+
+        loopTimer.restart();
+    }
+    end(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() 
   {
+    //end early on any error
+    if (errorFinish) end(false);
+
     Pose2d currentPose = drivetrain.getPose();
     poseError = currentPose.minus(goalPose2d);
-    Translation2d translationError = poseError.getTranslation();
 
+    //Draw goal on field
+    if (RobotContainer.DISPLAY_CLIMB_TARGET_POSE)
+    {
+      RobotContainer.drivebase.getField().getObject("Climber Target Pose").setPose(goalPose2d);       
+    }
+
+    Translation2d translationError = poseError.getTranslation();
     ChassisSpeeds currentSpeeds = drivetrain.getRobotVelocity();
 
-
     TrapezoidProfile.State currentPositionXState = new State(translationError.getX(), -currentSpeeds.vxMetersPerSecond);
-    
     TrapezoidProfile.State currentPositionYState = new State(translationError.getY(), -currentSpeeds.vyMetersPerSecond);
-
 
     previousPositionXState = positionXTrapezoidProfile.calculate(loopTimer.get(), currentPositionXState, new State(0,0));
     double positionXPIDOutput = positionXController.calculate(previousPositionXState.position, 0);
@@ -129,12 +133,11 @@ public class ActiveDriveToPose extends Command {
     previousPositionYState = positionYTrapezoidProfile.calculate(loopTimer.get(), currentPositionYState, new State(0,0));
     double positionYPIDOutput = positionYController.calculate(previousPositionYState.position, 0);
 
-    double rotationPIDOutput = rotationController.calculate(poseError.getRotation().getRadians(), 0);    
+    double rotationPIDOutput = rotationController.calculate(poseError.getRotation().getRadians(), 0);
+    
     ChassisSpeeds rrSpeeds = new ChassisSpeeds(positionXPIDOutput,positionYPIDOutput, rotationPIDOutput);
-
-
     drivetrain.setChassisSpeeds(rrSpeeds);
-
+    
     loopTimer.restart();
   }
 
@@ -143,17 +146,29 @@ public class ActiveDriveToPose extends Command {
   public void end(boolean interrupted) 
   {
     drivetrain.setChassisSpeeds(new ChassisSpeeds(0,0,0));
+    //remove item
+    if ((RobotContainer.DISPLAY_CLIMB_TARGET_POSE))
+        RobotContainer.drivebase.getField().getObject("Climber Target Pose").setPose(new Pose2d());      
   }
 
 
+  /**
+   * Check if we are close enough
+   * @return
+   */
   public boolean atToleranceFromGoal()
   {
     double angleError = poseError.getRotation().getDegrees();
+
     double positionErrorMagnitude = poseError.getTranslation().getDistance(Translation2d.kZero);
     
-    return (Math.abs(angleError) < 1.0) && positionErrorMagnitude < 0.035;    
+    return (Math.abs(angleError) < 1.0) && positionErrorMagnitude < Constants.AutonConstants.POSITION_TOLERANCE;    
   }
 
+  /**
+   * Are we at goal and in position to climb
+   * @return
+   */
   public boolean readyToClimb()
   {
     boolean nowAtTolerance = atToleranceFromGoal();

@@ -30,6 +30,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -37,6 +38,8 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
 import java.io.IOException;
@@ -92,7 +95,8 @@ public class SwerveSubsystem extends SubsystemBase
                                                                       Meter.of(4)),
                                                     Rotation2d.fromDegrees(180));
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    //SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.POSE;
     try
     {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED, startingPose);
@@ -146,8 +150,7 @@ public class SwerveSubsystem extends SubsystemBase
     if(robotPose.getTranslation().getDistance(endPose.getTranslation()) < 0.05) return new PrintCommand("Too close to the endpoint, canceling");
 
     if(robotPose == null) return new PrintCommand("For some reason you don't have a position, createTrajectoryToPose failed");
-    
-    
+        
     PathPlannerPath path = new PathPlannerPath(
       PathPlannerPath.waypointsFromPoses(robotPose, endPose),
      
@@ -207,8 +210,11 @@ public class SwerveSubsystem extends SubsystemBase
     {
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
-      //Update the tracked vision target on the field
-      vision.updateVisionField();
+      //Update the tracked vision target on the field, if enabled
+      if (RobotContainer.DISPLAY_VISION_TAGS)
+      {
+        vision.updateVisionField();
+      }
     }
   }
 
@@ -254,7 +260,7 @@ public class SwerveSubsystem extends SubsystemBase
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(5.0, 0.0, 0.0),
+              new PIDConstants(1.0, 0.0, 0.0),
               // Translation PID constants
               new PIDConstants(5.0, 0.0, 0.0)
               // Rotation PID constants
@@ -334,8 +340,8 @@ public class SwerveSubsystem extends SubsystemBase
   {
 // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity(), 4.0,
-        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        swerveDrive.getMaximumChassisVelocity()/2, 2.0, /* 4 */ 
+        swerveDrive.getMaximumChassisAngularVelocity()/2, Units.degreesToRadians(720 /*720 */));
 
 // Since AutoBuilder is configured, we can use it to build pathfinding commands
     return AutoBuilder.pathfindToPose(
@@ -345,6 +351,14 @@ public class SwerveSubsystem extends SubsystemBase
                                      );
   }
 
+  /**
+   * 3883: return the field dashboard object
+   * @return
+   */
+  public Field2d getField()
+  {
+    return swerveDrive.field;
+  }
   /**
    * Drive with {@link SwerveSetpointGenerator} from 254, implemented by PathPlanner.
    *
@@ -454,7 +468,7 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   /**
-   * Drive right 1m./s until it ends
+   * 3883: Drive right 1m./s until it ends
    * @return
    */
   public Command driveRight()
@@ -536,6 +550,22 @@ public class SwerveSubsystem extends SubsystemBase
                                                                       swerveDrive.getOdometryHeading().getRadians(),
                                                                       swerveDrive.getMaximumChassisVelocity()));
     });
+  }
+
+  /**
+   * 3883 - drive backwards with blue, forwards with red
+   * @return
+   */
+  public Command driveBackwardsForwardsWithAlliance()
+  {
+    if (isRedAlliance())
+    {
+      return driveCommand(Robot.doubleSupplierSuperSlowRed, Robot.doubleSupplierZero, Robot.doubleSupplierZero);
+    }
+    else
+    {
+      return driveCommand(Robot.doubleSupplierSuperSlowBlue, Robot.doubleSupplierZero, Robot.doubleSupplierZero);
+    }
   }
 
   /**
