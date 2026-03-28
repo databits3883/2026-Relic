@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -186,6 +187,20 @@ public class RobotContainer
                                                                        
                                      .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
     NamedCommands.registerCommand("Wiggle Intake", new WiggleIntake(intakeSubsystem));
+
+    // NamedCommands.registerCommand("Wiggle Intake", new PrintCommand("Wiggle"));
+    // NamedCommands.registerCommand("Drive to and Climb R", new PrintCommand("Test"));
+    // NamedCommands.registerCommand("Drive to and Climb L", new PrintCommand("Test"));
+    // NamedCommands.registerCommand("Prepare to Climb", new PrintCommand("Test"));
+    // NamedCommands.registerCommand("Align Turret", new PrintCommand("Test"));
+    // NamedCommands.registerCommand("Toggle Intake", new PrintCommand("Test"));
+    // NamedCommands.registerCommand("Retract Intake", new PrintCommand("Test"));
+    // NamedCommands.registerCommand("Deploy Intake", new PrintCommand("Test"));
+    // NamedCommands.registerCommand("wait 1/2 second", new PrintCommand("Test"));
+    // NamedCommands.registerCommand("Toggle Intake", new PrintCommand("Test"));
+    // NamedCommands.registerCommand("Retract Intake", new PrintCommand("Test"));
+    // NamedCommands.registerCommand("Deploy Intake", new PrintCommand("Test"));
+    // NamedCommands.registerCommand("wait 1/2 second", new PrintCommand("Test"));
     //Have the autoChooser pull in all PathPlanner autos as options
     autoChooser = AutoBuilder.buildAutoChooser();
 
