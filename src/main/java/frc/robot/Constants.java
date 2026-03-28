@@ -124,6 +124,8 @@ public final class Constants {
     public static int FOUR_BAR_FORWARD_TIMEOUT_SEC = 1; /* Max run time in case we do not hit limit */
     public static double FOUR_BAR_BACKWARD_POWER = 4.0;
     public static int FOUR_BAR_BACKWARD_TIMEOUT_SEC = 4; /* Max run time in case we do not hit limit */
+    public static double FOUR_BAR_WIGGLE_TIMEOUT_SEC = 0.25;
+    public static double FOUR_BAR_WIGGLE_POWER = 2;
 
     public static final int INTAKE_MOTOR_ID = 14;
     public static double INTAKE_MOTOR_POWER = 14.0;

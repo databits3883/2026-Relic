@@ -13,7 +13,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class WiggleIntake extends Command {
   private final IntakeSubsystem intake;
-  private final long ABORT_TIME = Constants.Intake.FOUR_BAR_BACKWARD_TIMEOUT_SEC * 1000; /* in millis */
+  private final double ABORT_TIME = Constants.Intake.FOUR_BAR_WIGGLE_TIMEOUT_SEC;
+  private final double WIGGLE_POWER = Constants.Intake.FOUR_BAR_WIGGLE_POWER;
   private final Timer wiggle_alt_timer = new Timer();
   private boolean intakeUp=false;
 
@@ -28,12 +29,15 @@ public class WiggleIntake extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    intakeUp=true;
     //Stop the intake
     intake.stopIntake();
 
-    intake.reverseFourBar();
     //start a timer, We can stop after X seconds if it does not reach limit
     wiggle_alt_timer.restart();
+    System.out.println("starting wiggle");
+
+    execute();//make sure the intake is extending or retracting as it should
     
   }
     
@@ -42,16 +46,17 @@ public class WiggleIntake extends Command {
   @Override
   public void execute() {
     
-    if (wiggle_alt_timer.hasElapsed(ABORT_TIME) && intakeUp==false){
-      
-      wiggle_alt_timer.restart();
-      intake.runFourBar();
-      intakeUp=true;
-    }
-    if (wiggle_alt_timer.hasElapsed(ABORT_TIME) && intakeUp==true){
+    if (wiggle_alt_timer.hasElapsed(ABORT_TIME*2) && intakeUp==false){
+      System.out.println("Intake Retracting now:");
       
       wiggle_alt_timer.restart();
       intake.reverseFourBar();
+      intakeUp=true;
+    }
+    if (wiggle_alt_timer.hasElapsed(ABORT_TIME) && intakeUp==true){
+      System.out.println("Intake Deploying] now:");
+      wiggle_alt_timer.restart();
+      intake.runFourBar();
       intakeUp=false;
     }
   }
@@ -60,6 +65,8 @@ public class WiggleIntake extends Command {
   @Override
   public void end(boolean interrupted) {
     intake.stopFourBar();
+    System.out.println("stopping wiggle, interrupted: " + interrupted + " Timer: " + wiggle_alt_timer.get());
+
   }
     
   // Returns true when the command should end.
