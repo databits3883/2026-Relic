@@ -20,7 +20,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -40,6 +42,7 @@ import frc.robot.commands.ClimberCommands.PrepareToClimb;
 import frc.robot.commands.ClimberCommands.StowClimber;
 import frc.robot.commands.intake.Deploy;
 import frc.robot.commands.intake.Retract;
+import frc.robot.commands.intake.WiggleIntake;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LaunchSubsystem;
@@ -158,10 +161,10 @@ public class RobotContainer
     DoubleSupplier doubleSupplierZero = () -> 0.0;
     
     //Create the NamedCommands that will be used in PathPlanner
-    NamedCommands.registerCommand("Shoot 5sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(5));    
-    NamedCommands.registerCommand("Shoot 3sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(3));  
-    NamedCommands.registerCommand("Shoot 2sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(2));  
-    NamedCommands.registerCommand("Shoot 1sec",new Shoot(launchSubsystem, stageSubsystem).withTimeout(1));  
+    NamedCommands.registerCommand("Shoot 5sec", new Shoot(launchSubsystem, stageSubsystem).withTimeout(5));    
+    NamedCommands.registerCommand("Shoot 3sec", new Shoot(launchSubsystem, stageSubsystem).withTimeout(3));  
+    NamedCommands.registerCommand("Shoot 2sec", new Shoot(launchSubsystem, stageSubsystem).withTimeout(2));
+    NamedCommands.registerCommand("Shoot 1sec", new Shoot(launchSubsystem, stageSubsystem).withTimeout(1));
     NamedCommands.registerCommand("wait 1/2 second", new WaitCommand(0.5));
     NamedCommands.registerCommand("Deploy Intake", new Deploy(intakeSubsystem));    
     NamedCommands.registerCommand("Retract Intake",new Retract(intakeSubsystem));
@@ -182,12 +185,12 @@ public class RobotContainer
                                      .andThen(new ParallelRaceGroup(new ActiveDriveToPose(drivebase,true,ActiveDriveToPose.GoalType.Climber_Right_Step2), new WaitCommand(1)))
                                                                        
                                      .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
-                                     
+    NamedCommands.registerCommand("Wiggle Intake", new WiggleIntake(intakeSubsystem));
     //Have the autoChooser pull in all PathPlanner autos as options
     autoChooser = AutoBuilder.buildAutoChooser();
 
     //Set the default auto (do nothing) 
-    autoChooser.setDefaultOption("Do Nothing", Commands.none());
+    //autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
     //Add a simple auto option to have the robot drive forward for 1 second then stop
     autoChooser.addOption("Drive Forward 3sec", drivebase.driveForward().withTimeout(3));
@@ -290,11 +293,16 @@ public class RobotContainer
       driverJoystick.povRight().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(270);}));
 
       //Shoot while button is held, auto distance
-      driverJoystick.button(1).whileTrue(
-                                          new Shoot(launchSubsystem, stageSubsystem, false));
+      driverJoystick.button(1).whileTrue(new ParallelCommandGroup(
+
+                                          new Shoot(launchSubsystem, stageSubsystem),
+                                          new InstantCommand(()->intakeSubsystem.stopIntake())));
       copilotSNESController.button(5).whileTrue(new ParallelCommandGroup(
                                           drivebase.driveFieldOriented(driveAngularVelocityPrecise),
-                                          new Shoot(launchSubsystem, stageSubsystem, false)));
+                                          new Shoot(launchSubsystem, stageSubsystem)));
+                                          intakeSubsystem.stopIntake();
+                                          
+
       //Shoot with manual velocity control
       driverJoystick.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
 
