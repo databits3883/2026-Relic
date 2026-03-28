@@ -67,7 +67,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot 3sec"
+                  "name": "Deploy Intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot 2sec"
                 }
               }
             ]
@@ -88,45 +94,19 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot 2sec"
+            "name": "Shoot 3sec"
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Prepare to Climb"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Trench to Climb L"
-                }
-              }
-            ]
+            "name": "Deploy Intake"
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Drive to and Climb L"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot 5sec"
-                }
-              }
-            ]
+            "pathName": "Hub Run L"
           }
         }
       ]

@@ -1,0 +1,81 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Setup Center"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Deploy Intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot 3sec"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot - Depot Collect"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center To Climb L"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot 5sec"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Prepare to Climb"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot 5sec"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Drive to and Climb L"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": null,
+  "choreoAuto": false
+}

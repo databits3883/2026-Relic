@@ -204,7 +204,7 @@ public final class Constants {
     public static final double TOLERANCE = 500; //rps
 
     public static final int SPINDEXER_MOTOR_ID = 15;
-    public static double SPINDEXER_MOTOR_POWER = 8.0;
+    public static double SPINDEXER_MOTOR_POWER = 14.0;
     public static boolean SPINDEXER_INVERSE = true;
 
     public static final int OMNIDEXER_MOTOR_ID = 18;
@@ -217,17 +217,17 @@ public final class Constants {
     public static double SLOT0_KP = 0.00072;
     public static double SLOT0_KI = 0.0000009;
     public static double SLOT0_KD = 0.0;
-    public static double SLOT1_KP = 0.00005;
+    public static double SLOT1_KP = 0.0001; // Tune changed for fuel exit speed not steady state. prior value = 0.00005;
     public static double SLOT1_KI = 0.0;
     public static double SLOT1_KD = 0.0;
-    public static double SLOT1_kV = 0.0016;
+    public static double SLOT1_kV = 0.00165; // Tune changed for fuel exit speed not steady state. prior value  = 0.0016;
     //public static double KF = 0.0001;
     public static double MAX_OUTPUT = 1;
     public static final double MAX_VELOCITY = 1.0;
     public static final double MAX_ACCELERATION = 0.5 ;
     public static final int MAX_CURRENT = 60; //amps
     public static final double MAX_VOLTAGE = 12; //volts
-    public static final double TARGET_VELOCITY_RPM = 3500; 
+    public static final double TARGET_VELOCITY_RPM = 6000; // = 3500; 
     public static final double TOLERANCE = 50; //rpm
     public static final double WHEEL_DIAMETER_IN = 4;
 
