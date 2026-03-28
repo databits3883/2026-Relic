@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Setup Center"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Setup Center"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Deploy Intake"
+                }
+              }
+            ]
           }
         },
         {
@@ -17,13 +30,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Deploy Intake"
+                  "name": "Shoot 3sec"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot 3sec"
+                  "name": "Wiggle Intake"
                 }
               }
             ]
@@ -42,9 +55,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Shoot 5sec"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot 5sec"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Wiggle Intake"
+                }
+              }
+            ]
           }
         },
         {

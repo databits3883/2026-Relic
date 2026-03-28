@@ -8,12 +8,12 @@ import frc.robot.subsystems.StageSubsystem;
 public class Shoot extends Command {
     private final LaunchSubsystem launcher;
     private final StageSubsystem stager;
-    private final IntakeSubsystem intake;
+    // private final IntakeSubsystem intake;
     private boolean manualLaunch;
 
-    public Shoot(LaunchSubsystem launchSubsystem, StageSubsystem stageSubsystem, IntakeSubsystem intakeSubsystem) 
+    public Shoot(LaunchSubsystem launchSubsystem, StageSubsystem stageSubsystem) 
     {
-        this(launchSubsystem, stageSubsystem, intakeSubsystem, false );
+        this(launchSubsystem, stageSubsystem, false );
     }
 
     /**
@@ -23,19 +23,19 @@ public class Shoot extends Command {
      * @param stageSubsystem
      * @param manual
      */
-     public Shoot(LaunchSubsystem launchSubsystem, StageSubsystem stageSubsystem, IntakeSubsystem intakeSubsystem, boolean manual)
+     public Shoot(LaunchSubsystem launchSubsystem, StageSubsystem stageSubsystem, /*IntakeSubsystem intakeSubsystem,*/ boolean manual)
     {
         manualLaunch = manual;
         this.launcher = launchSubsystem;
         this.stager = stageSubsystem;
-        this.intake = intakeSubsystem;
+        // this.intake = intakeSubsystem;
         addRequirements(launchSubsystem, stageSubsystem);
     } 
 
     @Override
     public void initialize() {
         //launcher.runLauncher(true);
-        intake.stopIntake();
+        // intake.stopIntake();
         launcher.runLauncher(!manualLaunch);
     }
 
