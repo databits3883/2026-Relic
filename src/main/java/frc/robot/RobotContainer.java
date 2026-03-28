@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -292,11 +293,11 @@ public class RobotContainer
       //Shoot while button is held, auto distance
       driverJoystick.button(1).whileTrue(new ParallelCommandGroup(
 
-                                          new Shoot(launchSubsystem, stageSubsystem, false));
-                                          intakeSubsystem.stopIntake());
+                                          new Shoot(launchSubsystem, stageSubsystem, intakeSubsystem),
+                                          new InstantCommand(()->intakeSubsystem.stopIntake())));
       copilotSNESController.button(5).whileTrue(new ParallelCommandGroup(
                                           drivebase.driveFieldOriented(driveAngularVelocityPrecise),
-                                          new Shoot(launchSubsystem, stageSubsystem, false)));
+                                          new Shoot(launchSubsystem, stageSubsystem, intakeSubsystem)));
                                           intakeSubsystem.stopIntake();
                                           
 
