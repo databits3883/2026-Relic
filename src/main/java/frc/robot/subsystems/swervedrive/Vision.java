@@ -341,15 +341,18 @@ public class Vision
     Integer tagNum = 0;
     for (PhotonTrackedTarget target: targets)
     {
-      boolean canUseTag = !Constants.Climber.IGNORE_CLIMBER_TAGS_WHEN_STOWED;
+      boolean canUseTag = true;
+      boolean ignoreClimberTagsWhenStowed = !Constants.Climber.IGNORE_CLIMBER_TAGS_WHEN_STOWED;
+      boolean ignoreNonClimberTagsWhenNotStowed = Constants.Climber.IGNORE_NON_CLIMBER_TAGS_WHEN_NOT_STOWED;
+
       //Only run in teleop mode
-      if (!canUseTag && isTeleop)
+      if ((ignoreClimberTagsWhenStowed || ignoreNonClimberTagsWhenNotStowed) && isTeleop)
       {
         tagNum = target.getFiducialId();
         boolean isTagInIgnoreList = Constants.Climber.CLIMBER_TAG_LIST.contains(tagNum);
         boolean isStowed = RobotContainer.climberSubsystem.isClimberStowed();
-        if (isStowed && isTagInIgnoreList) canUseTag = false;
-        else if (!isStowed && !isTagInIgnoreList) canUseTag = false;
+        if (isStowed && isTagInIgnoreList && ignoreClimberTagsWhenStowed) canUseTag = false;
+        else if (!isStowed && ignoreNonClimberTagsWhenNotStowed && !isTagInIgnoreList) canUseTag = false;
         else canUseTag = true;
       }
       if (canUseTag)

@@ -186,6 +186,7 @@ public final class Constants {
 
     // This will be used to ignore climber tags when stowed and only use them when not stowed
     public static boolean IGNORE_CLIMBER_TAGS_WHEN_STOWED = false;
+    public static boolean IGNORE_NON_CLIMBER_TAGS_WHEN_NOT_STOWED = true;
     public static final List<Integer> CLIMBER_TAG_LIST = Arrays.asList(15,16,31,32);
   }
 
