@@ -53,6 +53,8 @@ public class LaunchSubsystem extends SubsystemBase
 
   private double tweakDistance = 0;
 
+  private boolean forceManualLaunchSpeed = false;
+
   public LaunchSubsystem() 
   {   
     launchEncoder_a = m_motor_a.getEncoder();      
@@ -114,6 +116,7 @@ public class LaunchSubsystem extends SubsystemBase
       }
       SmartDashboard.putNumber("Launch Current Velocity",0);
       SmartDashboard.putNumber("Launch Current VelocityB",0);
+      forceManualLaunchSpeed = false;
   }
 
   /**
@@ -127,6 +130,13 @@ public class LaunchSubsystem extends SubsystemBase
     {
       this.tweakDistance = distanceTweakAmount;
     }
+  }
+
+  /** Force the launcher to run a set speed */
+  public void forceManualVelocity(boolean updatedValue, double forcedSpeed)
+  {
+    forceManualLaunchSpeed = updatedValue;
+    SmartDashboard.putNumber("Launch Target Velocity", forcedSpeed);
   }
   
  /**
@@ -188,7 +198,8 @@ public class LaunchSubsystem extends SubsystemBase
   public void runLauncher(boolean useTargetDistance)
   {
     x_useTargetDistance = useTargetDistance;
-    if (x_useTargetDistance)
+    
+    if (!forceManualLaunchSpeed && x_useTargetDistance)
        runLauncher(estimateVelocityForTargetDistance(RobotContainer.turretSubsystem.getDistanceToTarget()));
     else runLauncher(SmartDashboard.getNumber("Launch Target Velocity", 0));
   }

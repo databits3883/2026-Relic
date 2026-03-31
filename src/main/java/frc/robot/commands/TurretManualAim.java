@@ -10,11 +10,24 @@ import frc.robot.RobotContainer;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TurretManualAim  extends Command 
 {
+  private double setPointAngle;
+  private double launchSpeedOverride;
+  private boolean overrideLaunchSpeed = false;
+
   /** Creates a new turretAim toggle command */
   public TurretManualAim() 
   {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.turretSubsystem);
+    //get current angle
+    setPointAngle = RobotContainer.turretSubsystem.getCurrentAngle();
+  }
+  public TurretManualAim(double angle, double launchSpeed)
+  {
+    this();
+    setPointAngle = angle;
+    overrideLaunchSpeed = true;
+    launchSpeedOverride = launchSpeed;
   }
 
   // Called when the command is initially scheduled.
@@ -22,6 +35,11 @@ public class TurretManualAim  extends Command
   public void initialize() {
     //System.out.println("Toggle Manual Aim Command init()");
     RobotContainer.turretSubsystem.enableManuallyAim();
+    RobotContainer.turretSubsystem.setManualAimTarget(setPointAngle);
+    if (overrideLaunchSpeed)
+    {
+      RobotContainer.launchSubsystem.forceManualVelocity(true, launchSpeedOverride);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -35,6 +53,8 @@ public class TurretManualAim  extends Command
   @Override
   public void end(boolean interrupted) 
   {
+    //disable the forced launch speed
+    RobotContainer.launchSubsystem.forceManualVelocity(false, 0);
     RobotContainer.turretSubsystem.disableManuallyAim();
     //System.out.println("Toggle Manual Aim Command end()");
   }
