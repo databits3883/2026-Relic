@@ -304,8 +304,8 @@ public class RobotContainer
       
       driverJoystick.povUp().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(0);}));
       driverJoystick.povDown().onTrue(Commands.runOnce(() -> { turretSubsystem.setManualAimTarget(180);}));
-      driverJoystick.povLeft().onTrue(Commands.runOnce(() -> {new TurretManualAim(45, 2000);}));
-      driverJoystick.povRight().onTrue(Commands.runOnce(() -> {new TurretManualAim(360-45, 2000);}));
+      driverJoystick.povLeft().onTrue(new TurretManualAim(45, 2000));
+      driverJoystick.povRight().onTrue(new TurretManualAim(360-45, 2000));
 
       //Shoot while button is held, auto distance
       if (Constants.LaunchConstants.STOP_INTAKE_DURING_FIRE)
