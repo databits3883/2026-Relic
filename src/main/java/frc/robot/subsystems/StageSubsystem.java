@@ -76,6 +76,7 @@ public class StageSubsystem extends SubsystemBase
 
       //Spindexer
       m_spindexerConfig.inverted(Constants.StageConstants.SPINDEXER_INVERSE);
+      m_spindexerConfig.smartCurrentLimit(Constants.StageConstants.SPINDEXER_MAX_CURRENT);
       m_spindexer_motor.configure(m_spindexerConfig, ResetMode.kResetSafeParameters,PersistMode.kNoPersistParameters);
       SmartDashboard.setDefaultNumber("Stage Target Velocity", targetVelocity);
       SmartDashboard.setDefaultBoolean("Stage Run Motor", isRunning);

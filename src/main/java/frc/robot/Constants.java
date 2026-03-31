@@ -209,6 +209,7 @@ public final class Constants {
     public static final int SPINDEXER_MOTOR_ID = 15;
     public static double SPINDEXER_MOTOR_POWER = 14.0;
     public static boolean SPINDEXER_INVERSE = true;
+    public static int SPINDEXER_MAX_CURRENT = 20; //amps
 
     public static final int OMNIDEXER_MOTOR_ID = 18;
     public static double OMNIDEXER_MOTOR_POWER = 10.0;
