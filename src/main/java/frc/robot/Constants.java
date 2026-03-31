@@ -236,6 +236,9 @@ public final class Constants {
 
     public static final double MAX_SHOOTING_DISTANCE = 4.5; //Max distance we can shoot at max velocity in meters
     public static final double MIN_SHOOTING_MIN_VELOCITY_RPM = 1100;
+
+    //Stop intake during shooting or not
+    public static final boolean STOP_INTAKE_DURING_FIRE = false;
     
     //15% +/- speed
     public static final double DISTANCE_TWEAK_MAX_PERCENTABE = .15;
