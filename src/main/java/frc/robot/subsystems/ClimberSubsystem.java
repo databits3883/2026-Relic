@@ -235,6 +235,16 @@ public class ClimberSubsystem extends SubsystemBase
     return m_isStowed;
   }
 
+  /**
+   * This will check if the climber is higher than climb height
+   * @return
+   */
+  public boolean isClimberDeployed()
+  {
+    double xlastPositionRead = getCurrentClimberPosition();
+    return (xlastPositionRead >= Constants.Climber.ROTATIONS_AT_CLIMB);
+  }
+
   @Override
   public void periodic() 
   {

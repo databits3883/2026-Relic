@@ -350,7 +350,7 @@ public class Vision
       {
         tagNum = target.getFiducialId();
         boolean isTagInIgnoreList = Constants.Climber.CLIMBER_TAG_LIST.contains(tagNum);
-        boolean isStowed = RobotContainer.climberSubsystem.isClimberStowed();
+        boolean isStowed = RobotContainer.climberSubsystem.isClimberDeployed();
         if (isStowed && isTagInIgnoreList && ignoreClimberTagsWhenStowed) canUseTag = false;
         else if (!isStowed && ignoreNonClimberTagsWhenNotStowed && !isTagInIgnoreList) canUseTag = false;
         else canUseTag = true;
