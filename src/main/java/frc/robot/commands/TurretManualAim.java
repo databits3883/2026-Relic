@@ -54,7 +54,10 @@ public class TurretManualAim  extends Command
   public void end(boolean interrupted) 
   {
     //disable the forced launch speed
-    RobotContainer.launchSubsystem.forceManualVelocity(false, 0);
+    if (overrideLaunchSpeed)
+    {
+      RobotContainer.launchSubsystem.forceManualVelocity(false, 0);
+    }
     RobotContainer.turretSubsystem.disableManuallyAim();
     //System.out.println("Toggle Manual Aim Command end()");
   }
