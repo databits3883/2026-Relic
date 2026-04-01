@@ -46,15 +46,12 @@ public class WiggleIntake extends Command {
   @Override
   public void execute() {
     
-    if (wiggle_alt_timer.hasElapsed(ABORT_TIME*2) && intakeUp==false){
-      System.out.println("Intake Retracting now:");
-      
+    if (wiggle_alt_timer.hasElapsed(ABORT_TIME*2) && intakeUp==false){      
       wiggle_alt_timer.restart();
       intake.reverseFourBar();
       intakeUp=true;
     }
     if (wiggle_alt_timer.hasElapsed(ABORT_TIME) && intakeUp==true){
-      System.out.println("Intake Deploying] now:");
       wiggle_alt_timer.restart();
       intake.runFourBar();
       intakeUp=false;
@@ -65,8 +62,6 @@ public class WiggleIntake extends Command {
   @Override
   public void end(boolean interrupted) {
     intake.stopFourBar();
-    System.out.println("stopping wiggle, interrupted: " + interrupted + " Timer: " + wiggle_alt_timer.get());
-
   }
     
   // Returns true when the command should end.
