@@ -227,10 +227,10 @@ public final class Constants {
     public static double SLOT0_KP = 0.00072;
     public static double SLOT0_KI = 0.0000009;
     public static double SLOT0_KD = 0.0;
-    public static double SLOT1_KP = 0.0001; // Tune changed for fuel exit speed not steady state. prior value = 0.00005;
+    public static double SLOT1_KP = 0.00015; // Tune changed for fuel exit speed not steady state. prior value = 0.00005;
     public static double SLOT1_KI = 0.0;
     public static double SLOT1_KD = 0.0;
-    public static double SLOT1_kV = 0.00165; // Tune changed for fuel exit speed not steady state. prior value  = 0.0016;
+    public static double SLOT1_kV = 0.00174; // Tune changed for fuel exit speed not steady state. prior value  = 0.0016;
     //public static double KF = 0.0001;
     public static double MAX_OUTPUT = 1;
     public static final double MAX_VELOCITY = 1.0;
