@@ -35,10 +35,8 @@ public class WiggleIntake extends Command {
 
     //start a timer, We can stop after X seconds if it does not reach limit
     wiggle_alt_timer.restart();
-    System.out.println("starting wiggle");
 
-    execute();//make sure the intake is extending or retracting as it should
-    
+    execute();
   }
     
 
