@@ -14,7 +14,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -71,7 +70,7 @@ public class ClimberSubsystem extends SubsystemBase
   }
 
   //This will determine if the motor is stalled
-  public boolean isStalled() 
+  public boolean isStalled_UNUSED() 
   {
     long currentTime = System.currentTimeMillis();
     long deltaTime = currentTime - lastStallReading;
@@ -241,8 +240,9 @@ public class ClimberSubsystem extends SubsystemBase
    */
   public boolean isClimberDeployed()
   {
-    double xlastPositionRead = getCurrentClimberPosition();
-    return (xlastPositionRead >= Constants.Climber.ROTATIONS_AT_CLIMB);
+    //Get from last read in periodic, will speed up calls to this method
+    //double xlastPositionRead = getCurrentClimberPosition();
+    return (lastPositionRead >= Constants.Climber.ROTATIONS_AT_CLIMB);
   }
 
   @Override
@@ -250,14 +250,9 @@ public class ClimberSubsystem extends SubsystemBase
   {
     //Update the last position reading
     double xlastPositionRead = getCurrentClimberPosition();
-    SmartDashboard.putNumber("Climber Current Position",lastPositionRead);
-
-    //TODO: check if this will work, check if running in reverse
-    /* 
-    if (isClimberRunning() && isRunningReverse() && isStalled())
-    {
-      stopClimber();
-    }*/
+    //Since we are not using the isStalled, update the lastPosition on every run through periodic
+    lastPositionRead = xlastPositionRead;
+    SmartDashboard.putNumber("Climber Current Position",xlastPositionRead);
 
     //If we are "stowed" and not currently running the climber ensure our position does not drift too far up
     //Only run this in teleop
@@ -270,7 +265,7 @@ public class ClimberSubsystem extends SubsystemBase
         m_isStowed = false;
         CommandScheduler.getInstance().schedule(new StowClimber(RobotContainer.climberSubsystem));
       }
-      }
+    }
   }
 
   @Override
