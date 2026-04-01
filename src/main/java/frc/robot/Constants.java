@@ -115,6 +115,12 @@ public final class Constants {
     //Future pose calculation
     public static final double LATENCY_SEC = 0.2;    
     public static final boolean USE_FUTURE_POSE = true;
+
+    //Driver stick overrides
+    public static final double RIGHT_HOOD_ANGLE = 45;
+    public static final double LEFT_HOOD_ANGLE = 360-45;
+    public static final double RIGHT_HOOD_VELOCITY = 2000;
+    public static final double LEFT_HOOD_VELOCITY = 2000;
   }
   
   public static class Intake 
