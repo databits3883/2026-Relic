@@ -188,19 +188,6 @@ public class RobotContainer
                                      .andThen(new SequentialCommandGroup(new Climb(climberSubsystem).andThen(new WaitCommand(0.5))).repeatedly()));    
     NamedCommands.registerCommand("Wiggle Intake", new WiggleIntake(intakeSubsystem));
 
-    // NamedCommands.registerCommand("Wiggle Intake", new PrintCommand("Wiggle"));
-    // NamedCommands.registerCommand("Drive to and Climb R", new PrintCommand("Test"));
-    // NamedCommands.registerCommand("Drive to and Climb L", new PrintCommand("Test"));
-    // NamedCommands.registerCommand("Prepare to Climb", new PrintCommand("Test"));
-    // NamedCommands.registerCommand("Align Turret", new PrintCommand("Test"));
-    // NamedCommands.registerCommand("Toggle Intake", new PrintCommand("Test"));
-    // NamedCommands.registerCommand("Retract Intake", new PrintCommand("Test"));
-    // NamedCommands.registerCommand("Deploy Intake", new PrintCommand("Test"));
-    // NamedCommands.registerCommand("wait 1/2 second", new PrintCommand("Test"));
-    // NamedCommands.registerCommand("Toggle Intake", new PrintCommand("Test"));
-    // NamedCommands.registerCommand("Retract Intake", new PrintCommand("Test"));
-    // NamedCommands.registerCommand("Deploy Intake", new PrintCommand("Test"));
-    // NamedCommands.registerCommand("wait 1/2 second", new PrintCommand("Test"));
     //Have the autoChooser pull in all PathPlanner autos as options
     autoChooser = AutoBuilder.buildAutoChooser();
 
@@ -340,9 +327,8 @@ public class RobotContainer
       copilotSNESController.axisGreaterThan(0,0.5).onTrue(new Retract(intakeSubsystem));
       //Run intake while this button is off and stop when button is on
       copilotSNESController.button(3).onTrue(Commands.runOnce(intakeSubsystem::toggleIntake));
-      //Run intake max speed while held
-      copilotSNESController.button(6).onTrue(Commands.runOnce(() -> { intakeSubsystem.setIntakeMax(true);;}));
-      copilotSNESController.button(6).onFalse(Commands.runOnce(() -> { intakeSubsystem.setIntakeMax(false);;}));
+      //Run wiggle while held
+      copilotSNESController.button(6).whileTrue(new WiggleIntake(intakeSubsystem));
 
       //Climber
       //climber stow/prepare
@@ -362,7 +348,6 @@ public class RobotContainer
 
       //Test later
       driverJoystick.button(6).whileTrue(new ActiveDriveToPose(drivebase,false, ActiveDriveToPose.GoalType.Climber_Left_Step1)); // in auto = false
-      //driverJoystick.button(6).whileTrue(drivebase.driveToClimb(ActiveDriveToPose.GoalType.Climber_Left,false)); // true = use active drive, false use pathplanner (sHOW TAG)
     }
   }
 
