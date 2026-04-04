@@ -328,7 +328,7 @@ public class RobotContainer
       //Run intake while this button is off and stop when button is on
       copilotSNESController.button(3).onTrue(Commands.runOnce(intakeSubsystem::toggleIntake));
       //Run wiggle while held
-      copilotSNESController.button(6).whileTrue(new WiggleIntake(intakeSubsystem));
+      copilotSNESController.button(6).whileTrue(new WiggleIntake(intakeSubsystem, true));
 
       //Climber
       //climber stow/prepare

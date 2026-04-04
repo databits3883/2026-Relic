@@ -22,14 +22,18 @@ public class WiggleIntake extends Command {
   public WiggleIntake(IntakeSubsystem intakeSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.intake = intakeSubsystem;
+    intakeUp=true;
 
     addRequirements(intakeSubsystem);
   }
+  public WiggleIntake(IntakeSubsystem intakeSubsystem, boolean checkDownState) {
+    this(intakeSubsystem);
+    if (checkDownState && intake.isFourBarForwardLimit()) intakeUp = false;
+   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intakeUp=true;
     //Stop the intake
     intake.stopIntake();
 
