@@ -127,9 +127,9 @@ public final class Constants {
   {
     public static final int FOUR_BAR_MOTOR_ID = 13;
     public static double FOUR_BAR_FORWARD_POWER = 2.0;
-    public static int FOUR_BAR_FORWARD_TIMEOUT_SEC = 1; /* Max run time in case we do not hit limit */
+    public static double FOUR_BAR_FORWARD_TIMEOUT_SEC = 0.75; /* Max run time in case we do not hit limit */
     public static double FOUR_BAR_BACKWARD_POWER = 4.0;
-    public static int FOUR_BAR_BACKWARD_TIMEOUT_SEC = 4; /* Max run time in case we do not hit limit */
+    public static int FOUR_BAR_BACKWARD_TIMEOUT_SEC = 2; /* Max run time in case we do not hit limit */
     public static double FOUR_BAR_WIGGLE_TIMEOUT_SEC = 0.25;
     public static double FOUR_BAR_WIGGLE_POWER = 2;
 
@@ -181,10 +181,10 @@ public final class Constants {
     public static final Pose2d RED_RIGHT_POSE_STEP1 = new Pose2d(15.10-CLIMBER_BUFFER_SPACE,4.76, Rotation2d.fromDegrees(-90));
     public static final Pose2d BLUE_LEFT_POSE_STEP1 = new Pose2d(1.50+CLIMBER_BUFFER_SPACE,4.17, Rotation2d.fromDegrees(90));
     public static final Pose2d BLUE_RIGHT_POSE_STEP1 = new Pose2d(1.50+CLIMBER_BUFFER_SPACE,3.31, Rotation2d.fromDegrees(90));
-    public static final Pose2d RED_LEFT_POSE_STEP2 = new Pose2d(15.10, 3.91,Rotation2d.fromDegrees(-90));
-    public static final Pose2d RED_RIGHT_POSE_STEP2 = new Pose2d(15.10,4.76, Rotation2d.fromDegrees(-90));
-    public static final Pose2d BLUE_LEFT_POSE_STEP2 = new Pose2d(1.50,4.17, Rotation2d.fromDegrees(90));
-    public static final Pose2d BLUE_RIGHT_POSE_STEP2 = new Pose2d(1.50,3.31, Rotation2d.fromDegrees(90));
+    public static final Pose2d RED_LEFT_POSE_STEP2 = new Pose2d(15.125, 3.91,Rotation2d.fromDegrees(-90));
+    public static final Pose2d RED_RIGHT_POSE_STEP2 = new Pose2d(15.125,4.76, Rotation2d.fromDegrees(-90));
+    public static final Pose2d BLUE_LEFT_POSE_STEP2 = new Pose2d(1.475,4.17, Rotation2d.fromDegrees(90));
+    public static final Pose2d BLUE_RIGHT_POSE_STEP2 = new Pose2d(1.475,3.31, Rotation2d.fromDegrees(90));
     
     //For stall checks
     public static double MIN_POSITION_MOVEMENT = 0.02; /* Minimum movement in check_ms interval for stalled */

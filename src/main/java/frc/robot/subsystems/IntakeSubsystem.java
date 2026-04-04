@@ -27,7 +27,7 @@ public class IntakeSubsystem extends SubsystemBase
   private SparkMax m_intake_motor = new SparkMax(Constants.Intake.INTAKE_MOTOR_ID, MotorType.kBrushless);
   private RelativeEncoder m_intakeEncoder = null;
 
-  private double m_intakeSpinningPower = Constants.Intake.INTAKE_MOTOR_POWER;
+  private final double m_intakeSpinningPower = Constants.Intake.INTAKE_MOTOR_POWER;
   private double m_fourBarForwardPower = Constants.Intake.FOUR_BAR_FORWARD_POWER;
   private double m_fourBarBackwardPower = Constants.Intake.FOUR_BAR_BACKWARD_POWER;
   
@@ -113,6 +113,8 @@ public class IntakeSubsystem extends SubsystemBase
       intakeLastStallReading = currentTime;
       intakeStalledLastPositionRead = currentPosition;      
 
+      //hardcode to not stalled
+      isMotorStalled = false;
       if (isMotorStalled)
       {
         SmartDashboard.putBoolean("Intake Stalled", true);

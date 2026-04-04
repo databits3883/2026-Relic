@@ -347,7 +347,7 @@ public class RobotContainer
       //copilotBoxController.button(10).whileTrue(new TurretManualAim());
 
       //Test later
-      driverJoystick.button(6).whileTrue(new ActiveDriveToPose(drivebase,false, ActiveDriveToPose.GoalType.Climber_Left_Step1)); // in auto = false
+      driverJoystick.button(6).whileTrue(new ActiveDriveToPose(drivebase,false, ActiveDriveToPose.GoalType.Climber_Right_Step2)); // in auto = false
     }
   }
 
