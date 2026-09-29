@@ -330,6 +330,7 @@ public class RobotContainer
       //Run wiggle while held
       copilotSNESController.button(6).whileTrue(new WiggleIntake(intakeSubsystem, true));
 
+      /** Disable Climber butons
       //Climber
       //climber stow/prepare
       driverJoystick.button(7).onTrue(new Retract(intakeSubsystem).andThen(new PrepareToClimb(climberSubsystem)));
@@ -340,6 +341,7 @@ public class RobotContainer
       //Stow
       driverJoystick.button(9).onTrue(new StowClimber(climberSubsystem));
       copilotSNESController.button(4).onTrue(new StowClimber(climberSubsystem));
+       */
       
       //Try to home the turret
       copilotSNESController.button(1).onTrue(new TurretAlign(Constants.TurretConstants.ALIGN_ANGLE_OFFSET));
