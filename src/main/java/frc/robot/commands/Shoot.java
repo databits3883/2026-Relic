@@ -35,7 +35,7 @@ public class Shoot extends Command {
     @Override
     public void initialize() {
         //launcher.runLauncher(true);
-        // intake.stopIntake();
+        //intake.stopIntake();
         launcher.runLauncher(!manualLaunch);
     }
 

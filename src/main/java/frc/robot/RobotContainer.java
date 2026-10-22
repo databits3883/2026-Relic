@@ -35,6 +35,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ActiveDriveToPose;
 import frc.robot.commands.Outtake;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.Turret45;
 import frc.robot.commands.TurretAlign;
 import frc.robot.commands.TurretAutoAim;
 import frc.robot.commands.TurretManualAim;
@@ -316,6 +317,7 @@ public class RobotContainer
 
       //Shoot with manual velocity control
       driverJoystick.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
+      driverJoystick.button(3).whileTrue(new Turret45());
 
       //Outake while button is held
       driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem, intakeSubsystem));
@@ -323,7 +325,7 @@ public class RobotContainer
       //Intake deploy/retract
       driverJoystick.button(4).onTrue(new Deploy(intakeSubsystem));
       copilotSNESController.axisLessThan(0,-0.5).onTrue(new Deploy(intakeSubsystem));
-      driverJoystick.button(3).onTrue(new Retract(intakeSubsystem));
+      //driverJoystick.button(3).onTrue(new Retract(intakeSubsystem));
       copilotSNESController.axisGreaterThan(0,0.5).onTrue(new Retract(intakeSubsystem));
       //Run intake while this button is off and stop when button is on
       copilotSNESController.button(3).onTrue(Commands.runOnce(intakeSubsystem::toggleIntake));
