@@ -317,7 +317,7 @@ public class RobotContainer
 
       //Shoot with manual velocity control
       driverJoystick.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
-      driverJoystick.button(7).whileTrue(new NevinCommand(intakeSubsystem, launchSubsystem, stageSubsystem));
+      driverJoystick.button(7).whileTrue(new NevinCommand(intakeSubsystem, launchSubsystem, stageSubsystem, turretSubsystem));
 
       //Outake while button is held
       driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem, intakeSubsystem));
