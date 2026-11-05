@@ -39,6 +39,7 @@ import frc.robot.commands.Shoot;
 import frc.robot.commands.TurretAlign;
 import frc.robot.commands.TurretAutoAim;
 import frc.robot.commands.TurretManualAim;
+import frc.robot.commands.madness;
 import frc.robot.commands.ClimberCommands.Climb;
 import frc.robot.commands.ClimberCommands.PrepareToClimb;
 import frc.robot.commands.ClimberCommands.StowClimber;
@@ -318,6 +319,7 @@ public class RobotContainer
       //Shoot with manual velocity control
       driverJoystick.button(5).whileTrue(new Shoot(launchSubsystem, stageSubsystem, false));
       driverJoystick.button(7).whileTrue(new NevinCommand(intakeSubsystem, launchSubsystem, stageSubsystem, turretSubsystem));
+      driverJoystick.button(8).whileTrue(new madness());
 
       //Outake while button is held
       driverJoystick.button(2).whileTrue(new Outtake(launchSubsystem, stageSubsystem, intakeSubsystem));
